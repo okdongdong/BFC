@@ -50,14 +50,14 @@
 git commit -m '#[지라이슈번호] feat
 페이지네이션 기능 추가'
 
-`git commit -m '#[지라이슈번호] style
-버튼 스타일링'`
+git commit -m '#[지라이슈번호] style
+버튼 스타일링'
 
-`git commit -m '#[지라이슈번호] fix
-팝업 버그 수정'`
+git commit -m '#[지라이슈번호] fix
+팝업 버그 수정'
 
-`git commit -m '#[지라이슈번호] docs
-리드미 수정'`
+git commit -m '#[지라이슈번호] docs
+리드미 수정'
 ```
 
 
@@ -79,3 +79,31 @@ git commit -m '#[지라이슈번호] feat
 - [“Resolves” “Fixes” “Closes”] + [지라이슈번호]
 
  	→ Commit Message 혹은 MR Description에 [“Resolves” “Fixes” “Closes”] + 이슈 아이디가 있으면 이슈가 자동으로 닫힘. 
+
+
+
+
+
+### 🛠주요기술스택
+
+**Backend**
+
+- SpringBoot
+- JPA
+- MySQL
+- Redis
+- ElasticSearch
+- Django
+
+**Frontend**
+
+- React
+- Node.js,
+- VisualStudioCode
+
+**DataAnalysis**
+
+- BeautifulSoup
+- crontab
+- Numpy
+- Pandas
