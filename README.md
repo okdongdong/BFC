@@ -106,4 +106,4 @@ git commit -m '#[지라이슈번호] docs
 - BeautifulSoup
 - crontab
 - Numpy
-- Pandas
+- Pandas 
