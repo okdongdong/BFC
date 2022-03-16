@@ -3,6 +3,8 @@ package com.busanfullcourse.bfc.db.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,4 +34,10 @@ public class Fullcourse {
     @Column(name = "finished_on")
     private Long finishedOn;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToMany(mappedBy = "fullcourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sharing> sharings = new ArrayList<>();
 }
