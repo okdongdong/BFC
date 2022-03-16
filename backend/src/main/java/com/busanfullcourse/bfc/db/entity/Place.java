@@ -3,6 +3,8 @@ package com.busanfullcourse.bfc.db.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,4 +49,6 @@ public class Place {
 
     private String thumbnail;
 
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
 }
