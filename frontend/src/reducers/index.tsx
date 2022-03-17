@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import { createReducer } from "@reduxjs/toolkit";
+import user from "./userReducer";
 // import { UPDATE_USER_INFO } from "../actions"; // actions에서 정의한거 들고옴
 
 // 객체 갱신
@@ -42,6 +43,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const appReducer = combineReducers({
   // userInfo: accountReducer,
+  user,
 });
 
 export default appReducer;

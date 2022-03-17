@@ -2,9 +2,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/react,visualstudiocode,git,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=react,visualstudiocode,git,windows
 
+#환경변수파일
+.env.local
+
 ### Git ###
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
+
 *.orig
 
 # Created by git when using merge tools for conflicts
