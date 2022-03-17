@@ -1,14 +1,16 @@
 package com.busanfullcourse.bfc.db.entity;
 
 
+import com.busanfullcourse.bfc.api.request.SignUpReq;
 import lombok.*;
 
 import javax.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+import static javax.persistence.CascadeType.ALL;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -27,15 +29,14 @@ public class User {
     private Long id;
 
     @Column(unique = true)
-    private String email;
+    private String username;
 
     private String password;
 
     @Column(unique = true)
     private String nickname;
 
-    @Temporal(TemporalType.DATE)
-    private Date birthday;
+    private LocalDate birthday;
 
     private Boolean gender;
 
@@ -54,4 +55,43 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomPlace> customPlaceList = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Authority> authorities = new HashSet<>();
+
+    public static User ofUser(SignUpReq signUpReq) {
+        User user = User.builder()
+                .username(signUpReq.getUsername())
+                .password(signUpReq.getPassword())
+                .nickname(signUpReq.getNickname())
+                .birthday(signUpReq.getBirthday())
+                .gender((signUpReq.getGender()))
+                .build();
+        user.addAuthority(Authority.ofUser(user));
+        return user;
+    }
+
+    public static User ofAdmin(SignUpReq signUpReq) {
+        User user = User.builder()
+                .username(signUpReq.getUsername())
+                .password(signUpReq.getPassword())
+                .nickname(signUpReq.getNickname())
+                .birthday(signUpReq.getBirthday())
+                .gender((signUpReq.getGender()))
+                .build();
+        user.addAuthority(Authority.ofAdmin(user));
+        return user;
+    }
+
+    private void addAuthority(Authority authority) {
+        authorities.add(authority);
+    }
+
+    public List<String> getRoles() {
+        return authorities.stream()
+                .map(Authority::getRole)
+                .collect(toList());
+    }
 }
