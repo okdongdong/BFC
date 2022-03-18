@@ -1,8 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
 
-import com.busanfullcourse.bfc.api.request.LoginReq;
-import com.busanfullcourse.bfc.api.request.SignUpReq;
+import com.busanfullcourse.bfc.api.request.*;
 import com.busanfullcourse.bfc.api.response.MyInfoRes;
 import com.busanfullcourse.bfc.api.response.TokenRes;
 import com.busanfullcourse.bfc.api.response.UserProfileRes;
@@ -24,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPIRATION_TIME;
 
@@ -92,10 +93,51 @@ public class UserService {
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
 //                .profileImg(user.getProfileImg())
                 .build();
+    }
+
+    public MyInfoRes getMyInfo(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        return MyInfoRes.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
+//                .profileImg(user.getProfileImg())
+                .build();
+    }
+
+    public void updateMyInfo(UserUpdateReq userUpdateReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        user.setBirthday(userUpdateReq.getBirthday());
+        user.setGender(userUpdateReq.getGender());
+        user.setNickname(userUpdateReq.getNickname());
+        userRepository.save(user);
+    }
+
+    public void changePassword(ChangePasswordReq changePasswordReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        checkPassword(changePasswordReq.getOldPassword(), user.getPassword());
+        if (!changePasswordReq.getNewPassword().equals(changePasswordReq.getPasswordCheck())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordReq.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void deleteUser(UserDeleteReq userDeleteReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        checkPassword(userDeleteReq.getPassword(), user.getPassword());
+        userRepository.deleteById(userId);
     }
 
     // Redis에 저장된 refreshToken을 삭제하고, accessToken을 Key로 하여 남은 기간 만큼 TTL을 설정 후 LogoutAccessToken을 저장
