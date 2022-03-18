@@ -1,7 +1,9 @@
 import { alpha, AppBar, Box, styled, Toolbar } from "@material-ui/core";
-import { Link as RouterLink } from "react-router-dom";
+import Logo from "../../components/logo";
+import NavbarText from "../../components/navbarText";
 
 // 헤더 화면 (상단 메뉴바)
+
 const Navbar = () => {
   const APPBAR_MOBILE = 64;
   const APPBAR_DESKTOP = 92;
@@ -24,15 +26,15 @@ const Navbar = () => {
   return (
     <RootStyle>
       <ToolbarStyle>
-        <Box sx={{ px: 2.5, py: 3 }}>
-          <RouterLink to="/">aaa</RouterLink>
-        </Box>
-
         <Box sx={{ flexGrow: 1 }} />
-
-        <RouterLink to="/items">구매하기</RouterLink>
-        <RouterLink to="/register">등록하기</RouterLink>
-        <RouterLink to="/whosart">후즈컬렉션</RouterLink>
+        <Logo />
+        <NavbarText to="/attraction" text="여행지"></NavbarText>
+        <NavbarText to="/restaurant" text="맛집"></NavbarText>
+        <NavbarText to="/info" text="이용방법"></NavbarText>
+        <Box sx={{ flexGrow: 1 }} />
+        <NavbarText to="/signup" text="회원가입"></NavbarText>
+        <NavbarText to="/login" text="로그인"></NavbarText>
+        <Box sx={{ flexGrow: 1 }} />
       </ToolbarStyle>
     </RootStyle>
   );
