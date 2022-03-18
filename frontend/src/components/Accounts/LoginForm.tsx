@@ -10,8 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import kakaoLogo from "../../assets/img/kakaoLogo.png";
 import axios from "axios";
-// import { useDispatch } from "react-redux";
-// import { loginUser } from "../../actions/UserAction";
+import { Link as RouterLink } from "react-router-dom";
 
 //footbar
 function Copyright() {
@@ -70,7 +69,7 @@ export default function LoginForm() {
     // event.preventDefault();
 
     let body = {
-      email: email,
+      username: email,
       password: password,
     };
     axios({
@@ -97,10 +96,9 @@ export default function LoginForm() {
             value={email}
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             id="email"
-            label="이메일을 입력해주세요"
+            label="이메일"
             name="email"
             autoComplete="email"
             autoFocus
@@ -110,10 +108,9 @@ export default function LoginForm() {
             value={password}
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             name="password"
-            label="비밀번호를 입력해주세요"
+            label="비밀번호"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -121,17 +118,13 @@ export default function LoginForm() {
           />
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                회원가입
-              </Link>
+              <RouterLink to="/signup">회원가입</RouterLink>
             </Grid>
             <Grid item xs>
               |
             </Grid>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                비밀번호찾기
-              </Link>
+              <RouterLink to="/findPw">비밀번호찾기</RouterLink>
             </Grid>
           </Grid>
           <Button
