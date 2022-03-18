@@ -76,7 +76,7 @@ git commit -m '#[지라이슈번호] docs
 
 **Transition 사용하기**
 
-- [“Resolves” “Fixes” “Closes”] + [지라이슈번호]
+- [“Resolves” “Fixes” “Closes”] + [지라이슈번호] + [내용]
 
  	→ Commit Message 혹은 MR Description에 [“Resolves” “Fixes” “Closes”] + 이슈 아이디가 있으면 이슈가 자동으로 닫힘. 
 
@@ -107,4 +107,25 @@ git commit -m '#[지라이슈번호] docs
 - crontab
 - Numpy
 - Pandas 
-- a
+- Selenium
+
+
+
+### 아키텍쳐
+
+![20220317_221203](/uploads/648d322bf5915c359a191fe3bc0b2643/20220317_221203.png)
+
+
+
+### DB 구조
+
+![BFC_ERD](/uploads/3f8b89d5660e649a719b92264bf89b88/BFC_ERD.png)
+
+
+
+### 참고
+
+- [와이어프레임](https://www.figma.com/file/bICixqqXgLeObjjRYmld3i/%ED%8A%B9%ED%99%94?node-id=82%3A4)
+
+- [API 명세서](https://past-raptorex-bdf.notion.site/API-e141f4b56dc84d0ab4cf1e7d60ebf7d1)
+- [기능명세서](https://past-raptorex-bdf.notion.site/1d4a78e559734e8584757bbff46f148f?v=f60344b1bf8640e4a9c0e7379a23eaec)
