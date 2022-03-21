@@ -9,6 +9,9 @@ import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/users")
@@ -45,5 +48,9 @@ public class UserController {
         return ResponseEntity.ok("회원탈퇴가 정상적으로 처리되었습니다.");
     }
 
+    @PostMapping("/{userId}/profile")
+    public ResponseEntity<UserProfileRes> updateProfileImg(@PathVariable Long userId, @RequestParam MultipartFile file) throws IOException {
+        return ResponseEntity.ok(userService.updateProfileImg(userId, file));
+    }
 
 }
