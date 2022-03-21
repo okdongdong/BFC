@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.request.*;
+import com.busanfullcourse.bfc.api.response.FollowRes;
 import com.busanfullcourse.bfc.api.response.MyInfoRes;
 import com.busanfullcourse.bfc.api.response.TokenRes;
 import com.busanfullcourse.bfc.api.response.UserProfileRes;
@@ -9,6 +10,8 @@ import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
+import com.busanfullcourse.bfc.db.entity.Follow;
+import com.busanfullcourse.bfc.db.repository.FollowRepository;
 import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
 import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
@@ -24,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -39,6 +41,7 @@ import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPI
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
@@ -226,6 +229,35 @@ public class UserService {
             primitiveBytes[j++] = b;
         }
         return new String(primitiveBytes);
+    }
+
+    public FollowRes follow(String myName, Long yourId) {
+        User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        if (you.getUsername().equals(myName)) {
+            throw new IllegalArgumentException("자기자신은 팔로우 할 수 없습니다.");
+        }
+        User me = userRepository.findByUsername(myName).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        Optional<Follow> follow = followRepository.findByFromUserAndToUser(me, you);
+        Boolean isFollowing;
+
+        if (follow.isPresent()){
+            isFollowing = false;
+            followRepository.deleteById(follow.get().getFollowId());
+            System.out.println(followRepository.findAll());
+        } else {
+            isFollowing = true;
+            followRepository.save(Follow.builder()
+                    .fromUser(me)
+                    .toUser(you)
+                    .build());
+        }
+
+        return FollowRes.builder()
+                .followerCnt(you.getFollowers().size())
+                .followingCnt(you.getFollowings().size())
+                .isFollowing(isFollowing)
+                .build();
     }
 
 }
