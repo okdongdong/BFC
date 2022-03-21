@@ -1,4 +1,4 @@
-import { styled } from "@material-ui/core";
+import { styled } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 interface navbarTextProps {
