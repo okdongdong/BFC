@@ -1,16 +1,19 @@
-import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import { ButtonGroup } from "@material-ui/core";
+import { useState } from "react";
 import axios from "axios";
 import TextFieldWithButton from "./TextFieldWithButton";
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  TextField,
+  Theme,
+  Typography,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
@@ -99,14 +102,16 @@ function SignupForm() {
       console.log(userInfo);
       setSendEmailConfirmation(() => true);
       axios({
-        method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup/email`,
+        method: "POST",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/email/verification`,
+        data: { email: userInfo.username },
       })
         .then((res) => {
+          console.log(`인증번호 수신 : ${res.data.certificationNumber}`);
           setResponseCertificationNumber(() => res.data.certificationNumber);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("이메일 인증 실패", err);
           // setSendEmailConfirmation(() => false);
         });
     }
@@ -125,7 +130,8 @@ function SignupForm() {
       setSendCheckNickname(() => true);
       axios({
         method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup/email`,
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/nickname`,
+        params: { nickname: userInfo.nickname },
       })
         .then((res) => {
           setNicknameConfirmation(() => true);

@@ -1,7 +1,8 @@
+import { Theme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import userImg from "../../../assets/img/userImg.png";
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   myImg: {
     borderRadius: theme.spacing(100),
     width: theme.spacing(15),

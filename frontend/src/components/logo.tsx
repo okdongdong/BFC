@@ -1,8 +1,9 @@
-import { Box, makeStyles, styled } from "@material-ui/core";
+import { Box, styled } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Link as RouterLink } from "react-router-dom";
 
 import bfcLogo from "../assets/img/logo_no_text.png";
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   logo: {
     maxHeight: "64px", // Fix IE 11 issue.
   },

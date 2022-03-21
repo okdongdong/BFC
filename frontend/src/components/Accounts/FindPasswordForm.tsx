@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+
+import { makeStyles } from "@mui/styles";
+
 import axios from "axios";
 import TextFieldWithButton from "./TextFieldWithButton";
+import { Button, Container, TextField, Theme, Typography } from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",

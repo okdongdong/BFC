@@ -4,11 +4,12 @@ import {
   FormHelperText,
   InputAdornment,
   InputLabel,
-  makeStyles,
   OutlinedInput,
-} from "@material-ui/core";
+  Theme,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(2),
     display: "flex",
@@ -72,7 +73,6 @@ function TextFieldWithButton({
             </Button>
           </InputAdornment>
         }
-        labelWidth={50}
       />
       <FormHelperText id={`${id}-helper-text`}>{helperText}</FormHelperText>
     </FormControl>

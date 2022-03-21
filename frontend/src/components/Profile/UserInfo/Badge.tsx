@@ -1,8 +1,9 @@
+import { Theme } from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { makeStyles } from "@mui/styles";
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { grey } from "@material-ui/core/colors";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   badge: {
     backgroundColor: grey[300],
     margin: theme.spacing(0.2),

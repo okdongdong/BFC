@@ -2,10 +2,12 @@ import BadgeItem from "./Badge";
 import Profileimg from "./ProfileImg";
 import ProfileInfo from "./ProfileInfo";
 import ProfileName from "./ProfileName";
-import { makeStyles } from "@material-ui/core/styles";
-import { orange } from "@material-ui/core/colors";
 import FollowFollower from "./FollowFollower";
-const useStyles = makeStyles((theme) => ({
+import { orange } from "@mui/material/colors";
+import { makeStyles } from "@mui/styles";
+import { Theme } from "@mui/material";
+
+const useStyles = makeStyles((theme: Theme) => ({
   bg: {
     marginTop: theme.spacing(2),
     height: theme.spacing(15),

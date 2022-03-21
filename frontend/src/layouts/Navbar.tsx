@@ -1,4 +1,4 @@
-import { alpha, AppBar, Box, styled, Toolbar } from "@material-ui/core";
+import { alpha, AppBar, Box, styled, Toolbar } from "@mui/material";
 import Logo from "../components/logo";
 import NavbarText from "../components/navbarText";
 

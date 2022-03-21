@@ -1,4 +1,5 @@
-import { styled } from "@material-ui/core";
+import { styled } from "@mui/material";
+import Carousel from "react-material-ui-carousel";
 import background1 from "../../assets/img/background1.png";
 import background2 from "../../assets/img/background2.png";
 import background3 from "../../assets/img/background3.png";
@@ -7,7 +8,6 @@ import background5 from "../../assets/img/background5.jpg";
 import background6 from "../../assets/img/background6.jpg";
 import background7 from "../../assets/img/background7.jpg";
 import background8 from "../../assets/img/background8.jpg";
-import Carousel from "react-material-ui-carousel";
 
 function MainBackgroundPart({ background }: any) {
   const MainBackgroundContainerStyle = styled("div")(({ theme }) => ({

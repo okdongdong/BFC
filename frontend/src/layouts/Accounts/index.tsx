@@ -1,4 +1,4 @@
-import { styled } from "@material-ui/core";
+import { styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Navbar from "../Navbar";
 
