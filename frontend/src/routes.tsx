@@ -2,9 +2,18 @@ import { Navigate, useRoutes } from "react-router-dom";
 import MainLayout from "./layouts/Main";
 import Login from "./pages/Accounts/Login";
 import Signup from "./pages/Accounts/Signup";
+import Main from "./pages/Main/Main";
 
 function Router() {
   return useRoutes([
+    {
+      path: "/",
+      element: <MainLayout />,
+      children: [
+        { element: <Navigate to="/" replace /> },
+        { path: "", element: <Main /> },
+      ],
+    },
     {
       path: "/login",
       element: <MainLayout />,
