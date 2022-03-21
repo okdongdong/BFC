@@ -1,6 +1,6 @@
 import { alpha, AppBar, Box, styled, Toolbar } from "@material-ui/core";
-import Logo from "../../components/logo";
-import NavbarText from "../../components/navbarText";
+import Logo from "../components/logo";
+import NavbarText from "../components/navbarText";
 
 // 헤더 화면 (상단 메뉴바)
 

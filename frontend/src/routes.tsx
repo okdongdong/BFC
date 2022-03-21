@@ -4,8 +4,18 @@ import Login from "./pages/Accounts/Login";
 import Signup from "./pages/Accounts/Signup";
 import FindPassword from "./pages/Accounts/FindPassword";
 import Profile from "./pages/Profile";
+import Main from "./pages/Main/Main";
+
 function Router() {
   return useRoutes([
+    {
+      path: "/",
+      element: <MainLayout />,
+      children: [
+        { element: <Navigate to="/" replace /> },
+        { path: "", element: <Main /> },
+      ],
+    },
     {
       path: "/login",
       element: <MainLayout />,
