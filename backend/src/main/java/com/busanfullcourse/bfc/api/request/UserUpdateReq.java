@@ -1,4 +1,4 @@
-package com.busanfullcourse.bfc.api.response;
+package com.busanfullcourse.bfc.api.request;
 
 import lombok.*;
 
@@ -9,11 +9,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MyInfoRes {
-    private Long userId;
+public class UserUpdateReq {
     private String username;
     private String nickname;
-    private Boolean gender;
     private LocalDate birthday;
-    private String profileImg;
+    private Boolean gender;
 }
