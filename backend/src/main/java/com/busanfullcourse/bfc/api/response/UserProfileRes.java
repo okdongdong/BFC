@@ -10,7 +10,7 @@ import lombok.*;
 public class UserProfileRes {
     private String username;
     private String nickname;
-//    private byte[] profileImg;
+    private String profileImg;
 //    private Boolean isFollowing;
 //    private Integer followingCnt;
 //    private Integer followerCnt;
