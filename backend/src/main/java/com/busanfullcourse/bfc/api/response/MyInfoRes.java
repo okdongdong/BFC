@@ -15,5 +15,5 @@ public class MyInfoRes {
     private String nickname;
     private Boolean gender;
     private LocalDate birthday;
-//    private byte[] profileImg;
+    private String profileImg;
 }
