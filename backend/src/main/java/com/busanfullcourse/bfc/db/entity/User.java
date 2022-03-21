@@ -42,7 +42,7 @@ public class User {
 
     @Column(name="profile_img")
     @Lob
-    private byte[] profileImg;
+    private Byte[] profileImg;
 
     @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followers = new ArrayList<>();

@@ -21,7 +21,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -86,7 +89,7 @@ public class UserService {
         return UserProfileRes.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-//                .profileImg(user.getProfileImg())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
@@ -98,7 +101,7 @@ public class UserService {
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-//                .profileImg(user.getProfileImg())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
@@ -110,7 +113,7 @@ public class UserService {
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-//                .profileImg(user.getProfileImg())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
@@ -193,6 +196,36 @@ public class UserService {
     public Boolean checkNickname(String nickname) {
         // 비어있으면 true, 객체가 찾아지면 false.
         return userRepository.findByNickname(nickname).isEmpty();
+    }
+
+    public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Byte[] bytes = new Byte[file.getBytes().length];
+        byte[] fileToBytes = file.getBytes();
+
+        int i = 0;
+
+        for (byte b : file.getBytes()) {
+            bytes[i++] = b;
+        }
+        user.setProfileImg(bytes);
+        userRepository.save(user);
+
+
+        return UserProfileRes.builder()
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .build();
+    }
+
+    private String convertByteArrayToString(Byte[] bytes) {
+        byte [] primitiveBytes = new byte[bytes.length];
+        int j = 0;
+        for (Byte b: bytes) {
+            primitiveBytes[j++] = b;
+        }
+        return new String(primitiveBytes);
     }
 
 }
