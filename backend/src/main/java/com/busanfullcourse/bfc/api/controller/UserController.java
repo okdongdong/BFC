@@ -3,11 +3,14 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.request.ChangePasswordReq;
 import com.busanfullcourse.bfc.api.request.UserDeleteReq;
 import com.busanfullcourse.bfc.api.request.UserUpdateReq;
+import com.busanfullcourse.bfc.api.response.FollowRes;
 import com.busanfullcourse.bfc.api.response.MyInfoRes;
 import com.busanfullcourse.bfc.api.response.UserProfileRes;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,6 +54,11 @@ public class UserController {
     @PostMapping("/{userId}/profile")
     public ResponseEntity<UserProfileRes> updateProfileImg(@PathVariable Long userId, @RequestParam MultipartFile file) throws IOException {
         return ResponseEntity.ok(userService.updateProfileImg(userId, file));
+    }
+
+    @PostMapping("/{userId}/follow")
+    public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.follow(userId));
     }
 
 }
