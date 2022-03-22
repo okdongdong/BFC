@@ -1,7 +1,8 @@
 package com.busanfullcourse.bfc.api.service;
 
 
-import com.busanfullcourse.bfc.api.response.RestaurantRes;
+import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
+import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,10 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
 
 
-    public RestaurantRes getRestaurantDetail(Long placeId){
+    public RestaurantDetailRes getRestaurantDetail(Long placeId){
         Place restaurant = placeRepository.findRestaurantMenusById(placeId);
 //        Place restaurant = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("식당이 없습니다."));
-        return RestaurantRes.builder()
+        return RestaurantDetailRes.builder()
                 .placeId(restaurant.getPlaceId())
                 .name(restaurant.getName())
                 .info(restaurant.getInfo())
@@ -40,5 +41,25 @@ public class PlaceService {
                 .menus(restaurant.getMenus())
                 .build();
 
+    }
+
+    public AttractionDetailRes getAttractionDetail(Long placeId){
+        Place attraction = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("여행지가 없습니다."));
+
+        return AttractionDetailRes.builder()
+                .placeId(attraction.getPlaceId())
+                .name(attraction.getName())
+                .info(attraction.getInfo())
+                .openTime(attraction.getOpenTime())
+                .lat(attraction.getLat())
+                .lng(attraction.getLng())
+                .address(attraction.getAddress())
+                .category(attraction.getCategory())
+                .phone(attraction.getPhone())
+                .label(attraction.getLabel())
+                .station(attraction.getStation())
+                .averageScore(attraction.getAverageScore())
+                .thumbnail(attraction.getThumbnail())
+                .build();
     }
 }
