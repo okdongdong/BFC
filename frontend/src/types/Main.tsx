@@ -26,3 +26,23 @@ export interface FullCourseListProps {
   title?: string;
   fullCourseList: FullCourseProps[];
 }
+
+export interface MyFullCourseContentDayProps {
+  courseDate: string; // 일정날짜
+  day: number;
+  placeList: { name: string; order: number }[];
+}
+
+export interface FullCourseDetailProps {
+  fullCourseId: number;
+  title: string;
+  views?: number;
+  startOn: Date;
+  finishedOn: Date;
+  thumbnailList: string[];
+  dayPlaceList: MyFullCourseContentDayProps[];
+}
+
+export interface FullCourseDetailListProps {
+  fullCourseDetailList: FullCourseDetailProps[];
+}
