@@ -6,7 +6,7 @@ interface DateCounterProps {
 }
 
 const CardStyle = styled(Card)(() => ({
-  width: 70,
+  width: 50,
   borderRadius: "25px",
   textAlign: "center",
   marginLeft: 10,
@@ -14,7 +14,7 @@ const CardStyle = styled(Card)(() => ({
 }));
 
 const DayCountStyle = styled("span")(() => ({
-  fontSize: 48,
+  fontSize: 30,
   fontWeight: "bold",
 }));
 
