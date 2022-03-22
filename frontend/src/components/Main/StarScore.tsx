@@ -5,21 +5,22 @@ interface StarScorePorps {
   starScore: number;
 }
 
+const StarScoreBoxStlye = styled(Box)(() => ({
+  display: "flex",
+  alignItems: "center",
+  margin: 0,
+}));
+
+const StarScoreStyle = styled("span")(() => ({
+  fontSize: 20,
+  fontWeight: "bold",
+}));
+
+const useStyles = makeStyles(() => ({
+  scoreStar: { color: "orange", fontSize: 32 },
+}));
+
 function StarScore({ starScore }: StarScorePorps) {
-  const StarScoreBoxStlye = styled(Box)(() => ({
-    display: "flex",
-    alignItems: "center",
-  }));
-
-  const StarScoreStyle = styled("span")(() => ({
-    fontSize: 20,
-    fontWeight: "bold",
-  }));
-
-  const useStyles = makeStyles(() => ({
-    scoreStar: { color: "orange", fontSize: 32 },
-  }));
-
   const classes = useStyles();
 
   return (

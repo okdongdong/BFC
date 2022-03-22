@@ -14,10 +14,11 @@ import StarScore from "./StarScore";
 import { PlaceCardProps } from "../../types/Main";
 
 const CardStyle = styled(Card)(() => ({
-  width: 300,
+  width: 240,
   borderRadius: "25px",
   textAlign: "left",
-  marginRight: 10,
+  marginRight: 15,
+  marginLeft: 15,
 }));
 
 const CardMediaStyle = styled(CardMedia)(() => ({
@@ -28,11 +29,14 @@ const PlaceNameStyle = styled("h2")(() => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  margin: 0,
 }));
 
 const PlaceAddressNameStyle = styled("p")(() => ({
   fontSize: 16,
   color: "grey",
+  marginTop: 8,
+  marginBottom: 8,
 }));
 
 function PlaceCard({
@@ -61,7 +65,6 @@ function PlaceCard({
             <StarScore starScore={averageScore}></StarScore>
           </PlaceNameStyle>
           <PlaceAddressNameStyle>{address}</PlaceAddressNameStyle>
-          <Box sx={{ flexGrow: 1 }} />
           <Stack direction="row" spacing={1}>
             {keywords.map((item, key) => (
               <Chip key={key} label={`#${item}`} />

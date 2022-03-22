@@ -13,15 +13,13 @@ import FullCouresThumbnail from "./FullCourseThumbnail";
 import LikeCount from "./LikeCount";
 
 const CardStyle = styled(Card)(() => ({
-  width: 300,
+  width: 240,
   borderRadius: "25px",
   textAlign: "left",
-  marginRight: 10,
+  marginRight: 15,
+  marginLeft: 15,
 }));
 
-const CardMediaStyle = styled(CardMedia)(() => ({
-  height: 200,
-}));
 
 const CardContentStyle = styled(CardContent)(() => ({
   display: "flex",

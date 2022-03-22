@@ -4,6 +4,7 @@ import FullCourseCard from "./FullCourseCard";
 
 const TitleTextStyle = styled("h1")(() => ({
   fontSize: 32,
+  marginBottom: 36,
 }));
 
 const FullCourseCardListStyle = styled("div")(() => ({
