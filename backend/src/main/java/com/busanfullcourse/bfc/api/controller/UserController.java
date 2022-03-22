@@ -58,8 +58,7 @@ public class UserController {
 
     @PostMapping("/{userId}/follow")
     public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(userService.follow(authentication.getName(), userId));
+        return ResponseEntity.ok(userService.follow(userId));
     }
 
 }

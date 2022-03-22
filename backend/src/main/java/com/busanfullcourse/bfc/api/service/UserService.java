@@ -174,7 +174,7 @@ public class UserService {
         throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
     }
 
-    private String getCurrentUsername() {
+    public String getCurrentUsername() {
         // JwtAuthenticationFilter를 통해 SecurityContext 에 저장된 Authentication 객체를 조회
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
@@ -204,7 +204,6 @@ public class UserService {
     public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         Byte[] bytes = new Byte[file.getBytes().length];
-        byte[] fileToBytes = file.getBytes();
 
         int i = 0;
 
@@ -223,6 +222,9 @@ public class UserService {
     }
 
     private String convertByteArrayToString(Byte[] bytes) {
+        if (bytes==null){
+            return null;
+        }
         byte [] primitiveBytes = new byte[bytes.length];
         int j = 0;
         for (Byte b: bytes) {
@@ -231,7 +233,8 @@ public class UserService {
         return new String(primitiveBytes);
     }
 
-    public FollowRes follow(String myName, Long yourId) {
+    public FollowRes follow(Long yourId) {
+        String myName = getCurrentUsername();
         User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         if (you.getUsername().equals(myName)) {
             throw new IllegalArgumentException("자기자신은 팔로우 할 수 없습니다.");
