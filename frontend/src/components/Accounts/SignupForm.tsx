@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -43,6 +44,7 @@ interface UserInfo {
 
 function SignupForm() {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   // 유저정보 기본값
   const initUserInfo: UserInfo = {
@@ -67,26 +69,38 @@ function SignupForm() {
     useState<boolean>(false);
   const [sendCheckNickname, setSendCheckNickname] = useState<boolean>(false);
   const [userCertificationNumber, setUserCertificationNumber] =
-    useState<number>(0);
+    useState<string>("");
   const [responseCertificationNumber, setResponseCertificationNumber] =
-    useState<number>(0);
+    useState<string>("");
 
   // 유효성 검사 처리
   const [emailMessage, setEmailMessage] = useState<string>("");
+  const [emailConfirmMessage, setEmailConfirmMessage] = useState<string>("");
   const [nickNameMessage, setNickNameMessage] = useState<string>("");
   const [passwordMessage, setPasswordMessage] = useState<string>("");
   const [passwordConfirmMessage, setPasswordConfirmMessage] =
     useState<string>("");
 
   // 회원가입 요청전송
-  function requestSignup(userInfo: UserInfo): void {
+  function requestSignup(): void {
     console.log(userInfo);
     axios({
       method: "post",
       url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
-      data: userInfo,
+      data: {
+        username: userInfo.username,
+        password: userInfo.password,
+        passwordCheck: userInfo.passwordConfirmation,
+        nickname: userInfo.nickname,
+        birthday: userInfo.birthday,
+        gender: userInfo.gender,
+        // agreement: userInfo.agreement,
+      },
     })
-      .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
+      .then((res) => {
+        console.log(res);
+        navigate("main");
+      }) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
   }
 
@@ -107,12 +121,12 @@ function SignupForm() {
         data: { email: userInfo.username },
       })
         .then((res) => {
-          console.log(`인증번호 수신 : ${res.data.certificationNumber}`);
-          setResponseCertificationNumber(() => res.data.certificationNumber);
+          console.log(`인증번호 수신 : ${res.data.code}`);
+          setResponseCertificationNumber(() => res.data.code);
         })
         .catch((err) => {
           console.log("이메일 인증 실패", err);
-          // setSendEmailConfirmation(() => false);
+          setSendEmailConfirmation(() => false);
         });
     }
   }
@@ -138,7 +152,7 @@ function SignupForm() {
           console.log(res);
         })
         .catch((err) => {
-          // setSendCheckNickname(() => false);
+          setSendCheckNickname(() => false);
           console.log(err);
         });
     }
@@ -229,14 +243,21 @@ function SignupForm() {
   function changeUserCertificationNumber(
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
-    const newUserCertificationNumber: number = parseInt(event.target.value);
+    const newUserCertificationNumber: string = event.target.value;
     setUserCertificationNumber(() => newUserCertificationNumber);
-    if (
-      userCertificationNumber !== 0 &&
-      userCertificationNumber === responseCertificationNumber
-    ) {
-      setEmailConfirmation(() => true);
+    console.log(newUserCertificationNumber);
+    if (newUserCertificationNumber.length === 8) {
+      console.log(456);
+      if (newUserCertificationNumber === responseCertificationNumber) {
+        console.log(123);
+        setEmailConfirmation(() => true);
+        setEmailConfirmMessage("");
+      } else {
+        console.log(789);
+        setEmailConfirmMessage("인증번호가 일치하지 않습니다.");
+      }
     } else {
+      setEmailConfirmMessage("");
       setEmailConfirmation(() => false);
     }
   }
@@ -267,6 +288,7 @@ function SignupForm() {
             helperText={emailMessage}
           ></TextFieldWithButton>
           <TextField
+            inputProps={{ maxLength: 8 }}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -275,6 +297,8 @@ function SignupForm() {
             type="text"
             name="certificationNumber"
             onChange={changeUserCertificationNumber}
+            helperText={emailConfirmMessage}
+            error={!!emailConfirmMessage}
           />
           <TextField
             error={!!passwordMessage}
@@ -355,7 +379,7 @@ function SignupForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => requestSignup}
+            onClick={requestSignup}
             disabled={
               userInfo.password !== userInfo.passwordConfirmation ||
               userInfo.username === "" ||
