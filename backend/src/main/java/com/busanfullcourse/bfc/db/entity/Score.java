@@ -5,18 +5,18 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_score")
+@Table
 @Getter
 @Setter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserScore {
+public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_score_id")
-    private Long userScoreId;
+    @Column(name = "score_id")
+    private Long scoreId;
 
     private Float score;
 

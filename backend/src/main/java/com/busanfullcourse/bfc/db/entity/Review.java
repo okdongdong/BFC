@@ -8,20 +8,20 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_review")
+@Table
 @Getter
 @Setter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserReview {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_review_id")
-    private Long userReviewId;
+    @Column(name = "review_id")
+    private Long reviewId;
 
-    private String review;
+    private String content;
 
     @CreationTimestamp
     @Column(name = "posted_at")
