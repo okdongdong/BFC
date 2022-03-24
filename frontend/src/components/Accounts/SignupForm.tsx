@@ -57,8 +57,6 @@ function SignupForm() {
   const [sendEmailConfirmation, setSendEmailConfirmation] =
     useState<boolean>(false);
   const [sendCheckNickname, setSendCheckNickname] = useState<boolean>(false);
-  const [userCertificationNumber, setUserCertificationNumber] =
-    useState<string>("");
   const [responseCertificationNumber, setResponseCertificationNumber] =
     useState<string>("");
 
@@ -231,17 +229,13 @@ function SignupForm() {
   function changeUserCertificationNumber(
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
-    const newUserCertificationNumber: string = event.target.value;
-    setUserCertificationNumber(() => newUserCertificationNumber);
-    console.log(newUserCertificationNumber);
-    if (newUserCertificationNumber.length === 8) {
-      console.log(456);
-      if (newUserCertificationNumber === responseCertificationNumber) {
-        console.log(123);
+    const userCertificationNumber: string = event.target.value;
+    console.log(userCertificationNumber);
+    if (userCertificationNumber.length === 8) {
+      if (userCertificationNumber === responseCertificationNumber) {
         setEmailConfirmation(() => true);
         setEmailConfirmMessage("");
       } else {
-        console.log(789);
         setEmailConfirmMessage("인증번호가 일치하지 않습니다.");
       }
     } else {

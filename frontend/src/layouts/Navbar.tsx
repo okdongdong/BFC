@@ -3,13 +3,8 @@ import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
 import Logo from "../components/Logo";
 import NavbarText from "../components/NavbarText";
-import Profileimg from "../components/Profile/UserInfo/ProfileImg";
 
 // 헤더 화면 (상단 메뉴바)
-
-const APPBAR_MOBILE = 64;
-const APPBAR_DESKTOP = 92;
-
 const RootStyle = styled(AppBar)(({ theme }) => ({
   boxShadow: "none",
   backdropFilter: "blur(6px)",
@@ -18,11 +13,10 @@ const RootStyle = styled(AppBar)(({ theme }) => ({
 }));
 
 const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
-  minHeight: APPBAR_MOBILE,
-  [theme.breakpoints.up("lg")]: {
-    minHeight: APPBAR_DESKTOP,
-    padding: theme.spacing(0, 5),
-  },
+  height: 108,
+  padding: "0px !important",
+  letterSpacing: "0px",
+  width: "100%",
 }));
 
 const Navbar = ({ isLogin, nickname, profileImg }: Props) => {

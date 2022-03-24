@@ -6,6 +6,7 @@ function PlaceCardList({ placeList, title }: PlaceCardListProps) {
   const TitleTextStyle = styled("h1")(() => ({
     fontSize: 32,
     marginBottom: 32,
+    fontFamily: "Sunflower, sans-serif",
   }));
 
   const PlaceCardListStyle = styled("div")(() => ({
