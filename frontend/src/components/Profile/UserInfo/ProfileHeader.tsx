@@ -9,7 +9,7 @@ import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   bg: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(14),
     height: theme.spacing(15),
     backgroundColor: orange[500],
     position: "relative",
@@ -47,11 +47,11 @@ function ProfileHeader() {
         <Profileimg></Profileimg>
         <ProfileName></ProfileName>
       </div>
-      <div className={classes.myInfo}>
-        <ProfileInfo></ProfileInfo>
-      </div>
       <div className={classes.badges}>
         <BadgeItem></BadgeItem>
+      </div>
+      <div className={classes.myInfo}>
+        <ProfileInfo></ProfileInfo>
       </div>
     </div>
   );
