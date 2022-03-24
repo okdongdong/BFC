@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import kakaoLogo from "../../assets/img/kakaoLogo.png";
-import axios from "axios";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Typography,
   Link,
@@ -15,6 +14,10 @@ import {
   Theme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { connect } from "react-redux";
+import { userLogin } from "../../redux/account/actions";
+import { LoginUserInfo } from "../../types/account";
+import { AccountReducer } from "../../redux/rootReducer";
 
 //footbar
 function Copyright() {
@@ -57,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 //로그인
-export default function LoginForm() {
+function LoginForm({ userLogin, isLogin }: Props) {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,25 +72,23 @@ export default function LoginForm() {
   const onPasswordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.currentTarget.value);
   };
-  const login = () => {
-    // event.preventDefault();
 
-    let body = {
+  const login = () => {
+    const data: LoginUserInfo = {
       username: email,
       password: password,
     };
-    axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/login`,
-      data: body,
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    userLogin(data);
   };
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin]);
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -95,7 +96,7 @@ export default function LoginForm() {
         <Typography component="h1" variant="h5">
           로그인
         </Typography>
-        <form className={classes.form} noValidate>
+        <div className={classes.form}>
           <TextField
             value={email}
             variant="outlined"
@@ -137,6 +138,7 @@ export default function LoginForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={login}
           >
             로그인
           </Button>
@@ -156,7 +158,7 @@ export default function LoginForm() {
             />
             카카오로그인
           </Button>
-        </form>
+        </div>
       </div>
       <Box mt={8}>
         <Copyright />
@@ -164,3 +166,20 @@ export default function LoginForm() {
     </Container>
   );
 }
+
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    isLogin: account.isLogin,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    userLogin: (userInfo: LoginUserInfo) => dispatch(userLogin(userInfo)),
+  };
+};
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);

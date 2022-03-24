@@ -16,8 +16,8 @@ function Main() {
       thumbnailList: [
         "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
         "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
-        "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
-        "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
+        "https://image.ohou.se/i/bucketplace-v2-development/uploads/productions/157249584768148929.jpg?gif=1&w=720&h=480&c=c",
+        "https://t2.daumcdn.net/thumb/R720x0/?fname=http://t1.daumcdn.net/brunch/service/user/4BYf/image/OL1_yEG1rO4dXPZAhGEncbsZfN8.jfif",
       ],
       dayPlaceList: [
         {

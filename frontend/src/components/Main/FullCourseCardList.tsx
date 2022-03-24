@@ -1,5 +1,5 @@
 import { styled } from "@mui/material";
-import { FullCourseListProps } from "../../types/Main";
+import { FullCourseListProps } from "../../types/main";
 import FullCourseCard from "./FullCourseCard";
 
 const TitleTextStyle = styled("h1")(() => ({

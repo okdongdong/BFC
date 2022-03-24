@@ -1,7 +1,7 @@
 import { Card, CardActionArea, CardContent, styled } from "@mui/material";
 import Carousel from "react-material-ui-carousel";
 import { useNavigate } from "react-router-dom";
-import { FullCourseDetailListProps } from "../../../types/Main";
+import { FullCourseDetailListProps } from "../../../types/main";
 import MyFullCourseBackground from "./MyFullCourseBackground";
 import MyFullCourseContent from "./MyFullCourseContent";
 const CardStyle = styled(Card)(() => ({

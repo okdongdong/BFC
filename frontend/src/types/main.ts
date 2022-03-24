@@ -30,7 +30,7 @@ export interface FullCourseListProps {
 export interface MyFullCourseContentDayProps {
   courseDate: string; // 일정날짜
   day: number;
-  placeList: { name: string; order: number }[];
+  placeList: Array<{ name: string; order: number }>;
 }
 
 export interface FullCourseDetailProps {

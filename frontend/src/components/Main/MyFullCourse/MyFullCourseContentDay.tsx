@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
 import React from "react";
-import { MyFullCourseContentDayProps } from "../../../types/Main";
+import { MyFullCourseContentDayProps } from "../../../types/main";
 
 const CircleStlye = styled("div")(() => ({
   marginRight: 0,
