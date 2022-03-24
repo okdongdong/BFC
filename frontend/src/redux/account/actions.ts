@@ -26,6 +26,7 @@ const userLoginFailure = (err: any) => {
   };
 };
 
+
 export const userLogin = (userInfo: LoginUserInfo) => {
   return async (dispatch: Dispatch) => {
     dispatch(userLoginRequest());
@@ -42,7 +43,7 @@ export const userLogin = (userInfo: LoginUserInfo) => {
         data: data,
       });
 
-      localStorage.setItem("isLogin", "true");
+      // localStorage.setItem("isLogin", "true");
       localStorage.setItem(
         "accessToken",
         `${res.data.grantType}${res.data.accessToken}`

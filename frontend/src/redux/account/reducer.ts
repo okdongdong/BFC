@@ -4,11 +4,13 @@ import {
   USER_LOGIN_FAILURE,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
+  USER_LOGOUT,
 } from "./types";
 
 interface AccountStateType extends NavUserInfo {
   loading: boolean;
   err?: any;
+  isLogin: boolean;
 }
 
 const initialState: AccountStateType = {
@@ -16,6 +18,7 @@ const initialState: AccountStateType = {
   userId: 0,
   profileImg: null,
   loading: false,
+  isLogin: false,
 };
 
 const accountReducer = (
@@ -32,6 +35,7 @@ const accountReducer = (
     case USER_LOGIN_SUCCESS:
       return {
         ...action.payload,
+        isLogin: true,
       };
 
     case USER_LOGIN_FAILURE:
@@ -40,8 +44,13 @@ const accountReducer = (
         err: action.payload,
       };
 
+    case USER_LOGOUT:
+      return {
+        ...initialState,
+      };
+
     default:
-      return initialState;
+      return state;
   }
 };
 

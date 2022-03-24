@@ -16,7 +16,8 @@ import {
 import { makeStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import { userLogin } from "../../redux/account/actions";
-import { LoginUserInfo, NavUserInfo } from "../../types/account";
+import { LoginUserInfo } from "../../types/account";
+import { AccountReducer } from "../../redux/rootReducer";
 
 //footbar
 function Copyright() {
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 //로그인
-function LoginForm({ userLogin, nickname, profileImg, userId }: Props) {
+function LoginForm({ userLogin, isLogin }: Props) {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,10 +84,10 @@ function LoginForm({ userLogin, nickname, profileImg, userId }: Props) {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (userId !== 0) {
+    if (isLogin) {
       navigate("/");
     }
-  }, [userId]);
+  }, [isLogin]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -156,9 +157,6 @@ function LoginForm({ userLogin, nickname, profileImg, userId }: Props) {
               className={classes.logo}
             />
             카카오로그인
-            {nickname}
-            {profileImg}
-            {userId}
           </Button>
         </div>
       </div>
@@ -169,11 +167,9 @@ function LoginForm({ userLogin, nickname, profileImg, userId }: Props) {
   );
 }
 
-const mapStateToProps = ({ account }: { account: NavUserInfo }) => {
+const mapStateToProps = ({ account }: AccountReducer) => {
   return {
-    nickname: account.nickname,
-    profileImg: account.profileImg,
-    userId: account.userId,
+    isLogin: account.isLogin,
   };
 };
 
