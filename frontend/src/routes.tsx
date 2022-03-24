@@ -3,73 +3,69 @@ import MainLayout from "./layouts/Main";
 import Login from "./pages/Accounts/Login";
 import Signup from "./pages/Accounts/Signup";
 import FindPassword from "./pages/Accounts/FindPassword";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
-
+import ChangeUser from "./pages/Profile/ChangeUser";
+import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
 function Router() {
   return useRoutes([
     {
-      path: "/",
+      path: "",
       element: <MainLayout />,
       children: [
-        { element: <Navigate to="/" replace /> },
         { path: "", element: <Main /> },
-      ],
-    },
-    {
-      path: "/login",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/login" replace /> },
-        { path: "", element: <Login /> },
-      ],
-    },
-    {
-      path: "/signup",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/signup" replace /> },
-        { path: "", element: <Signup /> },
-      ],
-    },
-    {
-      path: "/attraction",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/signup" replace /> },
-        { path: "", element: <Signup /> },
-      ],
-    },
-    {
-      path: "/restaurant",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/signup" replace /> },
-        { path: "", element: <Signup /> },
-      ],
-    },
-    {
-      path: "/info",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/signup" replace /> },
-        { path: "", element: <Signup /> },
-      ],
-    },
-    {
-      path: "/findPw",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/findPw" replace /> },
-        { path: "", element: <FindPassword /> },
-      ],
-    },
-    {
-      path: "/profile",
-      element: <MainLayout />,
-      children: [
-        { element: <Navigate to="/profile" replace /> },
-        { path: "", element: <Profile /> },
+        {
+          path: "login",
+          element: <Login />,
+        },
+        {
+          path: "signup",
+          element: <Signup />,
+        },
+        {
+          path: "fullcourse/:fullCourseId",
+          element: <Signup />,
+        },
+        {
+          path: "attraction",
+          children: [
+            { path: "", element: <Login /> },
+            {
+              path: ":placeId",
+              element: <Signup />,
+            },
+          ],
+        },
+        {
+          path: "restaurant",
+          children: [
+            { path: "", element: <Login /> },
+            {
+              path: ":placeId",
+              element: <Signup />,
+            },
+          ],
+        },
+        {
+          path: "info",
+          element: <Signup />,
+        },
+        {
+          path: "findPw",
+          element: <FindPassword />,
+        },
+        {
+          path: "profile",
+          element: <Profile />,
+        },
+        {
+          path: "changeUser",
+          element: <ChangeUser />,
+        },
+        {
+          path: "deleteAccount",
+          element: <DeleteAccount />,
+        },
       ],
     },
     { path: "*", element: <Navigate to="/404" replace /> },

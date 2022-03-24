@@ -162,7 +162,6 @@ function SignupForm() {
     const targetId: string = event.target.id;
     newUserInfo[targetId] = event.target.value;
     setUserInfo(() => newUserInfo);
-
     // 유효성 검사
     switch (targetId) {
       case "username":

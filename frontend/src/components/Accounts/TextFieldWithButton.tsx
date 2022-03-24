@@ -31,6 +31,7 @@ interface TextFieldWithButtonProps {
   label: string;
   helperText?: string;
   autoComplete?: string;
+  value?: string;
 }
 
 function TextFieldWithButton({
@@ -42,6 +43,7 @@ function TextFieldWithButton({
   label,
   helperText = "",
   disabled,
+  value = "",
 }: TextFieldWithButtonProps) {
   const classes = useStyles();
 
@@ -61,6 +63,7 @@ function TextFieldWithButton({
         onChange={onChange}
         disabled={disabled}
         aria-describedby={`${id}-helper-text`}
+        defaultValue={value}
         endAdornment={
           <InputAdornment position="end">
             <Button
