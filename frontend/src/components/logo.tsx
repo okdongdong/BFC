@@ -4,8 +4,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 import bfcLogo from "../assets/img/logo_no_text.png";
 const useStyles = makeStyles(() => ({
-  logo: {
-    maxHeight: "64px", // Fix IE 11 issue.
+  bfcLogo: {
+    height: "64px", // Fix IE 11 issue.
   },
   logoContainer: {
     alignItems: "center",
@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "row",
   },
-  textContainer: {
+  logoTextContainer: {
     textAlign: "left",
     flexDirection: "column",
   },
@@ -26,10 +26,12 @@ function Logo() {
 
   const classes = useStyles();
   const TextStyle = styled("h3")(() => ({
-    fontSize: 16,
+    fontSize: "22px",
     paddingLeft: 8,
-    paddingRight: 8,
+    paddingRight: 24,
     margin: "0px",
+    fontFamily: "Sunflower, sans-serif",
+    lineHeight: 1,
   }));
 
   const LogoStyle = styled(Box)(({ theme }) => ({
@@ -43,8 +45,8 @@ function Logo() {
   return (
     <LogoStyle>
       <RouterLink to="/" className={classes.logoContainer}>
-        <img className={classes.logo} src={bfcLogo} alt="Logo" />
-        <div className={classes.textContainer}>
+        <img className={classes.bfcLogo} src={bfcLogo} alt="Logo" />
+        <div className={classes.logoTextContainer}>
           <TextStyle>Busan</TextStyle>
           <TextStyle>Full</TextStyle>
           <TextStyle>Course</TextStyle>

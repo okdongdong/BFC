@@ -6,7 +6,6 @@ import {
   Typography,
   Link,
   Container,
-  CssBaseline,
   TextField,
   Grid,
   Button,
@@ -91,7 +90,6 @@ function LoginForm({ userLogin, isLogin }: Props) {
 
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
           로그인

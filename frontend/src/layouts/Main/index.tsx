@@ -15,12 +15,7 @@ const MainLayout = () => {
   const MainStyle = styled("div")(({ theme }) => ({
     flexGrow: 1,
     overflow: "auto",
-    minHeight: "100%",
     marginTop: 108,
-    paddingBottom: theme.spacing(10),
-    [theme.breakpoints.up("lg")]: {
-      paddingTop: 0,
-    },
   }));
 
   return (

@@ -12,13 +12,12 @@ function NavbarText({ to, text }: navbarTextProps) {
     textDecoration: "none",
     color: "#0787EC",
     margin: theme.spacing(0, 2),
+    fontSize: "24px",
+    fontWeight: "bold",
+    height: 36,
   }));
 
-  return (
-    <NavTextStyle to={to}>
-      <h3>{text}</h3>
-    </NavTextStyle>
-  );
+  return <NavTextStyle to={to}>{text}</NavTextStyle>;
 }
 
 export default NavbarText;
