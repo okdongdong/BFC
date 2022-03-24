@@ -47,11 +47,11 @@ function ProfileHeader() {
         <Profileimg></Profileimg>
         <ProfileName></ProfileName>
       </div>
-      <div className={classes.myInfo}>
-        <ProfileInfo></ProfileInfo>
-      </div>
       <div className={classes.badges}>
         <BadgeItem></BadgeItem>
+      </div>
+      <div className={classes.myInfo}>
+        <ProfileInfo></ProfileInfo>
       </div>
     </div>
   );

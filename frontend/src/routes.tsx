@@ -3,9 +3,10 @@ import MainLayout from "./layouts/Main";
 import Login from "./pages/Accounts/Login";
 import Signup from "./pages/Accounts/Signup";
 import FindPassword from "./pages/Accounts/FindPassword";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
-
+import ChangeUser from "./pages/Profile/ChangeUser";
+import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
 function Router() {
   return useRoutes([
     {
@@ -56,6 +57,14 @@ function Router() {
         {
           path: "profile",
           element: <Profile />,
+        },
+        {
+          path: "changeUser",
+          element: <ChangeUser />,
+        },
+        {
+          path: "deleteAccount",
+          element: <DeleteAccount />,
         },
       ],
     },
