@@ -25,8 +25,10 @@ function Logo() {
   const APPBAR_DESKTOP = 92;
 
   const classes = useStyles();
-  const TextStyle = styled("h3")(({ theme }) => ({
-    padding: theme.spacing(0, 1),
+  const TextStyle = styled("h3")(() => ({
+    fontSize: 16,
+    paddingLeft: 8,
+    paddingRight: 8,
     margin: "0px",
   }));
 

@@ -15,8 +15,8 @@ function Main({ isLogin }: Props) {
       startOn: new Date("2022-03-17"),
       finishedOn: new Date("2022-03-19"),
       thumbnailList: [
-        "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
-        "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
+        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+        "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
         "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
         "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
       ],
