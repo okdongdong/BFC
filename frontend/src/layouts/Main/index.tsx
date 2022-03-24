@@ -16,7 +16,7 @@ const MainLayout = () => {
     flexGrow: 1,
     overflow: "auto",
     minHeight: "100%",
-    paddingTop: 108,
+    marginTop: 108,
     paddingBottom: theme.spacing(10),
     [theme.breakpoints.up("lg")]: {
       paddingTop: 0,
