@@ -12,7 +12,7 @@ import background8 from "../../assets/img/background8.jpg";
 function MainBackgroundPart({ background }: any) {
   const MainBackgroundContainerStyle = styled("div")(({ theme }) => ({
     width: "100%",
-    height: 500,
+    height: 450,
   }));
 
   const MainBackgroundStyle = styled("img")({
