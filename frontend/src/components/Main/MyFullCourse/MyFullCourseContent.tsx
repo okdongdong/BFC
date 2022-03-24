@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
 import React from "react";
-import { FullCourseDetailProps } from "../../../types/Main";
+import { FullCourseDetailProps } from "../../../types/main";
 import MyFullCourseContentDay from "./MyFullCourseContentDay";
 
 const BoxStyle = styled(Box)(() => ({

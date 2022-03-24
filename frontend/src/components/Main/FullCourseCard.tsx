@@ -1,13 +1,6 @@
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  styled,
-} from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { FullCourseProps } from "../../types/Main";
+import { FullCourseProps } from "../../types/main";
 import DateCounter from "./DateCounter";
 import FullCouresThumbnail from "./FullCourseThumbnail";
 import LikeCount from "./LikeCount";

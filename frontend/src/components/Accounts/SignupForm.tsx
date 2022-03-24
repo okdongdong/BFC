@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
+import { SignupUserInfo } from "../../types/account";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -30,24 +31,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface UserInfo {
-  username: string;
-  password: string;
-  passwordConfirmation: string;
-  nickname: string;
-  birthday: Date | null;
-  gender: number; // 남자: 1, 여자: 0
-  agreement: boolean; // 약관동의
-  profileimg?: string | null;
-  [key: string]: any; // 이거를 쓰면 ts를 쓰는 의미가 없긴한데 일단 오류를 해결하기 위해 사용
-}
-
 function SignupForm() {
   const classes = useStyles();
   const navigate = useNavigate();
 
   // 유저정보 기본값
-  const initUserInfo: UserInfo = {
+  const initUserInfo: SignupUserInfo = {
     username: "",
     password: "",
     passwordConfirmation: "",
@@ -55,11 +44,11 @@ function SignupForm() {
     birthday: null,
     gender: 1,
     agreement: false,
-    profileimg: null,
+    profileImg: null,
   };
 
   // 유저정보 state
-  const [userInfo, setUserInfo] = useState<UserInfo>(initUserInfo);
+  const [userInfo, setUserInfo] = useState<SignupUserInfo>(initUserInfo);
 
   // 인증관련 state
   const [emailConfirmation, setEmailConfirmation] = useState<boolean>(false);
@@ -160,7 +149,7 @@ function SignupForm() {
 
   // 성별버튼
   function selectGender(gender: number): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     if (gender === 1) {
       newUserInfo.gender = 1;
       setUserInfo(() => newUserInfo);
@@ -172,7 +161,7 @@ function SignupForm() {
 
   // 회원가입폼 정보입력
   function changeUserInfo(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     const targetId: string = event.target.id;
     newUserInfo[targetId] = event.target.value;
     setUserInfo(() => newUserInfo);
@@ -264,7 +253,7 @@ function SignupForm() {
 
   // 약관동의
   function checkAgreement(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     newUserInfo.agreement = event.target.checked;
     setUserInfo(() => newUserInfo);
     console.log(userInfo);

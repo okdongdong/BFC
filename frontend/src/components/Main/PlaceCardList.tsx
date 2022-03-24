@@ -1,5 +1,5 @@
 import PlaceCard from "./PlaceCard";
-import { PlaceCardListProps } from "../../types/Main";
+import { PlaceCardListProps } from "../../types/main";
 import { styled } from "@mui/material";
 
 function PlaceCardList({ placeList, title }: PlaceCardListProps) {
