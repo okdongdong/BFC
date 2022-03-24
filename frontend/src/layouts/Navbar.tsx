@@ -31,8 +31,8 @@ const Navbar = ({ isLogin, nickname, profileImg }: Props) => {
         <Box sx={{ flexGrow: 2 }} />
 
         {isLogin ? (
-          <Box sx={{ display: "flex" }}>
-            <Box sx={{ height: 64 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box>
               <img
                 src={profileImg}
                 alt="profileImg"
