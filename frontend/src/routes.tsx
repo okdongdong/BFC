@@ -7,6 +7,7 @@ import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
 import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
+import CreateFullCourse from "./pages/FullCourse/CreateFullCourse/CreateFullCourse";
 function Router() {
   return useRoutes([
     {
@@ -67,6 +68,11 @@ function Router() {
           element: <DeleteAccount />,
         },
       ],
+    },
+    {
+      path: "createFullCourse",
+      element: <MainLayout />,
+      children: [{ path: "", element: <CreateFullCourse /> }],
     },
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);
