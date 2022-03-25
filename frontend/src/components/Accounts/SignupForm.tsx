@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import { ButtonGroup } from "@material-ui/core";
+import { useState } from "react";
 import axios from "axios";
 import TextFieldWithButton from "./TextFieldWithButton";
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  TextField,
+  Theme,
+  Typography,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { useNavigate } from "react-router-dom";
+import { SignupUserInfo } from "../../types/account";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
@@ -26,23 +31,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface UserInfo {
-  username: string;
-  password: string;
-  passwordConfirmation: string;
-  nickname: string;
-  birthday: Date | null;
-  gender: number; // 남자: 1, 여자: 0
-  agreement: boolean; // 약관동의
-  profileimg?: string | null;
-  [key: string]: any; // 이거를 쓰면 ts를 쓰는 의미가 없긴한데 일단 오류를 해결하기 위해 사용
-}
-
 function SignupForm() {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   // 유저정보 기본값
-  const initUserInfo: UserInfo = {
+  const initUserInfo: SignupUserInfo = {
     username: "",
     password: "",
     passwordConfirmation: "",
@@ -50,11 +44,11 @@ function SignupForm() {
     birthday: null,
     gender: 1,
     agreement: false,
-    profileimg: null,
+    profileImg: null,
   };
 
   // 유저정보 state
-  const [userInfo, setUserInfo] = useState<UserInfo>(initUserInfo);
+  const [userInfo, setUserInfo] = useState<SignupUserInfo>(initUserInfo);
 
   // 인증관련 state
   const [emailConfirmation, setEmailConfirmation] = useState<boolean>(false);
@@ -63,27 +57,37 @@ function SignupForm() {
   const [sendEmailConfirmation, setSendEmailConfirmation] =
     useState<boolean>(false);
   const [sendCheckNickname, setSendCheckNickname] = useState<boolean>(false);
-  const [userCertificationNumber, setUserCertificationNumber] =
-    useState<number>(0);
   const [responseCertificationNumber, setResponseCertificationNumber] =
-    useState<number>(0);
+    useState<string>("");
 
   // 유효성 검사 처리
   const [emailMessage, setEmailMessage] = useState<string>("");
+  const [emailConfirmMessage, setEmailConfirmMessage] = useState<string>("");
   const [nickNameMessage, setNickNameMessage] = useState<string>("");
   const [passwordMessage, setPasswordMessage] = useState<string>("");
   const [passwordConfirmMessage, setPasswordConfirmMessage] =
     useState<string>("");
 
   // 회원가입 요청전송
-  function requestSignup(userInfo: UserInfo): void {
+  function requestSignup(): void {
     console.log(userInfo);
     axios({
       method: "post",
       url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
-      data: userInfo,
+      data: {
+        username: userInfo.username,
+        password: userInfo.password,
+        passwordCheck: userInfo.passwordConfirmation,
+        nickname: userInfo.nickname,
+        birthday: userInfo.birthday,
+        gender: userInfo.gender,
+        // agreement: userInfo.agreement,
+      },
     })
-      .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
+      .then((res) => {
+        console.log(res);
+        navigate("main");
+      }) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
   }
 
@@ -99,15 +103,17 @@ function SignupForm() {
       console.log(userInfo);
       setSendEmailConfirmation(() => true);
       axios({
-        method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup/email`,
+        method: "POST",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/email/verification`,
+        data: { email: userInfo.username },
       })
         .then((res) => {
-          setResponseCertificationNumber(() => res.data.certificationNumber);
+          console.log(`인증번호 수신 : ${res.data.code}`);
+          setResponseCertificationNumber(() => res.data.code);
         })
         .catch((err) => {
-          console.log(err);
-          // setSendEmailConfirmation(() => false);
+          console.log("이메일 인증 실패", err);
+          setSendEmailConfirmation(() => false);
         });
     }
   }
@@ -125,14 +131,15 @@ function SignupForm() {
       setSendCheckNickname(() => true);
       axios({
         method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup/email`,
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/nickname`,
+        params: { nickname: userInfo.nickname },
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
           console.log(res);
         })
         .catch((err) => {
-          // setSendCheckNickname(() => false);
+          setSendCheckNickname(() => false);
           console.log(err);
         });
     }
@@ -140,7 +147,7 @@ function SignupForm() {
 
   // 성별버튼
   function selectGender(gender: number): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     if (gender === 1) {
       newUserInfo.gender = 1;
       setUserInfo(() => newUserInfo);
@@ -152,11 +159,10 @@ function SignupForm() {
 
   // 회원가입폼 정보입력
   function changeUserInfo(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     const targetId: string = event.target.id;
     newUserInfo[targetId] = event.target.value;
     setUserInfo(() => newUserInfo);
-
     // 유효성 검사
     switch (targetId) {
       case "username":
@@ -223,21 +229,24 @@ function SignupForm() {
   function changeUserCertificationNumber(
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
-    const newUserCertificationNumber: number = parseInt(event.target.value);
-    setUserCertificationNumber(() => newUserCertificationNumber);
-    if (
-      userCertificationNumber !== 0 &&
-      userCertificationNumber === responseCertificationNumber
-    ) {
-      setEmailConfirmation(() => true);
+    const userCertificationNumber: string = event.target.value;
+    console.log(userCertificationNumber);
+    if (userCertificationNumber.length === 8) {
+      if (userCertificationNumber === responseCertificationNumber) {
+        setEmailConfirmation(() => true);
+        setEmailConfirmMessage("");
+      } else {
+        setEmailConfirmMessage("인증번호가 일치하지 않습니다.");
+      }
     } else {
+      setEmailConfirmMessage("");
       setEmailConfirmation(() => false);
     }
   }
 
   // 약관동의
   function checkAgreement(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SignupUserInfo = { ...userInfo };
     newUserInfo.agreement = event.target.checked;
     setUserInfo(() => newUserInfo);
     console.log(userInfo);
@@ -261,6 +270,7 @@ function SignupForm() {
             helperText={emailMessage}
           ></TextFieldWithButton>
           <TextField
+            inputProps={{ maxLength: 8 }}
             variant="outlined"
             margin="normal"
             fullWidth
@@ -269,6 +279,8 @@ function SignupForm() {
             type="text"
             name="certificationNumber"
             onChange={changeUserCertificationNumber}
+            helperText={emailConfirmMessage}
+            error={!!emailConfirmMessage}
           />
           <TextField
             error={!!passwordMessage}
@@ -349,7 +361,7 @@ function SignupForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => requestSignup}
+            onClick={requestSignup}
             disabled={
               userInfo.password !== userInfo.passwordConfirmation ||
               userInfo.username === "" ||

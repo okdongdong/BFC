@@ -1,6 +1,6 @@
-import { styled } from "@material-ui/core";
+import { styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar";
+import Navbar from "../Navbar";
 
 const MainLayout = () => {
   // const APP_BAR_MOBILE = 64;
@@ -15,12 +15,7 @@ const MainLayout = () => {
   const MainStyle = styled("div")(({ theme }) => ({
     flexGrow: 1,
     overflow: "auto",
-    minHeight: "100%",
-    paddingBottom: theme.spacing(10),
-    [theme.breakpoints.up("lg")]: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
-    },
+    marginTop: 108,
   }));
 
   return (

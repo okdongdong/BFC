@@ -1,14 +1,17 @@
 import React from "react";
 import "./App.css";
-import Signup from "./pages/Accounts/Signup";
 import Router from "./routes";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const theme = createTheme();
 
 function App() {
   return (
-    <div className="App">
-      <Signup></Signup>
-      <Router></Router>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className="App">
+        <Router></Router>
+      </div>
+    </ThemeProvider>
   );
 }
 
