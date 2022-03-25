@@ -40,15 +40,18 @@ public class User {
 
     private Boolean gender;
 
+    @ToString.Exclude
     @Column(name="profile_img")
     @Lob
-    private byte[] profileImg;
+    private Byte[] profileImg;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Follow> followers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followings = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Badge> badges = new ArrayList<>();

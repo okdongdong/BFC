@@ -1,17 +1,22 @@
-import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import React, { useState, useEffect } from "react";
+
 import kakaoLogo from "../../assets/img/kakaoLogo.png";
-import axios from "axios";
-// import { useDispatch } from "react-redux";
-// import { loginUser } from "../../actions/UserAction";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {
+  Typography,
+  Link,
+  Container,
+  TextField,
+  Grid,
+  Button,
+  Box,
+  Theme,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { connect } from "react-redux";
+import { userLogin } from "../../redux/account/actions";
+import { LoginUserInfo } from "../../types/account";
+import { AccountReducer } from "../../redux/rootReducer";
 
 //footbar
 function Copyright() {
@@ -27,7 +32,7 @@ function Copyright() {
 }
 
 //스타일
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
@@ -54,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 //로그인
-export default function LoginForm() {
+function LoginForm({ userLogin, isLogin }: Props) {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,41 +71,37 @@ export default function LoginForm() {
   const onPasswordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.currentTarget.value);
   };
-  const login = () => {
-    // event.preventDefault();
 
-    let body = {
-      email: email,
+  const login = () => {
+    const data: LoginUserInfo = {
+      username: email,
       password: password,
     };
-    axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/login`,
-      data: body,
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    userLogin(data);
   };
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin]);
+
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
           로그인
         </Typography>
-        <form className={classes.form} noValidate>
+        <div className={classes.form}>
           <TextField
             value={email}
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             id="email"
-            label="이메일을 입력해주세요"
+            label="이메일"
             name="email"
             autoComplete="email"
             autoFocus
@@ -110,10 +111,9 @@ export default function LoginForm() {
             value={password}
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             name="password"
-            label="비밀번호를 입력해주세요"
+            label="비밀번호"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -121,17 +121,13 @@ export default function LoginForm() {
           />
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                회원가입
-              </Link>
+              <RouterLink to="/signup">회원가입</RouterLink>
             </Grid>
             <Grid item xs>
               |
             </Grid>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                비밀번호찾기
-              </Link>
+              <RouterLink to="/findPw">비밀번호찾기</RouterLink>
             </Grid>
           </Grid>
           <Button
@@ -140,6 +136,7 @@ export default function LoginForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={login}
           >
             로그인
           </Button>
@@ -159,7 +156,7 @@ export default function LoginForm() {
             />
             카카오로그인
           </Button>
-        </form>
+        </div>
       </div>
       <Box mt={8}>
         <Copyright />
@@ -167,3 +164,20 @@ export default function LoginForm() {
     </Container>
   );
 }
+
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    isLogin: account.isLogin,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    userLogin: (userInfo: LoginUserInfo) => dispatch(userLogin(userInfo)),
+  };
+};
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
