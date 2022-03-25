@@ -91,6 +91,7 @@ public class UserService {
         List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
 
         return UserProfileRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .followerCnt(user.getFollowers().size())

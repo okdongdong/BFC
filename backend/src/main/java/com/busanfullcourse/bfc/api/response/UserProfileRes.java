@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserProfileRes {
+    private Long userId;
     private String username;
     private String nickname;
     private String profileImg;
