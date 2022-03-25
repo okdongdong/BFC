@@ -7,6 +7,8 @@ import com.busanfullcourse.bfc.db.repository.InterestRepository;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +52,9 @@ public class InterestService {
             map.put("interested", true);
         }
         return map;
+    }
+
+    public Page<Interest> getMoreInterestPlace(Long userId, Pageable pageable) {
+        return interestRepository.findAllByUserId(userId, pageable);
     }
 }
