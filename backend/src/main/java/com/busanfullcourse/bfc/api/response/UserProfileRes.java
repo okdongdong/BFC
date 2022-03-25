@@ -11,8 +11,8 @@ public class UserProfileRes {
     private String username;
     private String nickname;
     private String profileImg;
-//    private Boolean isFollowing;
-//    private Integer followingCnt;
-//    private Integer followerCnt;
+    private Boolean isFollowing;
+    private Integer followingCnt;
+    private Integer followerCnt;
 //    private List<Badge> badges;
 }

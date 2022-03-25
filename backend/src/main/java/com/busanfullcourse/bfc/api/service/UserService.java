@@ -86,16 +86,27 @@ public class UserService {
 
     public UserProfileRes getUserProfile(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        if (!user.getUsername().equals(getCurrentUsername())) {
-            throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Optional<Follow> follow = followRepository.findByFromUserAndToUser(reqUser, user);
+        Boolean isFollowing;
+        if (follow.isPresent()) {
+            isFollowing = true;
+        } else{
+            isFollowing = false;
         }
+
+
         return UserProfileRes.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .followerCnt(user.getFollowers().size())
+                .followingCnt(user.getFollowings().size())
+                .isFollowing(isFollowing)
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
-
+    // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
@@ -107,9 +118,13 @@ public class UserService {
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
-
+    // 회원 정보 조회에 사용됨
     public MyInfoRes getMyInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String reqUsername = getCurrentUsername();
+        if (!user.getUsername().equals(reqUsername)) {
+            throw new IllegalArgumentException("본인이 아닙니다.");
+        }
         return MyInfoRes.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
@@ -251,7 +266,8 @@ public class UserService {
         if (follow.isPresent()){
             isFollowing = false;
             followRepository.deleteById(follow.get().getFollowId());
-            System.out.println(followRepository.findAll());
+            you.getFollowers().remove(follow.get());
+
         } else {
             isFollowing = true;
             followRepository.save(Follow.builder()
