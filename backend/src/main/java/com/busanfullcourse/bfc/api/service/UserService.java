@@ -201,8 +201,12 @@ public class UserService {
         return userRepository.findByNickname(nickname).isEmpty();
     }
 
-    public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException {
+    public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException, IllegalAccessException {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String username = getCurrentUsername();
+        if (!username.equals(user.getUsername())) {
+            throw new IllegalAccessException("본인이 아닙니다.");
+        }
         Byte[] bytes = new Byte[file.getBytes().length];
 
         int i = 0;

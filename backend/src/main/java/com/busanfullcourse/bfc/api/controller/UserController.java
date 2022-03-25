@@ -9,8 +9,6 @@ import com.busanfullcourse.bfc.api.response.UserProfileRes;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/profile")
-    public ResponseEntity<UserProfileRes> updateProfileImg(@PathVariable Long userId, @RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<UserProfileRes> updateProfileImg(@PathVariable Long userId, @RequestParam MultipartFile file) throws IOException, IllegalAccessException {
         return ResponseEntity.ok(userService.updateProfileImg(userId, file));
     }
 

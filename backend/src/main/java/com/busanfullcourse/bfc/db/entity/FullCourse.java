@@ -13,11 +13,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Fullcourse {
+public class FullCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fullcourse_id")
-    private Long fullcourseId;
+    @Column(name = "fullCourse_id")
+    private Long fullCourseId;
 
     private Long title;
 
@@ -38,6 +38,6 @@ public class Fullcourse {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "fullcourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
 }
