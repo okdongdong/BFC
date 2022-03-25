@@ -4,11 +4,12 @@ import {
   FormHelperText,
   InputAdornment,
   InputLabel,
-  makeStyles,
   OutlinedInput,
-} from "@material-ui/core";
+  Theme,
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(2),
     display: "flex",
@@ -30,6 +31,7 @@ interface TextFieldWithButtonProps {
   label: string;
   helperText?: string;
   autoComplete?: string;
+  value?: string;
 }
 
 function TextFieldWithButton({
@@ -41,6 +43,7 @@ function TextFieldWithButton({
   label,
   helperText = "",
   disabled,
+  value = "",
 }: TextFieldWithButtonProps) {
   const classes = useStyles();
 
@@ -60,6 +63,7 @@ function TextFieldWithButton({
         onChange={onChange}
         disabled={disabled}
         aria-describedby={`${id}-helper-text`}
+        defaultValue={value}
         endAdornment={
           <InputAdornment position="end">
             <Button
@@ -72,7 +76,6 @@ function TextFieldWithButton({
             </Button>
           </InputAdornment>
         }
-        labelWidth={50}
       />
       <FormHelperText id={`${id}-helper-text`}>{helperText}</FormHelperText>
     </FormControl>
