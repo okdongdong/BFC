@@ -154,7 +154,7 @@ export const placeList = [
     keywords: ["국밥"],
   },
   {
-    placeId: 123,
+    placeId: 153,
     name: "관광지",
     thumbnail:
       "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
@@ -164,7 +164,7 @@ export const placeList = [
     keywords: ["국밥", "소주"],
   },
   {
-    placeId: 124,
+    placeId: 1264,
     name: "다른 관광지",
     thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
 

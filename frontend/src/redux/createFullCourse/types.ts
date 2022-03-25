@@ -1,0 +1,2 @@
+export const MOVE_CARD = "MOVE_CARD";
+export const CREATE_FULL_COURSE = "CREATE_FULL_COURSE";

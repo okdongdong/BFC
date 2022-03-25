@@ -16,7 +16,7 @@ const CardStyle = styled(Card)(() => ({
   textAlign: "left",
   display: "flex",
   justifyContent: "start",
-
+  zIndex: 100,
   width: 350,
 }));
 
