@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.response;
 
 import com.busanfullcourse.bfc.db.entity.Interest;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,5 +36,16 @@ public class InterestListRes {
                 .thumbnail(interest.getPlace().getThumbnail())
                 .build()
         ).collect(Collectors.toList());
+    }
+
+    public static Page<InterestListRes> of (Page<Interest> list) {
+        return list.map(interest -> InterestListRes.builder()
+                .placeId(interest.getPlace().getPlaceId())
+                .name(interest.getPlace().getName())
+                .lng(interest.getPlace().getLng())
+                .lat(interest.getPlace().getLat())
+                .averageScore(interest.getPlace().getAverageScore())
+                .thumbnail(interest.getPlace().getThumbnail())
+                .build());
     }
 }
