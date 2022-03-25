@@ -27,7 +27,6 @@ public class Place {
     @Column(name="open_time")
     private String openTime;
 
-
     private Float lat;
 
     private Float lng;

@@ -2,19 +2,14 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.request.*;
-import com.busanfullcourse.bfc.api.response.FollowRes;
-import com.busanfullcourse.bfc.api.response.MyInfoRes;
-import com.busanfullcourse.bfc.api.response.TokenRes;
-import com.busanfullcourse.bfc.api.response.UserProfileRes;
+import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.entity.Follow;
-import com.busanfullcourse.bfc.db.repository.FollowRepository;
-import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.UserRepository;
+import com.busanfullcourse.bfc.db.entity.Interest;
+import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
@@ -27,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -42,6 +38,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final InterestRepository interestRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
@@ -90,12 +87,8 @@ public class UserService {
         User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         Optional<Follow> follow = followRepository.findByFromUserAndToUser(reqUser, user);
         Boolean isFollowing;
-        if (follow.isPresent()) {
-            isFollowing = true;
-        } else{
-            isFollowing = false;
-        }
-
+        isFollowing = follow.isPresent();
+        List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
 
         return UserProfileRes.builder()
                 .username(user.getUsername())
@@ -104,6 +97,7 @@ public class UserService {
                 .followingCnt(user.getFollowings().size())
                 .isFollowing(isFollowing)
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .interestList(InterestListRes.of(interestList))
                 .build();
     }
     // 로그인에 사용됨
