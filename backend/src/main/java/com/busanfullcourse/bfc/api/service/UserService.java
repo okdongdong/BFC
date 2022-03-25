@@ -1,8 +1,8 @@
 package com.busanfullcourse.bfc.api.service;
 
 
-import com.busanfullcourse.bfc.api.request.LoginReq;
-import com.busanfullcourse.bfc.api.request.SignUpReq;
+import com.busanfullcourse.bfc.api.request.*;
+import com.busanfullcourse.bfc.api.response.FollowRes;
 import com.busanfullcourse.bfc.api.response.MyInfoRes;
 import com.busanfullcourse.bfc.api.response.TokenRes;
 import com.busanfullcourse.bfc.api.response.UserProfileRes;
@@ -10,6 +10,8 @@ import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
+import com.busanfullcourse.bfc.db.entity.Follow;
+import com.busanfullcourse.bfc.db.repository.FollowRepository;
 import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
 import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
@@ -22,8 +24,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPIRATION_TIME;
 
@@ -35,6 +41,7 @@ import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPI
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
@@ -85,17 +92,58 @@ public class UserService {
         return UserProfileRes.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-//                .profileImg(user.getProfileImg())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-//                .profileImg(user.getProfileImg())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
+    }
+
+    public MyInfoRes getMyInfo(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        return MyInfoRes.builder()
+                .userId(user.getId())
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .build();
+    }
+
+    public void updateMyInfo(UserUpdateReq userUpdateReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        user.setBirthday(userUpdateReq.getBirthday());
+        user.setGender(userUpdateReq.getGender());
+        user.setNickname(userUpdateReq.getNickname());
+        userRepository.save(user);
+    }
+
+    public void changePassword(ChangePasswordReq changePasswordReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        checkPassword(changePasswordReq.getOldPassword(), user.getPassword());
+        if (!changePasswordReq.getNewPassword().equals(changePasswordReq.getPasswordCheck())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordReq.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void deleteUser(UserDeleteReq userDeleteReq, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        checkPassword(userDeleteReq.getPassword(), user.getPassword());
+        userRepository.deleteById(userId);
     }
 
     // Redis에 저장된 refreshToken을 삭제하고, accessToken을 Key로 하여 남은 기간 만큼 TTL을 설정 후 LogoutAccessToken을 저장
@@ -126,7 +174,7 @@ public class UserService {
         throw new IllegalArgumentException("토큰이 일치하지 않습니다.");
     }
 
-    private String getCurrentUsername() {
+    public String getCurrentUsername() {
         // JwtAuthenticationFilter를 통해 SecurityContext 에 저장된 Authentication 객체를 조회
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails principal = (UserDetails) authentication.getPrincipal();
@@ -151,6 +199,72 @@ public class UserService {
     public Boolean checkNickname(String nickname) {
         // 비어있으면 true, 객체가 찾아지면 false.
         return userRepository.findByNickname(nickname).isEmpty();
+    }
+
+    public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException, IllegalAccessException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String username = getCurrentUsername();
+        if (!username.equals(user.getUsername())) {
+            throw new IllegalAccessException("본인이 아닙니다.");
+        }
+        Byte[] bytes = new Byte[file.getBytes().length];
+
+        int i = 0;
+
+        for (byte b : file.getBytes()) {
+            bytes[i++] = b;
+        }
+        user.setProfileImg(bytes);
+        userRepository.save(user);
+
+
+        return UserProfileRes.builder()
+                .username(user.getUsername())
+                .nickname(user.getNickname())
+                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .build();
+    }
+
+    private String convertByteArrayToString(Byte[] bytes) {
+        if (bytes==null){
+            return null;
+        }
+        byte [] primitiveBytes = new byte[bytes.length];
+        int j = 0;
+        for (Byte b: bytes) {
+            primitiveBytes[j++] = b;
+        }
+        return new String(primitiveBytes);
+    }
+
+    public FollowRes follow(Long yourId) {
+        String myName = getCurrentUsername();
+        User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        if (you.getUsername().equals(myName)) {
+            throw new IllegalArgumentException("자기자신은 팔로우 할 수 없습니다.");
+        }
+        User me = userRepository.findByUsername(myName).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        Optional<Follow> follow = followRepository.findByFromUserAndToUser(me, you);
+        Boolean isFollowing;
+
+        if (follow.isPresent()){
+            isFollowing = false;
+            followRepository.deleteById(follow.get().getFollowId());
+            System.out.println(followRepository.findAll());
+        } else {
+            isFollowing = true;
+            followRepository.save(Follow.builder()
+                    .fromUser(me)
+                    .toUser(you)
+                    .build());
+        }
+
+        return FollowRes.builder()
+                .followerCnt(you.getFollowers().size())
+                .followingCnt(you.getFollowings().size())
+                .isFollowing(isFollowing)
+                .build();
     }
 
 }
