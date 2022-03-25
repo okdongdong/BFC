@@ -25,6 +25,6 @@ public class Sharing {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fullcourse_id", nullable = false)
-    private Fullcourse fullcourse;
+    @JoinColumn(name = "fullCourse_id", nullable = false)
+    private FullCourse fullCourse;
 }
