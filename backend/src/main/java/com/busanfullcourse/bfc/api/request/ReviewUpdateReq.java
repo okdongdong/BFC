@@ -12,5 +12,4 @@ public class ReviewUpdateReq {
 
     private String content;
 
-    private Long userId;
 }
