@@ -22,8 +22,8 @@ public class CustomPlaceService {
     private final UserRepository userRepository;
 
 
-    public void createCustomPlace(CustomPlaceUpdateReq req) {
-        User user = userRepository.findById(req.getUserId()).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+    public void createCustomPlace(CustomPlaceUpdateReq req, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         customPlaceRepository.save(
                 CustomPlace.builder()
                         .name(req.getName())
@@ -35,13 +35,15 @@ public class CustomPlaceService {
         );
     }
 
-    public Page<CustomPlace> getCustomPlaceListByUserId(Long userId, Pageable pageable) {
-        return customPlaceRepository.findAllByUserId(userId, pageable);
+    public Page<CustomPlace> getCustomPlaceListByUserId(String username, Pageable pageable) {
+        return customPlaceRepository.findAllByUserUsername(username, pageable);
     }
 
-    public void updateCustomPlace(CustomPlaceUpdateReq req, Long customPlaceId) {
+    public void updateCustomPlace(CustomPlaceUpdateReq req, Long customPlaceId, String username) throws IllegalAccessException {
         CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException("나만의 장소가 없습니다."));
-
+        if (!customPlace.getUser().getUsername().equals(username)) {
+            throw new IllegalAccessException("본인이 아닙니다.");
+        }
         customPlace.setAddress(req.getAddress());
         customPlace.setLat(req.getLat());
         customPlace.setLng(req.getLng());
@@ -50,7 +52,11 @@ public class CustomPlaceService {
 
     }
 
-    public void deleteCustomPlace(Long customPlaceId) {
+    public void deleteCustomPlace(Long customPlaceId, String username) throws IllegalAccessException {
+        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException("나만의 장소가 없습니다."));
+        if (!customPlace.getUser().getUsername().equals(username)) {
+            throw new IllegalAccessException("본인이 아닙니다.");
+        }
         customPlaceRepository.deleteById(customPlaceId);
     }
 }

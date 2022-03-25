@@ -9,8 +9,6 @@ import lombok.*;
 @Builder
 public class CustomPlaceUpdateReq {
 
-    private Long userId;
-
     private String name;
 
     private String address;

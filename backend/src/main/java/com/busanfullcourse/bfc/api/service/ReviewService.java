@@ -26,9 +26,9 @@ public class ReviewService {
     private final UserRepository userRepository;
 
 
-    public void createReview(ReviewUpdateReq req, Long placeId) {
+    public void createReview(ReviewUpdateReq req, String username, Long placeId) {
         Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        User user = userRepository.findById(req.getUserId()).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         reviewRepository.save(
                 Review.builder()
                         .content(req.getContent())
@@ -42,9 +42,9 @@ public class ReviewService {
         return reviewRepository.findAllByPlacePlaceId(placeId, pageable);
     }
 
-    public void updateReview(ReviewUpdateReq req, Long reviewId) throws IllegalAccessException {
+    public void updateReview(ReviewUpdateReq req, String username, Long reviewId) throws IllegalAccessException {
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
-        if (!req.getUserId().equals(review.getUser().getId())) {
+        if (!username.equals(review.getUser().getUsername())) {
             throw new IllegalAccessException("자신이 작성한 리뷰만 수정할 수 있습니다");
         }
         review.setContent(req.getContent());
@@ -52,7 +52,11 @@ public class ReviewService {
 
     }
 
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Long reviewId, String username) throws IllegalAccessException {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
+        if (!username.equals(review.getUser().getUsername())) {
+            throw new IllegalAccessException("자신이 작성한 리뷰만 삭제할 수 있습니다");
+        }
         reviewRepository.deleteById(reviewId);
     }
 }

@@ -9,6 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ScoreReq {
-    private Long userId;
     private Float score;
 }
