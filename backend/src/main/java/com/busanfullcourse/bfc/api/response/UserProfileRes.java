@@ -1,6 +1,9 @@
 package com.busanfullcourse.bfc.api.response;
 
+import com.busanfullcourse.bfc.db.entity.Interest;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,5 +17,6 @@ public class UserProfileRes {
     private Boolean isFollowing;
     private Integer followingCnt;
     private Integer followerCnt;
+    private List<InterestListRes> interestList;
 //    private List<Badge> badges;
 }
