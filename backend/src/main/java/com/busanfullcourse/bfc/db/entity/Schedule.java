@@ -24,7 +24,7 @@ public class Schedule {
     private String memo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fullCourse_id", nullable = false)
+    @JoinColumn(name = "full_course_id", nullable = false)
     private FullCourse fullCourse;
 
     // 양방향 매핑시 orphanRemoval를 false(디폴트)로 설정해야함

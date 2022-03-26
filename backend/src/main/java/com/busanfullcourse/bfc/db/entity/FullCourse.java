@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.db.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "full_course")
 @Getter
 @Setter
 @ToString
@@ -17,7 +19,7 @@ import java.util.List;
 public class FullCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fullCourse_id")
+    @Column(name = "full_course_id")
     private Long fullCourseId;
 
     private String title;
@@ -41,4 +43,11 @@ public class FullCourse {
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishFood> wishFoods = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishPlace> wishPlaces = new ArrayList<>();
+
 }
