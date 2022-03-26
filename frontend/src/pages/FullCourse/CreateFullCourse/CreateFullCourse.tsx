@@ -73,10 +73,13 @@ function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
         {/* <DayBar></DayBar> */}
         <PlaceDetail></PlaceDetail>
         <PlaceSearch></PlaceSearch>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", position: "relative" }}>
           <CollapseContainer buttonPositionY={0}>
             풀코스
-            <Stack spacing={2} sx={{ alignItems: "center" }}>
+            <Stack
+              spacing={2}
+              sx={{ alignItems: "center", position: "relative" }}
+            >
               <PlaceCardList
                 placeList={fullCourseList}
                 droppableId="droppableFullCourseList"
@@ -87,7 +90,10 @@ function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
             검색창
             <hr />
             구분|구분|구분
-            <Stack spacing={2} sx={{ alignItems: "center" }}>
+            <Stack
+              spacing={2}
+              sx={{ alignItems: "center", position: "relative" }}
+            >
               <PlaceCardList placeList={placeList}></PlaceCardList>
             </Stack>
           </CollapseContainer>

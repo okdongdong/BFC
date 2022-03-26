@@ -57,6 +57,7 @@ export const getItemStyle = (
 
   // change background colour if dragging
   background: isDragging ? "lightblue" : "grey",
+  position: "relative",
 
   // styles we need to apply on draggables
   ...draggableStyle,

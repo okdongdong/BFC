@@ -56,11 +56,26 @@ function CollapseContainer({
   const [expanded, setExpanded] = useState(true);
 
   const ContentBox = styled("div")(() => ({
-    minHeight: "calc(100vh - 108px)",
+    height: "calc(100vh - 108px)",
     width: 400,
     backgroundColor: backgroundColor,
     position: "relative",
-    zIndex: 3,
+    overflowY: "scroll",
+
+    /* 스크롤바 설정*/
+    "&::-webkit-scrollbar": {
+      width: "6px",
+    },
+    /* 스크롤바 막대 설정*/
+    "&::-webkit-scrollbar-thumb": {
+      height: "17%",
+      backgroundColor: "rgba(33,133,133,1)",
+      borderRadius: " 10px",
+    },
+    /* 스크롤바 뒷 배경 설정*/
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: " rgba(33,133,133,0.33)",
+    },
   }));
 
   useEffect(() => {
@@ -82,7 +97,7 @@ function CollapseContainer({
     boxShadow: "1.2px 2px 1px 1px rgba(0,0,0,0.2)",
     position: "absolute",
     top: buttonPositionY,
-    zIndex: 20,
+    zIndex: 1000,
   }));
 
   return (

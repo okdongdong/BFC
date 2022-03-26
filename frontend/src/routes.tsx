@@ -8,6 +8,8 @@ import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
 import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
 import CreateFullCourse from "./pages/FullCourse/CreateFullCourse/CreateFullCourse";
+import Test from "./pages/Test";
+import CreateFullCourseLayout from "./layouts/CreateFullCourse";
 function Router() {
   return useRoutes([
     {
@@ -70,8 +72,12 @@ function Router() {
       ],
     },
     {
+      path: "test",
+      element: <Test />,
+    },
+    {
       path: "createFullCourse",
-      element: <MainLayout />,
+      element: <CreateFullCourseLayout />,
       children: [{ path: "", element: <CreateFullCourse /> }],
     },
     { path: "*", element: <Navigate to="/404" replace /> },

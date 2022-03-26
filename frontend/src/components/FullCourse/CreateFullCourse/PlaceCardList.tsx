@@ -1,5 +1,3 @@
-import { Stack } from "@mui/material";
-import React from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { PlaceCardListProps } from "../../../types/main";
 import { getItemStyle, getListStyle } from "./dndFunction";

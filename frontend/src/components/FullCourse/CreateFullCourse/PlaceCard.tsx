@@ -18,6 +18,7 @@ const CardStyle = styled(Card)(() => ({
   justifyContent: "start",
   zIndex: 100,
   width: 350,
+  position: "relative",
 }));
 
 const CardMediaStyle = styled(CardMedia)(() => ({
