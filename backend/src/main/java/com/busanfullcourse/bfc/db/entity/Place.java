@@ -44,8 +44,9 @@ public class Place {
     @Column(name = "average_score")
     private Float averageScore;
 
-    @Column(name = "review_count")
-    private Integer reviewCount;
+    @Builder.Default
+    @Column(name = "score_count")
+    private Integer scoreCount = 0;
 
     private String thumbnail;
 

@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.response;
 import com.busanfullcourse.bfc.db.entity.Schedule;
 import com.busanfullcourse.bfc.db.entity.WishFood;
 import com.busanfullcourse.bfc.db.entity.WishPlace;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.*;
 
 import java.nio.charset.StandardCharsets;
@@ -50,9 +51,10 @@ public class FullCourseRes {
     }
 
     @Builder
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public static class ScheduleDetail {
         private Integer day;
-        private Integer order;
+        private Integer sequence;
         private String memo;
         private Long customPlaceId;
         private Long placeId;
@@ -64,10 +66,10 @@ public class FullCourseRes {
         public static List<ScheduleDetail> of(List<Schedule> list) {
             List<ScheduleDetail> res = new ArrayList<>();
             for (Schedule schedule : list) {
-                if (schedule.getPlace().equals(null)) {
+                if (schedule.getPlace() == null) {
                     res.add(ScheduleDetail.builder()
                             .day(schedule.getDay())
-                            .order(schedule.getOrder())
+                            .sequence(schedule.getSequence())
                             .memo(schedule.getMemo())
                             .customPlaceId(schedule.getCustomPlace().getCustomPlaceId())
                             .name(schedule.getCustomPlace().getName())
@@ -78,7 +80,7 @@ public class FullCourseRes {
                 } else {
                     res.add(ScheduleDetail.builder()
                             .day(schedule.getDay())
-                            .order(schedule.getOrder())
+                            .sequence(schedule.getSequence())
                             .memo(schedule.getMemo())
                             .placeId(schedule.getPlace().getPlaceId())
                             .name(schedule.getPlace().getName())
@@ -90,9 +92,5 @@ public class FullCourseRes {
             }
             return res;
         }
-
-
-
-
     }
 }

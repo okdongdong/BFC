@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -44,9 +45,11 @@ public class FullCourse {
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishFood> wishFoods = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishPlace> wishPlaces = new ArrayList<>();
 

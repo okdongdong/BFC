@@ -13,6 +13,6 @@ public class PlaceScheduleReq {
 
     private Integer day;
 
-    private Integer order;
+    private Integer sequence;
 
 }
