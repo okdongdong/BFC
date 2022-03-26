@@ -1,6 +1,8 @@
 package com.busanfullcourse.bfc.api.controller;
 
+import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
+import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.UserService;
@@ -29,9 +31,13 @@ public class FullCourseController {
         return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId));
     }
 
-    @PostMapping("/{fullCourseId}")
-    public void addSchedule(@PathVariable Long fullCourseId) {
-
+    @PostMapping("/{fullCourseId}/place")
+    public ResponseEntity<Map<String, Long>> addPlaceSchedule(@PathVariable Long fullCourseId , @RequestBody PlaceScheduleReq req) {
+        return ResponseEntity.ok(fullCourseService.addPlaceSchedule(req, fullCourseId));
     }
 
+    @PostMapping("/{fullCourseId}/customPlace")
+    public ResponseEntity<Map<String, Long>> addCustomPlaceSchedule(@PathVariable Long fullCourseId, @RequestBody CustomPlaceScheduleReq req) {
+        return ResponseEntity.ok(fullCourseService.addCustomPlaceSchedule(req, fullCourseId));
+    }
 }

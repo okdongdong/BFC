@@ -1,6 +1,8 @@
 package com.busanfullcourse.bfc.api.response;
 
 import com.busanfullcourse.bfc.db.entity.Schedule;
+import com.busanfullcourse.bfc.db.entity.WishFood;
+import com.busanfullcourse.bfc.db.entity.WishPlace;
 import lombok.*;
 
 import java.nio.charset.StandardCharsets;
@@ -35,6 +37,17 @@ public class FullCourseRes {
     private List<String> WishPlaceList;
 
     private List<ScheduleDetail> scheduleDetailList;
+
+
+    public static List<String> ofWishFoodList(List<WishFood> list) {
+        return list.stream().map(WishFood::getKeyword)
+                .collect(Collectors.toList());
+    }
+
+    public static List<String> ofWishPlaceList(List<WishPlace> list) {
+        return list.stream().map(WishPlace::getKeyword)
+                .collect(Collectors.toList());
+    }
 
     @Builder
     public static class ScheduleDetail {

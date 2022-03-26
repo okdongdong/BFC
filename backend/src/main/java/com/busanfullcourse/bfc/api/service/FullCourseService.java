@@ -1,6 +1,8 @@
 package com.busanfullcourse.bfc.api.service;
 
+import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
+import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
@@ -20,6 +22,8 @@ public class FullCourseService {
     private final WishFoodRepository wishFoodRepository;
     private final WishPlaceRepository wishPlaceRepository;
     private final ScheduleRepository scheduleRepository;
+    private final PlaceRepository placeRepository;
+    private final CustomPlaceRepository customPlaceRepository;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
@@ -27,6 +31,7 @@ public class FullCourseService {
                 .user(user)
                 .isPublic(req.getIsPublic())
                 .title(req.getTitle())
+                .view(0)
                 .startedOn(req.getStartedOn())
                 .finishedOn(req.getFinishedOn())
                 .build());
@@ -67,7 +72,42 @@ public class FullCourseService {
                 .startedOn(fullCourse.getStartedOn())
                 .finishedOn(fullCourse.getFinishedOn())
                 .scheduleDetailList(FullCourseRes.ScheduleDetail.of(scheduleList))
+                .WishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
+                .WishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
                 .build();
 
     }
+
+    public Map<String, Long> addPlaceSchedule(PlaceScheduleReq req, Long fullCourseId) {
+        FullCourse fullCourse = fullCourseRepository.getById(fullCourseId);
+        Place place = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Schedule schedule = scheduleRepository.save(Schedule.builder()
+                .day(req.getDay())
+                .order(req.getOrder())
+                .fullCourse(fullCourse)
+                .place(place)
+                .build());
+
+        Map<String, Long> map = new HashMap<>();
+        map.put("scheduleId", schedule.getScheduleId());
+        return map;
+    }
+
+    public Map<String, Long> addCustomPlaceSchedule(CustomPlaceScheduleReq req, Long fullCourseId) {
+        FullCourse fullCourse = fullCourseRepository.getById(fullCourseId);
+        CustomPlace customPlace = customPlaceRepository.findById(req.getCustomPlaceId()).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Schedule schedule = scheduleRepository.save(Schedule.builder()
+                .day(req.getDay())
+                .order(req.getOrder())
+                .memo(req.getMemo())
+                .fullCourse(fullCourse)
+                .customPlace(customPlace)
+                .build());
+
+        Map<String, Long> map = new HashMap<>();
+        map.put("scheduleId", schedule.getScheduleId());
+        return map;
+    }
+
+
 }
