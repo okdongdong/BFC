@@ -21,7 +21,7 @@ public class Schedule {
 
     private Integer order;
 
-    private Integer memo;
+    private String memo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fullCourse_id", nullable = false)
