@@ -56,12 +56,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Badge> badges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CustomPlace> customPlaceList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Interest> interestList = new ArrayList<>();
-
     @OneToMany(mappedBy = "user", cascade = ALL, orphanRemoval = true)
     @Builder.Default
     private Set<Authority> authorities = new HashSet<>();
