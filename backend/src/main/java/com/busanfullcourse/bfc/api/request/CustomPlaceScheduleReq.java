@@ -13,7 +13,7 @@ public class CustomPlaceScheduleReq {
 
     private Integer day;
 
-    private Integer order;
+    private Integer sequence;
 
     private String memo;
 }
