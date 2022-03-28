@@ -1,8 +1,8 @@
 import { alpha, AppBar, Box, styled, Toolbar } from "@mui/material";
 import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
-import Logo from "../components/Logo";
-import NavbarText from "../components/NavbarText";
+import Logo from "../components/Navbar/Logo";
+import NavbarText from "../components/Navbar/NavbarText";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
