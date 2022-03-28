@@ -20,6 +20,7 @@ public class FullCourseService {
     private final WishFoodRepository wishFoodRepository;
     private final WishPlaceRepository wishPlaceRepository;
     private final ScheduleRepository scheduleRepository;
+    private final LikeRepository likeRepository;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
@@ -74,4 +75,27 @@ public class FullCourseService {
     }
 
 
+    public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
+
+        Boolean isLiked;
+        if (like.isPresent()) {
+            isLiked = false;
+            likeRepository.delete(like.get());
+        } else{
+            isLiked = true;
+            likeRepository.save(Like.builder()
+                            .user(user)
+                            .fullCourse(fullCourse)
+                    .build());
+        }
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("isLiked", isLiked);
+        return map;
+
+    }
 }
