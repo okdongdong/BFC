@@ -1,7 +1,9 @@
 package com.busanfullcourse.bfc.api.response;
 
+import com.busanfullcourse.bfc.db.entity.Like;
 import com.busanfullcourse.bfc.db.entity.Schedule;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -4,6 +4,7 @@ import com.busanfullcourse.bfc.api.request.ChangePasswordReq;
 import com.busanfullcourse.bfc.api.request.UserDeleteReq;
 import com.busanfullcourse.bfc.api.request.UserUpdateReq;
 import com.busanfullcourse.bfc.api.response.*;
+import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.InterestService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final InterestService interestService;
+    private final FullCourseService fullCourseService;
 
     @GetMapping("/{nickname}/profile")
     public ResponseEntity<UserProfileRes> getUserProfile(@PathVariable String nickname) {
@@ -70,11 +72,11 @@ public class UserController {
         return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
     }
 
-//    @GetMapping("/{userId}/like")
-//    public ResponseEntity<Page<LikeListRes>> getMoreLikedFullcourse(@PathVariable Long userId,
-//                                                                    @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
-//        return ResponseEntity.ok(LikeListRes.of(full));
-//    }
+    @GetMapping("/{userId}/like")
+    public ResponseEntity<Page<LikeListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
+                                                                    @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(fullCourseService.getMoreLikedFullCourse(userId, pageable));
+    }
 
 
 }
