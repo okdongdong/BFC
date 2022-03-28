@@ -98,4 +98,14 @@ public class FullCourseService {
         return map;
 
     }
+
+    public Map<String, Boolean> getLikeFullCourse(Long fullCourseId, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("isLiked", like.isPresent());
+        return map;
+
+    }
 }
