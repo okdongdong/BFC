@@ -1,5 +1,7 @@
 package com.busanfullcourse.bfc.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +23,6 @@ public class WishPlace {
     private String keyword;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fullCourse_id", nullable = false)
+    @JoinColumn(name = "full_course_id", nullable = false)
     private FullCourse fullCourse;
 }

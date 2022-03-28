@@ -2,19 +2,14 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.request.*;
-import com.busanfullcourse.bfc.api.response.FollowRes;
-import com.busanfullcourse.bfc.api.response.MyInfoRes;
-import com.busanfullcourse.bfc.api.response.TokenRes;
-import com.busanfullcourse.bfc.api.response.UserProfileRes;
+import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.entity.Follow;
-import com.busanfullcourse.bfc.db.repository.FollowRepository;
-import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.UserRepository;
+import com.busanfullcourse.bfc.db.entity.Interest;
+import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
@@ -27,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -42,6 +38,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final InterestRepository interestRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
@@ -86,16 +83,25 @@ public class UserService {
 
     public UserProfileRes getUserProfile(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        if (!user.getUsername().equals(getCurrentUsername())) {
-            throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
-        }
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Optional<Follow> follow = followRepository.findByFromUserAndToUser(reqUser, user);
+        Boolean isFollowing;
+        isFollowing = follow.isPresent();
+        List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
+
         return UserProfileRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
+                .followerCnt(user.getFollowers().size())
+                .followingCnt(user.getFollowings().size())
+                .isFollowing(isFollowing)
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .interestList(InterestListRes.of(interestList))
                 .build();
     }
-
+    // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
@@ -107,9 +113,13 @@ public class UserService {
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
-
+    // 회원 정보 조회에 사용됨
     public MyInfoRes getMyInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String reqUsername = getCurrentUsername();
+        if (!user.getUsername().equals(reqUsername)) {
+            throw new IllegalArgumentException("본인이 아닙니다.");
+        }
         return MyInfoRes.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
@@ -251,7 +261,8 @@ public class UserService {
         if (follow.isPresent()){
             isFollowing = false;
             followRepository.deleteById(follow.get().getFollowId());
-            System.out.println(followRepository.findAll());
+            you.getFollowers().remove(follow.get());
+
         } else {
             isFollowing = true;
             followRepository.save(Follow.builder()
