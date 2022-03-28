@@ -13,7 +13,7 @@ public class LoginRes extends TokenRes{
 
     private Long userId;
     private String nickname;
-//    private byte[] profileImg;
+    private String profileImg;
 
 
 
@@ -24,6 +24,7 @@ public class LoginRes extends TokenRes{
                 .refreshToken(tokenRes.getRefreshToken())
                 .userId(myInfoRes.getUserId())
                 .nickname(myInfoRes.getNickname())
+                .profileImg(myInfoRes.getProfileImg())
                 .build();
     }
 }

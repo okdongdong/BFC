@@ -1,12 +1,16 @@
 package com.busanfullcourse.bfc.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "full_course")
 @Getter
 @Setter
 @ToString
@@ -16,23 +20,23 @@ import java.util.List;
 public class FullCourse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fullCourse_id")
+    @Column(name = "full_course_id")
     private Long fullCourseId;
 
-    private Long title;
+    private String title;
 
     @Column(name = "is_public")
-    private Long isPublic;
+    private Boolean isPublic;
 
-    private Long view;
+    private Integer view;
 
-    private Long review;
+    private String review;
 
     @Column(name = "started_on")
-    private Long startedOn;
+    private LocalDate startedOn;
 
     @Column(name = "finished_on")
-    private Long finishedOn;
+    private LocalDate finishedOn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -40,4 +44,13 @@ public class FullCourse {
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishFood> wishFoods = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WishPlace> wishPlaces = new ArrayList<>();
+
 }
