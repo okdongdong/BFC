@@ -49,4 +49,9 @@ public class FullCourseController {
         return ResponseEntity.ok(fullCourseService.likeFullCourse(fullCourseId, username));
     }
 
+    @GetMapping("/{fullCourseId}/like")
+    public ResponseEntity<Map<String, Boolean>> getLikeFullCourse(@PathVariable Long fullCourseId) {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(fullCourseService.getLikeFullCourse(fullCourseId, username));
+    }
 }
