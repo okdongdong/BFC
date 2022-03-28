@@ -6,7 +6,7 @@ import FindPassword from "./pages/Accounts/FindPassword";
 import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
-import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
+import Detail from "./pages/Main/Detail";
 function Router() {
   return useRoutes([
     {
@@ -63,8 +63,8 @@ function Router() {
           element: <ChangeUser />,
         },
         {
-          path: "deleteAccount",
-          element: <DeleteAccount />,
+          path: "detail",
+          element: <Detail />,
         },
       ],
     },

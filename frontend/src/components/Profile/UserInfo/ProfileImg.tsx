@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function Profileimg() {
+function ProfileImg() {
   const classes = useStyles();
   return (
     <div>
@@ -18,4 +18,4 @@ function Profileimg() {
     </div>
   );
 }
-export default Profileimg;
+export default ProfileImg;
