@@ -15,7 +15,7 @@ const CreateFullCourseLayout = () => {
   const MainStyle = styled("div")(({ theme }) => ({
     flexGrow: 1,
     overflow: "auto",
-    marginTop: 108,
+    marginTop: 80,
   }));
 
   return (

@@ -56,7 +56,7 @@ function CollapseContainer({
   const [expanded, setExpanded] = useState(true);
 
   const ContentBox = styled("div")(() => ({
-    height: "calc(100vh - 108px)",
+    height: "calc(100vh - 80px)",
     width: 400,
     backgroundColor: backgroundColor,
     position: "relative",

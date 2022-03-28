@@ -1,8 +1,19 @@
-import { alpha, AppBar, Box, styled, Toolbar } from "@mui/material";
+import {
+  alpha,
+  AppBar,
+  Box,
+  Button,
+  Menu,
+  styled,
+  Toolbar,
+} from "@mui/material";
 import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
 import Logo from "../components/Navbar/LogoWhite";
 import NavbarText from "../components/Navbar/NavbarText";
+import DatePicker from "../components/FullCourse/CreateFullCourse/DatePicker";
+import { useState } from "react";
+import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
@@ -19,12 +30,63 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
   width: "100%",
 }));
 
-const CreateFullCourseNavbar = ({ isLogin, nickname, profileImg }: Props) => {
+const CreateFullCourseNavbar = ({
+  isLogin,
+  nickname,
+  profileImg,
+  fullCourseDate,
+}: Props) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openDatePicker = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  console.log(typeof handleClose);
+
+  const toStringByFormatting = (source: Date, delimiter: string = "-") => {
+    const year = source.getFullYear();
+    const month = source.getMonth() + 1;
+    const day = source.getDate();
+    return [year, month, day].join(delimiter);
+  };
+
+  const dateRangeToString = (dateRange: DateRange<Date>) => {
+    const [startDate, endDate]: DateRange<Date> = dateRange;
+
+    if (startDate !== null && endDate !== null) {
+      return `${toStringByFormatting(startDate, ".")} ~ 
+      ${toStringByFormatting(endDate, ".")}`;
+    } else if (startDate !== null) {
+      return `${toStringByFormatting(startDate, ".")} ~`;
+    } else if (endDate !== null) {
+      return `~ ${toStringByFormatting(endDate, ".")}`;
+    }
+    return "날짜정보없음";
+  };
+
   return (
     <RootStyle>
       <ToolbarStyle>
         <Box sx={{ flexGrow: 1 }} />
         <Logo />
+        <Button sx={{ color: "white" }} onClick={handleClick}>
+          {dateRangeToString(fullCourseDate)}
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={openDatePicker}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <DatePicker closePicker={handleClose}></DatePicker>
+        </Menu>
+
         <Box sx={{ flexGrow: 10 }} />
         {isLogin ? (
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -53,10 +115,11 @@ const CreateFullCourseNavbar = ({ isLogin, nickname, profileImg }: Props) => {
   );
 };
 
-const mapStateToProps = ({ account }: AccountReducer) => ({
+const mapStateToProps = ({ account, createFullCourse }: AccountReducer) => ({
   isLogin: account.isLogin,
   nickname: account.nickname,
   profileImg: account.profileImg,
+  fullCourseDate: createFullCourse.fullCourseDate,
 });
 
 const mapDispatchToProps = {};

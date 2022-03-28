@@ -52,7 +52,7 @@ export const getItemStyle = (
   grid: number = 8
 ) => ({
   // some basic styles to make the items look a bit nicer
-  userSelect: "none",
+  // userSelect: "none",
   margin: `0 0 ${grid}px 0`,
 
   // change background colour if dragging

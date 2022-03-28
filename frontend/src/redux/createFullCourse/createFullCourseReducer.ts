@@ -1,11 +1,12 @@
+import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 import { AnyAction } from "redux";
 import { placeList } from "../../assets/dummyData/dummyData";
 import { PlaceCardProps } from "../../types/main";
-import { MOVE_CARD, CREATE_FULL_COURSE } from "./types";
+import { MOVE_CARD, CREATE_FULL_COURSE, SET_FULL_COURSE_DATE } from "./types";
 
 export interface CreateFullCourseDnd {
   fullCourseList: Array<{ id: string; content: PlaceCardProps }> | Array<null>;
-  placeList: Array<{ id: string; content: PlaceCardProps }> | Array<null>;
+  fullCourseDate: DateRange<Date>;
 }
 
 const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
@@ -20,7 +21,7 @@ placeList.map((place: PlaceCardProps) =>
 
 const initialState: CreateFullCourseDnd = {
   fullCourseList: [...plt2],
-  placeList: [...plt],
+  fullCourseDate: [null, null],
 };
 
 const createFullCourseReducer = (
@@ -30,10 +31,17 @@ const createFullCourseReducer = (
   switch (action.type) {
     case MOVE_CARD:
       return {
+        ...state,
         fullCourseList: [...action.payload.fullCourseList],
-        placeList: [...action.payload.placeList],
+        // placeList: [...state.placeList],
       };
 
+    case SET_FULL_COURSE_DATE:
+      return {
+        ...state,
+        fullCourseDate: [...action.payload],
+        // placeList: [...state.placeList],
+      };
     // case CREATE_FULL_COURSE:
     //   return {
     //     ...action.payload,
