@@ -44,6 +44,10 @@ public class Place {
     @Column(name = "average_score")
     private Float averageScore;
 
+    @Builder.Default
+    @Column(name = "score_count")
+    private Integer scoreCount = 0;
+
     private String thumbnail;
 
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
