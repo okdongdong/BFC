@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -70,5 +70,20 @@ public class ScheduleService {
         Map<String, Long> map = new HashMap<>();
         map.put("scheduleId", schedule.getScheduleId());
         return map;
+    }
+
+    public void deleteSchedule(Long scheduleId) {
+        Schedule scheduleDel = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NoSuchElementException("스케줄이 없습니다."));
+
+        List<Schedule> schedules = scheduleRepository
+                .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThan(
+                        scheduleDel.getFullCourse().getFullCourseId(), scheduleDel.getDay(), scheduleDel.getSequence());
+
+        scheduleRepository.deleteById(scheduleId);
+        for (Schedule schedule : schedules) {
+            schedule.setSequence(schedule.getSequence()-1);
+        }
+        scheduleRepository.saveAll(schedules);
     }
 }

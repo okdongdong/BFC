@@ -19,4 +19,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     @EntityGraph(attributePaths = {"place"})
     List<Schedule> findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(FullCourse fullCourse);
 
+    List<Schedule> findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThan(Long fullCourseId, Integer day, Integer seq);
+
 }
