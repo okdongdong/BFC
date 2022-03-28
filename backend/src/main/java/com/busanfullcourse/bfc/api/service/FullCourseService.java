@@ -2,9 +2,12 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
+import com.busanfullcourse.bfc.api.response.LikeListRes;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,5 +110,18 @@ public class FullCourseService {
         map.put("isLiked", like.isPresent());
         return map;
 
+    }
+
+    public Page<LikeListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
+        Page<Like> page = likeRepository.findAllByUserId(userId, pageable);
+
+        return page.map(like -> LikeListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(LikeListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse())))
+                .build());
     }
 }
