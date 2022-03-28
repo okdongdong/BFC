@@ -43,6 +43,9 @@ public class FullCourse {
     private User user;
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
 
     @ToString.Exclude
