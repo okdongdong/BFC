@@ -9,6 +9,7 @@ import com.busanfullcourse.bfc.common.jwt.RefreshToken;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.entity.Follow;
 import com.busanfullcourse.bfc.db.entity.Interest;
+import com.busanfullcourse.bfc.db.entity.Like;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPIRATION_TIME;
@@ -39,7 +41,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final InterestRepository interestRepository;
+    private final LikeRepository likeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ScheduleRepository scheduleRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private final JwtTokenUtil jwtTokenUtil;
@@ -89,6 +93,16 @@ public class UserService {
         Boolean isFollowing;
         isFollowing = follow.isPresent();
         List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
+        List<Like> likeList = likeRepository.findTop6ByUser(user);
+
+        List<LikeListRes> likeListRes = likeList.stream().map(like -> LikeListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(LikeListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse())))
+                .build()).collect(Collectors.toList());
 
         return UserProfileRes.builder()
                 .userId(user.getId())
@@ -99,6 +113,7 @@ public class UserService {
                 .isFollowing(isFollowing)
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .interestList(InterestListRes.of(interestList))
+                .likeList(likeListRes)
                 .build();
     }
     // 로그인에 사용됨
