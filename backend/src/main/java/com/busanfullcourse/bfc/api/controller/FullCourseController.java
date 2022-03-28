@@ -42,4 +42,11 @@ public class FullCourseController {
     public ResponseEntity<Map<String, Long>> addCustomPlaceSchedule(@PathVariable Long fullCourseId, @RequestBody CustomPlaceScheduleReq req) {
         return ResponseEntity.ok(scheduleService.addCustomPlaceSchedule(req, fullCourseId));
     }
+
+    @PostMapping("/{fullCourseId}/like")
+    public ResponseEntity<Map<String, Boolean>> likeFullCourse(@PathVariable Long fullCourseId) {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(fullCourseService.likeFullCourse(fullCourseId, username));
+    }
+
 }
