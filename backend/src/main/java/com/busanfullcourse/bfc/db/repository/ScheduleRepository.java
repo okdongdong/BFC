@@ -12,7 +12,7 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @EntityGraph(attributePaths = {"place"})
-    List<Schedule> findAllByFullCourseFullCourseId(Long fullCourseId);
+    List<Schedule> findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(Long fullCourseId);
 
     Boolean existsByFullCourseFullCourseIdAndDayAndSequence(Long fullCourseId, Integer day, Integer seq);
 
@@ -20,5 +20,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(FullCourse fullCourse);
 
     List<Schedule> findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThan(Long fullCourseId, Integer day, Integer seq);
+
+    List<Schedule> findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqual(Long fullCourseId, Integer day, Integer seq);
 
 }

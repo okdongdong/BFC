@@ -62,7 +62,7 @@ public class FullCourseService {
 
     public FullCourseRes getFullCourse(Long fullCourseId) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
-        List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseId(fullCourseId);
+        List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourseId);
         return FullCourseRes.builder()
                 .fullCourseId(fullCourseId)
                 .title(fullCourse.getTitle())

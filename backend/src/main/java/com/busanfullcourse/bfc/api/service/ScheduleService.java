@@ -33,12 +33,20 @@ public class ScheduleService {
         FullCourse fullCourse = fullCourseRepository.getById(fullCourseId);
         Place place = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
 
-        // 중복된 일정이 있는지 검사
-        if(scheduleRepository.existsByFullCourseFullCourseIdAndDayAndSequence(fullCourseId, req.getDay(), req.getSequence())) {
-            throw new IllegalArgumentException("해당 일정이 이미 존재합니다.");
-        }
+//        // 중복된 일정이 있는지 검사
+//        if(scheduleRepository.existsByFullCourseFullCourseIdAndDayAndSequence(fullCourseId, req.getDay(), req.getSequence())) {
+//            throw new IllegalArgumentException("해당 일정이 이미 존재합니다.");
+//        }
+        List<Schedule> schedules = scheduleRepository
+                .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqual(
+                        fullCourseId, req.getDay(), req.getSequence());
 
-        Schedule schedule = scheduleRepository.save(Schedule.builder()
+        for (Schedule schedule : schedules) {
+            schedule.setSequence(schedule.getSequence()+1);
+        }
+        scheduleRepository.saveAll(schedules);
+
+        Schedule scheduleNew = scheduleRepository.save(Schedule.builder()
                 .day(req.getDay())
                 .sequence(req.getSequence())
                 .fullCourse(fullCourse)
@@ -46,7 +54,7 @@ public class ScheduleService {
                 .build());
 
         Map<String, Long> map = new HashMap<>();
-        map.put("scheduleId", schedule.getScheduleId());
+        map.put("scheduleId", scheduleNew.getScheduleId());
         return map;
     }
 
