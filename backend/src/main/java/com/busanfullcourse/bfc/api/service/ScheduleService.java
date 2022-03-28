@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
+import com.busanfullcourse.bfc.api.request.ScheduleUpdateReq;
 import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Place;
@@ -44,14 +45,15 @@ public class ScheduleService {
         for (Schedule schedule : schedules) {
             schedule.setSequence(schedule.getSequence()+1);
         }
-        scheduleRepository.saveAll(schedules);
 
-        Schedule scheduleNew = scheduleRepository.save(Schedule.builder()
+        Schedule scheduleNew = Schedule.builder()
                 .day(req.getDay())
                 .sequence(req.getSequence())
                 .fullCourse(fullCourse)
                 .place(place)
-                .build());
+                .build();
+        schedules.add(scheduleNew);
+        scheduleRepository.saveAll(schedules);
 
         Map<String, Long> map = new HashMap<>();
         map.put("scheduleId", scheduleNew.getScheduleId());
@@ -78,6 +80,68 @@ public class ScheduleService {
         Map<String, Long> map = new HashMap<>();
         map.put("scheduleId", schedule.getScheduleId());
         return map;
+    }
+
+    public void changeSchedule(Long fullCourseId, ScheduleUpdateReq scheduleUpdateReq) {
+        if (!fullCourseRepository.existsById(fullCourseId)) {
+            throw new NoSuchElementException("풀코스가 없습니다.");
+        }
+
+        if (scheduleUpdateReq.getDayBefore().equals(scheduleUpdateReq.getDayAfter())) {
+            if (scheduleUpdateReq.getSequenceBefore() < scheduleUpdateReq.getSequenceAfter()) {
+                // 같은날, 더 뒤로 옮기는 경우
+                List<Schedule> schedules = scheduleRepository
+                        .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanAndSequenceLessThanEqual(
+                                fullCourseId, scheduleUpdateReq.getDayBefore(),
+                                scheduleUpdateReq.getSequenceBefore(), scheduleUpdateReq.getSequenceAfter());
+
+                for (Schedule schedule : schedules) {
+                    schedule.setSequence(schedule.getSequence()-1);
+                }
+                Schedule targetSchedule = scheduleRepository.getById(scheduleUpdateReq.getScheduleId());
+                targetSchedule.setSequence(scheduleUpdateReq.getSequenceAfter());
+                schedules.add(targetSchedule);
+                scheduleRepository.saveAll(schedules);
+            } else if (scheduleUpdateReq.getSequenceBefore() > scheduleUpdateReq.getSequenceAfter()) {
+                // 같은날, 더 앞으로 당기는 경우
+                List<Schedule> schedules = scheduleRepository
+                        .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqualAndSequenceLessThan(
+                                fullCourseId, scheduleUpdateReq.getDayBefore(),
+                                scheduleUpdateReq.getSequenceAfter(), scheduleUpdateReq.getSequenceBefore());
+
+                for (Schedule schedule : schedules) {
+                    schedule.setSequence(schedule.getSequence()+1);
+                }
+                Schedule targetSchedule = scheduleRepository.getById(scheduleUpdateReq.getScheduleId());
+                targetSchedule.setSequence(scheduleUpdateReq.getSequenceAfter());
+                schedules.add(targetSchedule);
+                scheduleRepository.saveAll(schedules);
+            }
+        } else {
+            // 다른날로 바꾸는 경우
+            Schedule targetSchedule = scheduleRepository.getById(scheduleUpdateReq.getScheduleId());
+            // before보다 seq가 큰 것들 다 가져와
+            List<Schedule> schedulesBefore = scheduleRepository
+                    .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThan(
+                            fullCourseId, scheduleUpdateReq.getDayBefore(), scheduleUpdateReq.getSequenceBefore());
+
+            for (Schedule scheduleBefore : schedulesBefore) {
+                scheduleBefore.setSequence(scheduleBefore.getSequence()-1);
+            }
+            // agter보다 seq가 크거나 같은 것들 다 가져와
+            List<Schedule> schedulesAfter = scheduleRepository
+                    .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqual(
+                            fullCourseId, scheduleUpdateReq.getDayAfter(), scheduleUpdateReq.getSequenceAfter());
+
+            for (Schedule scheduleAfter : schedulesAfter) {
+                scheduleAfter.setSequence(scheduleAfter.getSequence()+1);
+            }
+            targetSchedule.setDay(scheduleUpdateReq.getDayAfter());
+            targetSchedule.setSequence(scheduleUpdateReq.getSequenceAfter());
+            schedulesBefore.addAll(schedulesAfter);
+            schedulesBefore.add(targetSchedule);
+            scheduleRepository.saveAll(schedulesBefore);
+        }
     }
 
     public void deleteSchedule(Long scheduleId) {
