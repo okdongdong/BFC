@@ -5,23 +5,26 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table
 @Getter
 @Setter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Like {
+public class Follow {
+
     @Id
+    @Column(name = "follow_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
-    private Long likeId;
+    private Long followId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name="from_user_id")
+    private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "full_course_id", nullable = false)
-    private FullCourse fullCourse;
+    @JoinColumn(name="to_user_id")
+    private User toUser;
+
 }
