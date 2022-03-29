@@ -16,7 +16,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @PostMapping("/{fullCourseId}/place")
+    @PostMapping("/{fullCourseId}")
     public ResponseEntity<Map<String, Long>> addPlaceSchedule(
             @PathVariable Long fullCourseId, @RequestBody PlaceScheduleReq req) {
         return ResponseEntity.ok(scheduleService.addPlaceSchedule(req, fullCourseId));
