@@ -1,11 +1,8 @@
 package com.busanfullcourse.bfc.api.controller;
 
-import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
-import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
-import com.busanfullcourse.bfc.api.service.ScheduleService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
