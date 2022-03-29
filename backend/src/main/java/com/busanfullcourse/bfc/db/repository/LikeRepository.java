@@ -19,7 +19,5 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     @EntityGraph(attributePaths = {"fullCourse"})
     List<Like> findTop6ByUser(User user);
 
-    Integer countByFullCourse(FullCourse fullCourse);
-
     Page<Like> findAllByUserId(Long userId, Pageable pageable);
 }
