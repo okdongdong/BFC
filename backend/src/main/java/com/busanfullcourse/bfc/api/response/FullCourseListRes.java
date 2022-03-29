@@ -2,9 +2,11 @@ package com.busanfullcourse.bfc.api.response;
 
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Schedule;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +29,21 @@ public class FullCourseListRes {
 
     private List<String> thumbnailList;
 
+    @JsonIgnore
+    private List<Schedule> scheduleList;
+
     public static List<String> ofThumbnailList(List<Schedule> list) {
-        return list.stream().map(schedule -> schedule.getPlace().getThumbnail()).collect(Collectors.toList());
+        List<String> res = new ArrayList<>();
+        for (Schedule schedule : list) {
+            String thumbnail = schedule.getPlace().getThumbnail();
+            if (thumbnail != null) {
+                res.add(thumbnail);
+            }
+            if (res.size()==4){
+                break;
+            }
+        }
+        return res;
     }
 
     public static List<FullCourseListRes> of (List<FullCourse> list) {
@@ -37,7 +52,8 @@ public class FullCourseListRes {
                 .title(fullCourse.getTitle())
                 .startedOn(fullCourse.getStartedOn())
                 .finishedOn(fullCourse.getFinishedOn())
-                .likeCnt(fullCourse.getLikeList().size())
+                .likeCnt(fullCourse.getLikeCnt())
+                .scheduleList(fullCourse.getScheduleList())
                 .build()
         ).collect(Collectors.toList());
     }

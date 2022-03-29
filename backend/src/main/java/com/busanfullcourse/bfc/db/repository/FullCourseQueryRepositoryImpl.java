@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static com.busanfullcourse.bfc.db.entity.QFullCourse.fullCourse;
-import static com.busanfullcourse.bfc.db.entity.QLike.like;
+import static com.busanfullcourse.bfc.db.entity.QSchedule.schedule;
 
 
 @RequiredArgsConstructor
@@ -21,9 +21,12 @@ public class FullCourseQueryRepositoryImpl implements FullCourseQueryRepository{
         return queryFactory
                 .select(fullCourse)
                 .from(fullCourse)
-                .leftJoin(fullCourse.likeList, like)
+                .leftJoin(fullCourse.scheduleList, schedule)
                 .fetchJoin()
-                .orderBy(fullCourse.likeList.size().desc())
+                .leftJoin(schedule.place)
+                .fetchJoin()
+                .where(fullCourse.isPublic.eq(true))
+                .orderBy(fullCourse.likeCnt.desc())
                 .limit(8)
                 .fetch();
 

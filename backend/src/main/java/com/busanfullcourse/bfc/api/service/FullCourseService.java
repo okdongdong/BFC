@@ -65,7 +65,7 @@ public class FullCourseService {
         List<FullCourseListRes> listRes = FullCourseListRes.of(list);
         for (FullCourseListRes res : listRes) {
             res.setThumbnailList(FullCourseListRes
-                    .ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(res.getFullCourseId())));
+                    .ofThumbnailList(res.getScheduleList()));
         }
         return listRes;
     }
