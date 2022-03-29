@@ -35,6 +35,31 @@ class User(models.Model):
         managed = False
         db_table = 'user'
 
+
+class FullCourse(models.Model):
+    full_course_id = models.BigAutoField(primary_key=True)
+    title = models.CharField(max_length=45)
+    is_public = models.IntegerField()
+    view = models.PositiveIntegerField()
+    review = models.TextField(blank=True, null=True)
+    started_on = models.DateField()
+    finished_on = models.DateField()
+    user = models.ForeignKey('User', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'full_course'
+
+class Like(models.Model):
+    like_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey('User', models.DO_NOTHING)
+    full_course = models.ForeignKey(FullCourse, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'like'
+
+
 class Score(models.Model):
     score_id = models.BigAutoField(primary_key=True)
     score = models.FloatField()
