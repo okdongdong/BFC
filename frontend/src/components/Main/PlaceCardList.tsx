@@ -1,11 +1,12 @@
 import PlaceCard from "./PlaceCard";
-import { PlaceCardListProps } from "../../types/Main";
+import { PlaceCardListProps } from "../../types/main";
 import { styled } from "@mui/material";
 
 function PlaceCardList({ placeList, title }: PlaceCardListProps) {
   const TitleTextStyle = styled("h1")(() => ({
     fontSize: 32,
     marginBottom: 32,
+    fontFamily: "Sunflower, sans-serif",
   }));
 
   const PlaceCardListStyle = styled("div")(() => ({

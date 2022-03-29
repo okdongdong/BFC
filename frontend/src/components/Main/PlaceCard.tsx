@@ -3,7 +3,6 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
-  Box,
   Chip,
   styled,
   Stack,
@@ -11,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import StarScore from "./StarScore";
 
-import { PlaceCardProps } from "../../types/Main";
+import { PlaceCardProps } from "../../types/main";
 
 const CardStyle = styled(Card)(() => ({
   width: 240,

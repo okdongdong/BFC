@@ -5,13 +5,13 @@ interface thumbnailListProps {
 }
 
 const CardMediaStyle = styled(CardMedia)(() => ({
-  height: 400,
+  height: 300,
   width: "100%",
 }));
 
 const CardBackgroundStyle = styled("div")(() => ({
   backgroundColor: "rgba(0,0,0,0.5)",
-  height: 400,
+  height: 300,
   width: "100%",
   position: "absolute",
   top: 0,

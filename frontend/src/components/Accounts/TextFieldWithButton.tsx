@@ -55,6 +55,7 @@ function TextFieldWithButton({
     >
       <InputLabel htmlFor={id}>{label}</InputLabel>
       <OutlinedInput
+        label={label}
         fullWidth
         id={id}
         name={id}

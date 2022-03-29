@@ -4,14 +4,19 @@ import Router from "./routes";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
 function App() {
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <div className="App">
         <Router></Router>
-      </ThemeProvider>
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
 
