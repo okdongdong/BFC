@@ -84,6 +84,7 @@ public class FullCourseService {
                 .scheduleDetailList(FullCourseRes.ScheduleDetail.of(scheduleList))
                 .WishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
                 .WishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
+                .LikeCnt(fullCourse.getLikeCnt())
                 .build();
     }
 
@@ -98,14 +99,17 @@ public class FullCourseService {
         if (like.isPresent()) {
             isLiked = false;
             likeRepository.delete(like.get());
+            fullCourse.setLikeCnt(fullCourse.getLikeCnt()-1);
         } else{
             isLiked = true;
             likeRepository.save(Like.builder()
                             .user(user)
                             .fullCourse(fullCourse)
                     .build());
+            fullCourse.setLikeCnt(fullCourse.getLikeCnt()+1);
         }
 
+        fullCourseRepository.save(fullCourse);
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", isLiked);
         return map;
@@ -127,7 +131,7 @@ public class FullCourseService {
 
         return page.map(like -> FullCourseListRes.builder()
                 .fullCourseId(like.getFullCourse().getFullCourseId())
-                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
+                .likeCnt(like.getFullCourse().getLikeCnt())
                 .title(like.getFullCourse().getTitle())
                 .startedOn(like.getFullCourse().getStartedOn())
                 .finishedOn(like.getFullCourse().getFinishedOn())

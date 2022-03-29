@@ -39,6 +39,8 @@ public class FullCourseRes {
 
     private List<ScheduleDetail> scheduleDetailList;
 
+    private Integer LikeCnt;
+
 
     public static List<String> ofWishFoodList(List<WishFood> list) {
         return list.stream().map(WishFood::getKeyword)
