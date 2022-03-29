@@ -1,3 +1,5 @@
+import { useDateTimeValidation } from "@mui/lab/internal/pickers/hooks/useValidation";
+import { useEffect, useRef } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { PlaceCardListProps } from "../../../types/main";
 import { getItemStyle, getListStyle } from "./dndFunction";
@@ -5,17 +7,38 @@ import PlaceCard from "./PlaceCard";
 
 interface PlaceCardListDnd extends PlaceCardListProps {
   droppableId?: string;
+  idx?: number;
+  pickedDay?: number;
+  nowScrollPosition?: number;
+  setDayChange?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function DailyFullCourse({
   placeList,
   droppableId = "droppablePlaceList",
+  idx = 0,
+  pickedDay = -1,
+  nowScrollPosition = 0,
+  setDayChange,
 }: PlaceCardListDnd) {
+  const dayText = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log("-------", nowScrollPosition);
+    if (pickedDay === idx) {
+      const scrollTarget = dayText.current?.offsetTop;
+      if (!!scrollTarget) {
+        dayText.current?.parentElement?.parentElement?.parentElement?.parentElement?.scrollTo(
+          { top: scrollTarget, behavior: "auto" }
+        );
+      }
+    }
+    console.log(dayText.current?.offsetTop);
+  }, []);
+
   return (
-    <>
-      검색창
-      <hr />
-      구분|구분|구분
+    <div>
+      <div ref={dayText}>DAY{idx + 1}</div>
       <Droppable droppableId={droppableId}>
         {(provided: any, snapshot: any) => (
           <div
@@ -52,7 +75,7 @@ function DailyFullCourse({
           </div>
         )}
       </Droppable>
-    </>
+    </div>
   );
 }
 
