@@ -53,6 +53,7 @@ public class FullCourseRes {
     @Builder
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
     public static class ScheduleDetail {
+        private Long scheduleId;
         private Integer day;
         private Integer sequence;
         private String memo;
@@ -68,6 +69,7 @@ public class FullCourseRes {
             for (Schedule schedule : list) {
                 if (schedule.getPlace() == null) {
                     res.add(ScheduleDetail.builder()
+                            .scheduleId(schedule.getScheduleId())
                             .day(schedule.getDay())
                             .sequence(schedule.getSequence())
                             .memo(schedule.getMemo())
@@ -79,6 +81,7 @@ public class FullCourseRes {
                             .build());
                 } else {
                     res.add(ScheduleDetail.builder()
+                            .scheduleId(schedule.getScheduleId())
                             .day(schedule.getDay())
                             .sequence(schedule.getSequence())
                             .memo(schedule.getMemo())
