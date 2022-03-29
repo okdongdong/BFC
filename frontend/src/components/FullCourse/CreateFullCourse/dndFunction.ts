@@ -68,4 +68,5 @@ export const getListStyle = (isDraggingOver: boolean, grid: number = 8) => ({
   background: isDraggingOver ? "lightgreen" : "lightgrey",
   padding: grid,
   minHeight: 100,
+  minWidth: 350,
 });

@@ -27,29 +27,48 @@ const ContentBox = styled(Stack)(() => ({
   },
 }));
 
-const DayTextStyle = styled("div")(() => ({
-  backgroundColor: "white",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  borderRadius: "25px",
-  height: 60,
-  marginTop: 5,
-  marginBottom: 5,
-  width: 80,
-  position: "relative",
-  fontSize: 20,
-  fontWeight: "bold",
-  "&:hover": {
-    backgroundColor: "#47A3EC",
-    color: "white",
-  },
-}));
 
-function DayBar({ fullCourseDate, setFullCourseDate }: Props) {
+function DayBar({
+  fullCourseDate,
+  setFullCourseDate,
+  pickedDay,
+  setPickedDay,
+  setDayChange,
+}: Props & {
+  pickedDay: number;
+  setPickedDay: React.Dispatch<React.SetStateAction<number>>;
+  setDayChange: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [dayList, setDayList] = useState<Array<string>>([]);
   const [startDate, endDate]: DateRange<Date> = fullCourseDate;
-  console.log(fullCourseDate);
+  const DayTextStyle = styled("div")((attr: { idx: number }) => ({
+    backgroundColor: `${attr.idx === pickedDay ? "#47A3EC" : "white"}`,
+    color: `${attr.idx !== pickedDay || "white"}`,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "15px",
+    height: 50,
+    marginTop: 10,
+    marginBottom: 10,
+    width: 80,
+    position: "relative",
+    fontSize: 20,
+    fontWeight: "bold",
+  }));
+  const DayTextBox = styled("div")(() => ({
+    backgroundColor: "#ddd",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    position: "relative",
+    fontSize: 20,
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#47A3EC",
+    },
+  }));
 
   const calDayLength = () => {
     if (startDate !== null && endDate !== null) {
@@ -79,20 +98,29 @@ function DayBar({ fullCourseDate, setFullCourseDate }: Props) {
     calDayLength();
   }, [fullCourseDate]);
 
+  const dayChangeHandler = (idx: number) => {
+    setDayChange(true);
+    setPickedDay(idx);
+  };
+
   return (
     <ContentBox>
       {dayList.map((day, idx) => (
-        <DayTextStyle key={idx}>
-          <p>{day}</p>
-        </DayTextStyle>
+        <DayTextBox key={idx} onClick={() => dayChangeHandler(idx)}>
+          <DayTextStyle idx={idx}>
+            <p style={{ margin: 0 }}>{day}</p>
+          </DayTextStyle>
+        </DayTextBox>
       ))}
-      <DayTextStyle>
-        <p>
-          <Icon sx={{ fontSize: 30 }} onClick={addDate}>
-            add
-          </Icon>
-        </p>
-      </DayTextStyle>
+      <DayTextBox>
+        <DayTextStyle idx={-1}>
+          <p>
+            <Icon sx={{ fontSize: 30 }} onClick={addDate}>
+              add
+            </Icon>
+          </p>
+        </DayTextStyle>
+      </DayTextBox>
     </ContentBox>
   );
 }
