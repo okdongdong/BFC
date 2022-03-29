@@ -123,7 +123,14 @@ public class FullCourseService {
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", like.isPresent());
         return map;
+    }
 
+    public void deleteFullCourse(Long fullCourseId) {
+        if (fullCourseRepository.existsById(fullCourseId)) {
+            fullCourseRepository.deleteById(fullCourseId);
+        } else {
+            throw new NoSuchElementException("풀코스가 없습니다.");
+        }
     }
 
     public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
