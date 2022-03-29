@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
+import { connect } from "react-redux";
 import { placeList as dummyPlaceList } from "../../../assets/dummyData/dummyData";
 import CollapseContainer from "../../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../../components/FullCourse/CreateFullCourse/DailyFullCourse";
@@ -13,7 +14,6 @@ import PlaceDetail from "../../../components/FullCourse/CreateFullCourse/PlaceDe
 import PlaceSearch from "../../../components/FullCourse/CreateFullCourse/PlaceSearch";
 import { moveCard } from "../../../redux/createFullCourse/actions";
 import { CreateFullCourseDnd } from "../../../redux/createFullCourse/createFullCourseReducer";
-import { CreateFullCourseReducer } from "../../../redux/rootReducer";
 
 const getItems = (count: number, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map((k) => ({
@@ -29,12 +29,17 @@ const move = (
 ) => {
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-  destClone.splice(droppableDestination.index, 0, removed);
+  const [removed]: any = sourceClone.splice(droppableSource.index, 1);
+  const removedClone = { ...removed };
+  if (droppableSource.dropableId !== "placeList") {
+    removedClone.id = `${removed.id}-${new Date().getTime()}`;
+  }
+  destClone.splice(droppableDestination.index, 0, removedClone);
 
   const result: any = {};
-  result[droppableSource.droppableId] = sourceClone;
+  if (droppableSource.dropableId !== "placeList") {
+    result[droppableSource.droppableId] = sourceClone;
+  }
   result[droppableDestination.droppableId] = destClone;
 
   return result;
@@ -51,36 +56,65 @@ const createNewItem = () => {
 };
 const plt2: any = [];
 dummyPlaceList.map((place: any) =>
-  plt2.push({ id: `place2-${place.placeId}`, content: place })
+  plt2.push({
+    id: `place2-${place.placeId}-${new Date().getTime()}`,
+    content: place,
+  })
 );
 
-function CreateFullCourse() {
-  const [state, setState] = useState([[...plt2], createNewItem()]);
-
-  function onDragEnd(result: any) {
+function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
+  const [pickedDay, setPickedDay] = useState<number>(1);
+  const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
+  const [dayChange, setDayChange] = useState<boolean>(false);
+  const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
     // dropped outside the list
-    if (!destination) {
+    if (!destination || destination.dropableId === "placeList") {
       return;
     }
+    console.log(111111111, source);
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
 
+    if (source.droppableId === "placeList") {
+      const result = move(placeList, fullCourseList[dInd], source, destination);
+      const newState: any = [...fullCourseList];
+      newState[dInd] = result[dInd];
+      moveCard(newState);
+      // 스케줄 추가 구현중
+      // creatNewSchedule({...placeList[source.index], day:dInd+1, sequence:destination.index+1});
+
+      return;
+    }
+
     if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
-      const newState: any = [...state];
+      if (source.index === destination.index) {
+        return;
+      }
+
+      const items = reorder(
+        fullCourseList[sInd],
+        source.index,
+        destination.index
+      );
+      const newState: any = [...fullCourseList];
       newState[sInd] = items;
-      setState(newState);
+      moveCard(newState);
     } else {
-      const result = move(state[sInd], state[dInd], source, destination);
-      const newState = [...state];
+      const result = move(
+        fullCourseList[sInd],
+        fullCourseList[dInd],
+        source,
+        destination
+      );
+      const newState: any = [...fullCourseList];
       newState[sInd] = result[sInd];
       newState[dInd] = result[dInd];
-
-      setState(newState.filter((group) => group.length));
+      moveCard(newState);
     }
-  }
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -88,19 +122,33 @@ function CreateFullCourse() {
         <PlaceDetail></PlaceDetail>
         <PlaceSearch></PlaceSearch>
         <div style={{ display: "flex", position: "relative" }}>
-          <DayBar></DayBar>
-          <CollapseContainer buttonPositionY={0}>
+          <DayBar
+            pickedDay={pickedDay}
+            setPickedDay={setPickedDay}
+            setDayChange={setDayChange}
+          ></DayBar>
+          <CollapseContainer
+            dayChange={dayChange}
+            buttonPositionY={0}
+            setNowScrollPosition={setNowScrollPosition}
+          >
             풀코스
             <Stack
               spacing={2}
               sx={{ alignItems: "center", position: "relative" }}
             >
-              {state.map((el, idx) => (
-                <DailyFullCourse
-                  key={idx}
-                  placeList={el}
-                  droppableId={`${idx}`}
-                ></DailyFullCourse>
+              {fullCourseList.map((placeList: any, idx: number) => (
+                <div key={idx}>
+                  <div>DAY{idx + 1}</div>
+                  <DailyFullCourse
+                    setDayChange={setDayChange}
+                    nowScrollPosition={nowScrollPosition}
+                    idx={idx}
+                    pickedDay={pickedDay}
+                    placeList={placeList}
+                    droppableId={`${idx}`}
+                  ></DailyFullCourse>
+                </div>
               ))}
             </Stack>
           </CollapseContainer>
@@ -119,13 +167,24 @@ function CreateFullCourse() {
           <CollapseContainer buttonPositionY={400} backgroundColor="#cdd">
             디테일
           </CollapseContainer>
-          {/* <KakaoMap></KakaoMap> */}
+          <KakaoMap></KakaoMap>
         </div>
       </DragDropContext>
     </div>
   );
 }
+const mapStateToProps = ({ createFullCourse, createPlaceList }: any) => ({
+  fullCourseList: createFullCourse.fullCourseList,
+  placeList: createPlaceList.placeList,
+});
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    moveCard: (newState: Array<CreateFullCourseDnd>) =>
+      dispatch(moveCard(newState)),
+  };
+};
 
-export default CreateFullCourse;
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-
+export default connect(mapStateToProps, mapDispatchToProps)(CreateFullCourse);

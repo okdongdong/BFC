@@ -12,7 +12,7 @@ interface PlaceCardListDndProps extends PlaceCardListProps {
 
 function PlaceCardListDnd({
   placeList,
-  droppableId = "droppablePlaceList",
+  droppableId = "placeList",
 }: PlaceCardListDndProps) {
   console.log(placeList[0]);
   const getRenderItem =
@@ -61,15 +61,7 @@ function PlaceCardListDnd({
                         provided.draggableProps.style
                       )}
                     >
-                      <PlaceCard
-                        placeId={item.content.placeId}
-                        category={item.content.category}
-                        name={item.content.name}
-                        thumbnail={item.content.thumbnail}
-                        address={item.content.address}
-                        averageScore={item.content.averageScore}
-                        keywords={item.content.keywords}
-                      ></PlaceCard>
+                      <div style={{ width: 350, height: 132 }}></div>
                     </div>
                   )}
                 </Draggable>
