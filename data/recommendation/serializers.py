@@ -1,7 +1,7 @@
-from re import L
-from attr import fields
+# from re import L
+# from attr import fields
 from django.db import models
-from itsdangerous import Serializer
+# from itsdangerous import Serializer
 from .models import Recommend, SurveyRecommend
 from rest_framework import serializers
 
