@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
+import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.ScheduleService;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,6 +28,11 @@ public class FullCourseController {
     public ResponseEntity<Map<String, Long>> createFullCourse(@RequestBody FullCourseReq req) {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(fullCourseService.createFullCourse(req, username));
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<FullCourseListRes>> getPopularFullCourseList() {
+        return ResponseEntity.ok(fullCourseService.getPopularFullCourseList());
     }
 
     @GetMapping("/{fullCourseId}")

@@ -95,13 +95,14 @@ public class UserService {
         List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
         List<Like> likeList = likeRepository.findTop6ByUser(user);
 
-        List<LikeListRes> likeListRes = likeList.stream().map(like -> LikeListRes.builder()
+        List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
                 .fullCourseId(like.getFullCourse().getFullCourseId())
-                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
+                .likeCnt(like.getFullCourse().getLikeList().size())
+//                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
                 .title(like.getFullCourse().getTitle())
                 .startedOn(like.getFullCourse().getStartedOn())
                 .finishedOn(like.getFullCourse().getFinishedOn())
-                .thumbnailList(LikeListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse())))
+                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
                 .build()).collect(Collectors.toList());
 
         return UserProfileRes.builder()
@@ -113,7 +114,7 @@ public class UserService {
                 .isFollowing(isFollowing)
                 .profileImg(convertByteArrayToString(user.getProfileImg()))
                 .interestList(InterestListRes.of(interestList))
-                .likeList(likeListRes)
+                .likeList(fullCourseListRes)
                 .build();
     }
     // 로그인에 사용됨
