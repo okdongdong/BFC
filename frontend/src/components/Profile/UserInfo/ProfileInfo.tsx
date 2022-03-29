@@ -1,6 +1,7 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
@@ -16,7 +17,9 @@ function ProfileInfo() {
   return (
     <div>
       <span style={{ fontWeight: "bold", fontSize: 20 }}>{nickname}</span>
-      <button className={classes.btn}>회원정보관리</button>
+      <Link to="/changeUser">
+        <button className={classes.btn}>회원정보관리</button>
+      </Link>
     </div>
   );
 }

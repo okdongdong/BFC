@@ -14,7 +14,7 @@ function ChangeData() {
   };
 
   return (
-    <Box sx={{ width: "100%", typography: "body1", marginTop: "100px" }}>
+    <Box sx={{ width: "100%", typography: "body1", marginTop: "50px" }}>
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
