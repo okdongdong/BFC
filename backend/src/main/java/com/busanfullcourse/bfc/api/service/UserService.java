@@ -97,8 +97,7 @@ public class UserService {
 
         List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
                 .fullCourseId(like.getFullCourse().getFullCourseId())
-                .likeCnt(like.getFullCourse().getLikeList().size())
-//                .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
+                .likeCnt(like.getFullCourse().getLikeCnt())
                 .title(like.getFullCourse().getTitle())
                 .startedOn(like.getFullCourse().getStartedOn())
                 .finishedOn(like.getFullCourse().getFinishedOn())

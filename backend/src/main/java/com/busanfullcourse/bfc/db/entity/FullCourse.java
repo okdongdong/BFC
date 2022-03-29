@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -57,4 +58,6 @@ public class FullCourse {
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishPlace> wishPlaces = new ArrayList<>();
 
+    @Column(name = "like_count")
+    private Integer likeCnt;
 }
