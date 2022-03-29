@@ -50,6 +50,12 @@ public class FullCourseController {
         return ResponseEntity.ok(scheduleService.addCustomPlaceSchedule(req, fullCourseId));
     }
 
+    @DeleteMapping("/{fullCourseId}")
+    public ResponseEntity<String> deleteFullCourse(@PathVariable Long fullCourseId) {
+        fullCourseService.deleteFullCourse(fullCourseId);
+        return ResponseEntity.ok("풀코스가 삭제되었습니다.");
+    }
+
     @PostMapping("/{fullCourseId}/like")
     public ResponseEntity<Map<String, Boolean>> likeFullCourse(@PathVariable Long fullCourseId) {
         String username = userService.getCurrentUsername();
