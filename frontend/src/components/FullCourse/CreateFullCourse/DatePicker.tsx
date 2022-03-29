@@ -38,7 +38,7 @@ function DatePicker({
   fullCourseDate,
   setFullCourseDate,
   closePicker,
-}: Props & { closePicker: any }) {
+}: Props & { closePicker?: any }) {
   console.log(fullCourseDate);
 
   const renderWeekPickerDay = (
@@ -70,7 +70,7 @@ function DatePicker({
       <Button onClick={() => setFullCourseDate([null, null])}>
         일정초기화
       </Button>
-      <Button onClick={closePicker}>닫기</Button>
+      {closePicker === undefined || <Button onClick={closePicker}>닫기</Button>}
     </LocalizationProvider>
   );
 }

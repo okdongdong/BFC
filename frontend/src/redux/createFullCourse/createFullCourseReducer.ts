@@ -4,14 +4,20 @@ import { placeList } from "../../assets/dummyData/dummyData";
 import { PlaceCardProps } from "../../types/main";
 import {
   MOVE_CARD,
-  CREATE_FULL_COURSE,
   SET_FULL_COURSE_DATE,
   FullCourseListProps,
+  CREATE_CARD,
+  FULL_COURSE_REQUEST,
+  CREATE_FULL_COURSE_SUCCESS,
+  CREATE_FULL_COURSE_FAILURE,
 } from "./types";
 
 export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
   fullCourseDate: DateRange<Date>;
+  fullCourseId?: number;
+  nowLoading?: boolean;
+  nowError?: boolean;
 }
 
 const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
@@ -30,6 +36,7 @@ placeList.map((place: PlaceCardProps) =>
 const initialState: CreateFullCourseDnd = {
   fullCourseList: [[...plt2]],
   fullCourseDate: [null, null],
+  nowLoading: false,
 };
 
 const createFullCourseReducer = (
@@ -37,13 +44,17 @@ const createFullCourseReducer = (
   action: AnyAction
 ) => {
   switch (action.type) {
+    // 스케줄 DND에서 카드 옮길 때
     case MOVE_CARD:
       return {
         ...state,
         fullCourseList: [...action.payload],
-        // placeList: [...state.placeList],
       };
 
+    case CREATE_CARD:
+      return {};
+
+    // 풀코스 날짜 설정
     case SET_FULL_COURSE_DATE:
       const [startDate, endDate] = action.payload;
 
@@ -71,6 +82,8 @@ const createFullCourseReducer = (
           }
         }
         return {
+          ...state,
+          nowLoading: false,
           fullCourseList: newFullCourseList,
           fullCourseDate: [...action.payload],
         };
@@ -80,10 +93,26 @@ const createFullCourseReducer = (
         fullCourseDate: [...action.payload],
       };
 
-    // case CREATE_FULL_COURSE:
-    //   return {
-    //     ...action.payload,
-    //   };
+    // 로딩중..
+    case FULL_COURSE_REQUEST:
+      return {
+        ...state,
+        nowLoading: true,
+      };
+
+    case CREATE_FULL_COURSE_SUCCESS:
+      return {
+        ...state,
+        nowLoading: false,
+        fullCourseId: action.payload,
+      };
+
+    case CREATE_FULL_COURSE_FAILURE:
+      return {
+        ...state,
+        nowError: true,
+        nowLoading: false,
+      };
 
     default:
       return state;

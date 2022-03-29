@@ -2,10 +2,16 @@
 import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 import axios from "axios";
 import { Dispatch } from "redux";
+import { customAxios } from "../../lib/customAxios";
 import { CreateFullCourseDnd } from "./createFullCourseReducer";
 import {
+  CreateFullCourseProps,
+  CreateFullCourseRequestData,
   CreateScheduleRequestDataProps,
   CREATE_CARD,
+  CREATE_FULL_COURSE_FAILURE,
+  CREATE_FULL_COURSE_SUCCESS,
+  CustomInstance,
   FullCourseDndCardProps,
   FullCourseListProps,
   FULL_COURSE_REQUEST,
@@ -20,7 +26,7 @@ export const moveCard = (newState: Array<CreateFullCourseDnd>) => {
   };
 };
 
-const createCard = (newState: Array<CreateFullCourseDnd>) => {
+export const createCard = (newState: Array<CreateFullCourseDnd>) => {
   return {
     type: CREATE_CARD,
     payload: newState,
@@ -34,9 +40,48 @@ export const setFullCourseDate = (newDate: DateRange<Date>) => {
   };
 };
 
-const fullCourseRequest = () => {
+export const fullCourseRequest = () => {
   return {
     type: FULL_COURSE_REQUEST,
+  };
+};
+
+export const createFullCourseSuccess = (fullCourseId: number) => {
+  return {
+    type: CREATE_FULL_COURSE_SUCCESS,
+    payload: fullCourseId,
+  };
+};
+
+export const createFullCourseFailure = (state: boolean) => {
+  return {
+    type: CREATE_FULL_COURSE_FAILURE,
+    payload: state,
+  };
+};
+
+// 새로운 풀코스 생성
+export const creatNewFullCourse = (
+  fullCourseInfo: CreateFullCourseRequestData
+) => {
+  return async (dispatch: Dispatch) => {
+    // 서버에 요청 => 로딩중 표시
+    dispatch(fullCourseRequest());
+
+    try {
+      const res = await customAxios({
+        method: "POST",
+        url: `/fullCourse`,
+        data: fullCourseInfo,
+      });
+
+      const fullCourseId = res.data.fullCourseId;
+      dispatch(createFullCourseSuccess(fullCourseId));
+      console.log(res);
+    } catch (e) {
+      dispatch(createFullCourseFailure(true));
+      console.log(e);
+    }
   };
 };
 

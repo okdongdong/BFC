@@ -2,18 +2,18 @@ import { Stack } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
-import { placeList as dummyPlaceList } from "../../../assets/dummyData/dummyData";
-import CollapseContainer from "../../../components/FullCourse/CreateFullCourse/CollapseContainer";
-import DailyFullCourse from "../../../components/FullCourse/CreateFullCourse/DailyFullCourse";
-import DayBar from "../../../components/FullCourse/CreateFullCourse/DayBar";
-import { reorder } from "../../../components/FullCourse/CreateFullCourse/dndFunction";
-import KakaoMap from "../../../components/FullCourse/CreateFullCourse/KakaoMap";
-import PlaceCardList from "../../../components/FullCourse/CreateFullCourse/PlaceCardList";
-import PlaceCardListDnd from "../../../components/FullCourse/CreateFullCourse/PlaceCardListDnd";
-import PlaceDetail from "../../../components/FullCourse/CreateFullCourse/PlaceDetail";
-import PlaceSearch from "../../../components/FullCourse/CreateFullCourse/PlaceSearch";
-import { moveCard } from "../../../redux/createFullCourse/actions";
-import { CreateFullCourseDnd } from "../../../redux/createFullCourse/createFullCourseReducer";
+import { placeList as dummyPlaceList } from "../../assets/dummyData/dummyData";
+import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
+import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
+import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
+import { reorder } from "../../components/FullCourse/CreateFullCourse/dndFunction";
+import KakaoMap from "../../components/FullCourse/CreateFullCourse/KakaoMap";
+import PlaceCardList from "../../components/FullCourse/CreateFullCourse/PlaceCardList";
+import PlaceCardListDnd from "../../components/FullCourse/CreateFullCourse/PlaceCardListDnd";
+import PlaceDetail from "../../components/FullCourse/CreateFullCourse/PlaceDetail";
+import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
+import { moveCard } from "../../redux/createFullCourse/actions";
+import { CreateFullCourseDnd } from "../../redux/createFullCourse/createFullCourseReducer";
 
 const getItems = (count: number, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map((k) => ({
