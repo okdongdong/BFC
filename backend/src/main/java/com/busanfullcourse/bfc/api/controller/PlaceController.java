@@ -1,10 +1,7 @@
 package com.busanfullcourse.bfc.api.controller;
 
 import com.busanfullcourse.bfc.api.request.ScoreReq;
-import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
-import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
-import com.busanfullcourse.bfc.api.response.RestaurantListRes;
-import com.busanfullcourse.bfc.api.response.ScoreRes;
+import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.api.service.InterestService;
 import com.busanfullcourse.bfc.api.service.PlaceService;
 import com.busanfullcourse.bfc.api.service.ScoreService;
@@ -38,6 +35,11 @@ public class PlaceController {
     @GetMapping("/restaurant/popular")
     public ResponseEntity<List<RestaurantListRes>> getPopularRestaurantList() {
         return ResponseEntity.ok(placeService.getPopularRestaurantList());
+    }
+
+    @GetMapping("/attraction/popular")
+    public ResponseEntity<List<AttractionListRes>> getPopularAttractionList() {
+        return ResponseEntity.ok(placeService.getPopularAttractionList());
     }
 
     @PostMapping("/{placeId}/score")

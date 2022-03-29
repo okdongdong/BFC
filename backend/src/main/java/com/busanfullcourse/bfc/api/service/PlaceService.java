@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
+import com.busanfullcourse.bfc.api.response.AttractionListRes;
 import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.api.response.RestaurantListRes;
 import com.busanfullcourse.bfc.db.entity.Place;
@@ -66,8 +67,10 @@ public class PlaceService {
     }
 
     public List<RestaurantListRes> getPopularRestaurantList() {
-        List<Place> placeList = placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(70, true);
+        return RestaurantListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(70, true));
+    }
 
-        return RestaurantListRes.of(placeList);
+    public List<AttractionListRes> getPopularAttractionList() {
+        return AttractionListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
     }
 }
