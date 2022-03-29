@@ -1,6 +1,5 @@
 package com.busanfullcourse.bfc.db.repository;
 
-import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Schedule;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +16,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Boolean existsByFullCourseFullCourseIdAndDayAndSequence(Long fullCourseId, Integer day, Integer seq);
 
     @EntityGraph(attributePaths = {"place"})
-    List<Schedule> findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(FullCourse fullCourse);
+    List<Schedule> findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(Long fullCourseId);
 
 }

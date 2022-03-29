@@ -18,6 +18,6 @@ public class UserProfileRes {
     private Integer followingCnt;
     private Integer followerCnt;
     private List<InterestListRes> interestList;
-    private List<LikeListRes> likeList;
+    private List<FullCourseListRes> likeList;
 //    private List<Badge> badges;
 }

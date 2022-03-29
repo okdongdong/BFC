@@ -2,7 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
-import com.busanfullcourse.bfc.api.response.LikeListRes;
+import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +60,16 @@ public class FullCourseService {
         return map;
     }
 
+    public List<FullCourseListRes> getPopularFullCourseList() {
+        List<FullCourse> list = fullCourseRepository.findTop8ByLikeListSizeAndIsPublic();
+        List<FullCourseListRes> listRes = FullCourseListRes.of(list);
+        for (FullCourseListRes res : listRes) {
+            res.setThumbnailList(FullCourseListRes
+                    .ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(res.getFullCourseId())));
+        }
+        return listRes;
+    }
+
     public FullCourseRes getFullCourse(Long fullCourseId) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
         List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseId(fullCourseId);
@@ -112,16 +122,16 @@ public class FullCourseService {
 
     }
 
-    public Page<LikeListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
+    public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
         Page<Like> page = likeRepository.findAllByUserId(userId, pageable);
 
-        return page.map(like -> LikeListRes.builder()
+        return page.map(like -> FullCourseListRes.builder()
                 .fullCourseId(like.getFullCourse().getFullCourseId())
                 .likeCnt(likeRepository.countByFullCourse(like.getFullCourse()))
                 .title(like.getFullCourse().getTitle())
                 .startedOn(like.getFullCourse().getStartedOn())
                 .finishedOn(like.getFullCourse().getFinishedOn())
-                .thumbnailList(LikeListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse())))
+                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
                 .build());
     }
 }
