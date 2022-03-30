@@ -8,7 +8,7 @@ import placeListReducer from "./createFullCourse/placeListReducer";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["account"],
+  whitelist: ["account", "createFullCourse"],
 };
 
 const rootReducer = combineReducers({

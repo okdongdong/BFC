@@ -2,16 +2,26 @@ import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 import { AnyAction } from "redux";
 import { placeList } from "../../assets/dummyData/dummyData";
 import { PlaceCardProps } from "../../types/main";
+import deepcopy from "deepcopy";
+
 import {
   MOVE_CARD,
-  CREATE_FULL_COURSE,
   SET_FULL_COURSE_DATE,
   FullCourseListProps,
+  CREATE_CARD,
+  FULL_COURSE_REQUEST,
+  CREATE_FULL_COURSE_SUCCESS,
+  CREATE_FULL_COURSE_FAILURE,
+  ERROR_CONTROL,
 } from "./types";
 
 export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
-  fullCourseDate: DateRange<Date>;
+  fullCourseDate: Array<string | null>;
+  fullCourseId?: number;
+  nowLoading?: boolean;
+  nowError?: boolean;
+  errorMessage?: string;
 }
 
 const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
@@ -30,25 +40,35 @@ placeList.map((place: PlaceCardProps) =>
 const initialState: CreateFullCourseDnd = {
   fullCourseList: [[...plt2]],
   fullCourseDate: [null, null],
+  nowLoading: false,
 };
 
 const createFullCourseReducer = (
   state: CreateFullCourseDnd = initialState,
   action: AnyAction
 ) => {
+  const newState = deepcopy(state);
   switch (action.type) {
+    // 스케줄 DND에서 카드 옮길 때
     case MOVE_CARD:
+      console.log(action.payload);
+      const newFullCourseList = deepcopy(action.payload);
       return {
-        ...state,
-        fullCourseList: [...action.payload],
-        // placeList: [...state.placeList],
+        ...newState,
+        nowLoading: false,
+        fullCourseList: newFullCourseList,
       };
 
+    case CREATE_CARD:
+      return { ...initialState };
+
+    // 풀코스 날짜 설정
     case SET_FULL_COURSE_DATE:
       const [startDate, endDate] = action.payload;
 
       if (startDate !== null && endDate !== null) {
-        const diffDate = startDate.getTime() - endDate.getTime();
+        const diffDate =
+          new Date(startDate).getTime() - new Date(endDate).getTime();
         const dayLength = Math.abs(diffDate / (1000 * 3600 * 24)) + 1;
         const newFullCourseList: any = [];
         for (
@@ -71,6 +91,8 @@ const createFullCourseReducer = (
           }
         }
         return {
+          ...state,
+          nowLoading: false,
           fullCourseList: newFullCourseList,
           fullCourseDate: [...action.payload],
         };
@@ -80,10 +102,33 @@ const createFullCourseReducer = (
         fullCourseDate: [...action.payload],
       };
 
-    // case CREATE_FULL_COURSE:
-    //   return {
-    //     ...action.payload,
-    //   };
+    // 로딩중..
+    case FULL_COURSE_REQUEST:
+      return {
+        ...newState,
+        nowLoading: true,
+      };
+
+    case CREATE_FULL_COURSE_SUCCESS:
+      return {
+        ...newState,
+        nowLoading: false,
+        fullCourseId: action.payload,
+      };
+
+    case CREATE_FULL_COURSE_FAILURE:
+      return {
+        ...newState,
+        nowLoading: false,
+        nowError: true,
+        errorMessage: action.payload,
+      };
+
+    case ERROR_CONTROL:
+      return {
+        ...newState,
+        nowError: action.payload,
+      };
 
     default:
       return state;

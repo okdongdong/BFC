@@ -17,8 +17,8 @@ export interface FullCourseProps {
   fullCourseId: number;
   title: string;
   views: number;
-  startOn: Date;
-  finishedOn: Date;
+  startOn: string;
+  finishedOn: string;
   thumbnailList: string[];
 }
 
@@ -37,8 +37,8 @@ export interface FullCourseDetailProps {
   fullCourseId: number;
   title: string;
   views?: number;
-  startOn: Date;
-  finishedOn: Date;
+  startOn: string;
+  finishedOn: string;
   thumbnailList: string[];
   dayPlaceList: MyFullCourseContentDayProps[];
 }

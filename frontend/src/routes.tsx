@@ -8,7 +8,7 @@ import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
 import Detail from "./pages/Main/Detail";
 import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
-import CreateFullCourse from "./pages/FullCourse/CreateFullCourse/CreateFullCourse";
+import CreateFullCourse from "./pages/FullCourse/CreateFullCourse";
 import Test from "./pages/Test";
 import CreateFullCourseLayout from "./layouts/CreateFullCourse";
 function Router() {
