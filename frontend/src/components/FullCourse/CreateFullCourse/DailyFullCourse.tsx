@@ -1,4 +1,3 @@
-import { useDateTimeValidation } from "@mui/lab/internal/pickers/hooks/useValidation";
 import { useEffect, useRef } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { PlaceCardListProps } from "../../../types/main";

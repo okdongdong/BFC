@@ -2,10 +2,9 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { Theme, Paper, Modal, Box } from "@mui/material";
+import { Theme, Paper } from "@mui/material";
 import MoreModal from "./Modal/PlaceModal";
 
 interface place {

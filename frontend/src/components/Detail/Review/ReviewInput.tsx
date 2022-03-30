@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent } from "react";
 import { Button, TextField, Box } from "@mui/material";
-import { ReviewListProps, ReviewProps } from "../../../types/Review";
+import { ReviewListProps, ReviewProps } from "../../../types/review";
 import axios from "axios";
 const ReviewInput = ({ reviewList, setReviewList }: ReviewListProps) => {
   const place_id = 1; //리덕스로 받기

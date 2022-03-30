@@ -118,11 +118,6 @@ function CollapseContainer({
     zIndex: 1000,
   }));
 
-  const scrollBox = (e: any) => {
-    // console.log(e);
-    // e.target.scrollTop = 500;
-  };
-
   return (
     <CollapseBox>
       <Collapse

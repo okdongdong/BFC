@@ -125,6 +125,7 @@ export default function Like() {
               borderRadius: "10px",
             }}
             src={placesList[i].thumbnail}
+            alt="fullCourseImg"
           ></img>
           <div
             style={{

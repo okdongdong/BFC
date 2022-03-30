@@ -1,10 +1,4 @@
-import {
-  Alert,
-  Backdrop,
-  CircularProgress,
-  Collapse,
-  Stack,
-} from "@mui/material";
+import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
@@ -22,23 +16,15 @@ import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearc
 import {
   createNewSchedule,
   deleteSchedule,
-  errorControl,
   moveCard,
   updateSchedule,
 } from "../../redux/createFullCourse/actions";
-import { CreateFullCourseDnd } from "../../redux/createFullCourse/createFullCourseReducer";
 import {
   CreateNewScheduleProps,
   DeleteScheduleProps,
   FullCourseListProps,
   UpdateScheduleProps,
 } from "../../redux/createFullCourse/types";
-
-const getItems = (count: number, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map((k) => ({
-    id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `item ${k + offset}`,
-  }));
 
 export const move = (
   source: any,

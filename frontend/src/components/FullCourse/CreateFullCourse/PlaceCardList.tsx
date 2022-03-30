@@ -1,6 +1,4 @@
-import { Draggable, Droppable } from "react-beautiful-dnd";
 import { PlaceCardListProps } from "../../../types/main";
-import { getItemStyle, getListStyle } from "./dndFunction";
 import PlaceCard from "./PlaceCard";
 
 function PlaceCardList({ placeList }: PlaceCardListProps) {

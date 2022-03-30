@@ -1,7 +1,4 @@
-import { Box } from "@mui/material";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { connect } from "react-redux";
-import { PlaceListReducer } from "../../../redux/rootReducer";
 import { PlaceCardListProps } from "../../../types/main";
 import { getItemStyle, getListStyle } from "./dndFunction";
 import PlaceCard from "./PlaceCard";

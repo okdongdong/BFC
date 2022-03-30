@@ -1,6 +1,6 @@
 import Reviewer from "./Reviewer";
 import ReviewContent from "./ReviewContent";
-import { ReviewProps } from "../../../types/Review";
+import { ReviewProps } from "../../../types/review";
 const ReviewListItem = ({
   reviewId,
   profile,

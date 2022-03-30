@@ -1,5 +1,4 @@
 import axios from "axios";
-import { userInfo } from "os";
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import {
@@ -7,7 +6,6 @@ import {
   NavUserInfo,
   SetPasswordInfo,
   SetUserInfo,
-  UserInfo,
 } from "../../types/account";
 import {
   USER_LOGIN_REQUEST,

@@ -1,6 +1,4 @@
 // import axios from "axios";
-import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
-import { useNavigate } from "react-router-dom";
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import {
@@ -215,4 +213,3 @@ export const deleteSchedule = ({
     }
   };
 };
-

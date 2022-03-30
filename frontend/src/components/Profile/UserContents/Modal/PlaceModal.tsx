@@ -78,8 +78,9 @@ function PlaceModal({ open, setOpen, contentList, title }: ModalProps) {
               marginLeft: "90px",
             }}
           >
-            {contentList.map((item, key) => (
+            {contentList.map((item, idx) => (
               <Card
+                key={idx}
                 sx={{
                   width: "200px",
                   height: "200px",

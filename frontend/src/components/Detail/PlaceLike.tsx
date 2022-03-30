@@ -3,7 +3,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import IconButton from "@mui/material/IconButton";
 import { pink } from "@mui/material/colors";
-import axios from "axios";
+import { customAxios } from "../../lib/customAxios";
 function PlaceLike() {
   const [checked, setChecked] = React.useState(false);
   const handleChange = () => {
@@ -12,9 +12,9 @@ function PlaceLike() {
   };
   const place_id = 1; //데이터 가져옴
   function onClick() {
-    axios({
+    customAxios({
       method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/place/${place_id}/interest`,
+      url: `/place/${place_id}/interest`,
     }).then((res) => {
       console.log(res);
     });

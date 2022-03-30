@@ -1,5 +1,4 @@
-import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
-import { Box, Icon, Stack, styled } from "@mui/material";
+import { Icon, Stack, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";

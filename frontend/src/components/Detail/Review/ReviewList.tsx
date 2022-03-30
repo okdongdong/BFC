@@ -1,12 +1,12 @@
 import ReviewListItem from "./ReviewListItem";
-import axios from "axios";
-import { ReviewListProps } from "../../../types/Review";
+import { ReviewListProps } from "../../../types/review";
 
-function ReviewList({ reviewList, setReviewList }: ReviewListProps) {
+function ReviewList({ reviewList }: ReviewListProps) {
   return (
     <div className="ReviewList" style={{ marginTop: "10px" }}>
-      {reviewList.map((review) => (
+      {reviewList.map((review, idx) => (
         <ReviewListItem
+          key={idx}
           reviewId={review.reviewId}
           profile={review.profile}
           nickname={review.nickname}

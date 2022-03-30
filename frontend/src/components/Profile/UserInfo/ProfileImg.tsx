@@ -1,6 +1,6 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { AccountReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
 import { setProfileImg } from "../../../redux/account/actions";
