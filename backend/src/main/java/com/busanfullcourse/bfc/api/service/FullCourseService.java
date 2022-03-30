@@ -142,7 +142,25 @@ public class FullCourseService {
                 .title(like.getFullCourse().getTitle())
                 .startedOn(like.getFullCourse().getStartedOn())
                 .finishedOn(like.getFullCourse().getFinishedOn())
-                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                like.getFullCourse().getFullCourseId())))
+                .build());
+    }
+
+    public Page<FullCourseListRes> getMoreUserFullCourse(Long userId, Pageable pageable) {
+        User user = userRepository.getById(userId);
+        Page<FullCourse> page = fullCourseRepository.findAllByUserOrderByStartedOn(user, pageable);
+
+        return page.map(fullCourse -> FullCourseListRes.builder()
+                .fullCourseId(fullCourse.getFullCourseId())
+                .likeCnt(fullCourse.getLikeCnt())
+                .title(fullCourse.getTitle())
+                .startedOn(fullCourse.getStartedOn())
+                .finishedOn(fullCourse.getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                fullCourse.getFullCourseId())))
                 .build());
     }
 }
