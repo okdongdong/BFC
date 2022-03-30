@@ -11,6 +11,7 @@ import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
 import CreateFullCourse from "./pages/FullCourse/CreateFullCourse";
 import Test from "./pages/Test";
 import CreateFullCourseLayout from "./layouts/CreateFullCourse";
+import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
 function Router() {
   return useRoutes([
     {
@@ -69,6 +70,10 @@ function Router() {
         {
           path: "detail",
           element: <Detail />,
+        },
+        {
+          path: "fullcourseDetail",
+          element: <FullCourseDetail />,
         },
       ],
     },
