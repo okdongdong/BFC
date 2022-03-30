@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.api.controller;
 
+import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.CustomPlaceUpdateReq;
 import com.busanfullcourse.bfc.api.response.CustomPlaceListRes;
 import com.busanfullcourse.bfc.api.service.CustomPlaceService;
@@ -12,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/customPlace")
 @RequiredArgsConstructor
@@ -21,10 +24,9 @@ public class CustomPlaceController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<String> createCustomPlace(@RequestBody CustomPlaceUpdateReq req) {
+    public ResponseEntity<Map<String, Long>> createCustomPlace(@RequestBody CustomPlaceScheduleReq req) {
         String username = userService.getCurrentUsername();
-        customPlaceService.createCustomPlace(req, username);
-        return ResponseEntity.ok("나만의 장소가 생성되었습니다.");
+        return ResponseEntity.ok(customPlaceService.createCustomPlace(req, username));
     }
 
     @GetMapping

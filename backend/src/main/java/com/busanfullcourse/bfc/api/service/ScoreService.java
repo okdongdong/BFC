@@ -27,6 +27,11 @@ public class ScoreService {
         Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
 
+
+        Float newAverageScore = (place.getAverageScore()*place.getScoreCount()+score)/(place.getScoreCount()+1);
+        place.setAverageScore(newAverageScore);
+        place.setScoreCount(place.getScoreCount()+1);
+        placeRepository.save(place);
         scoreRepository.save(Score.builder()
                         .place(place)
                         .score(score)
@@ -51,6 +56,13 @@ public class ScoreService {
         if (!score.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
+        Float oldScore = score.getScore();
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Float newAverageScore = (place.getAverageScore()*place.getScoreCount()-oldScore+newScore)/(place.getScoreCount());
+
+        place.setAverageScore(newAverageScore);
+        placeRepository.save(place);
+
         score.setScore(newScore);
         scoreRepository.save(score);
     }
@@ -60,6 +72,12 @@ public class ScoreService {
         if (!score.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
+
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Float newAverageScore = (place.getAverageScore() * place.getScoreCount() - score.getScore()) / (place.getScoreCount() - 1);
+        place.setAverageScore(newAverageScore);
+        place.setScoreCount(place.getScoreCount()-1);
+        placeRepository.save(place);
         scoreRepository.delete(scoreRepository.findByPlacePlaceIdAndUserUsername(placeId, username));
     }
 }

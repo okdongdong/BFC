@@ -2,19 +2,16 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.request.*;
-import com.busanfullcourse.bfc.api.response.FollowRes;
-import com.busanfullcourse.bfc.api.response.MyInfoRes;
-import com.busanfullcourse.bfc.api.response.TokenRes;
-import com.busanfullcourse.bfc.api.response.UserProfileRes;
+import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.entity.Follow;
-import com.busanfullcourse.bfc.db.repository.FollowRepository;
-import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.UserRepository;
+import com.busanfullcourse.bfc.db.entity.Interest;
+import com.busanfullcourse.bfc.db.entity.Like;
+import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.Authentication;
@@ -27,8 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPIRATION_TIME;
@@ -42,10 +42,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final InterestRepository interestRepository;
+    private final LikeRepository likeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ScheduleRepository scheduleRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ConvertUtil convertUtil;
 
     public void signup(SignUpReq signUpReq) {
         if (!signUpReq.getPassword().equals(signUpReq.getPasswordCheck())){
@@ -86,16 +90,36 @@ public class UserService {
 
     public UserProfileRes getUserProfile(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        if (!user.getUsername().equals(getCurrentUsername())) {
-            throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
-        }
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Optional<Follow> follow = followRepository.findByFromUserAndToUser(reqUser, user);
+        Boolean isFollowing;
+        isFollowing = follow.isPresent();
+        List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
+        List<Like> likeList = likeRepository.findTop6ByUser(user);
+
+        List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(like.getFullCourse().getLikeCnt())
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
+                .build()).collect(Collectors.toList());
+
         return UserProfileRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .followerCnt(user.getFollowers().size())
+                .followingCnt(user.getFollowings().size())
+                .isFollowing(isFollowing)
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
+                .interestList(InterestListRes.of(interestList))
+                .likeList(fullCourseListRes)
                 .build();
     }
-
+    // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
@@ -104,19 +128,23 @@ public class UserService {
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
-
+    // 회원 정보 조회에 사용됨
     public MyInfoRes getMyInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String reqUsername = getCurrentUsername();
+        if (!user.getUsername().equals(reqUsername)) {
+            throw new IllegalArgumentException("본인이 아닙니다.");
+        }
         return MyInfoRes.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
@@ -207,35 +235,24 @@ public class UserService {
         if (!username.equals(user.getUsername())) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
-        Byte[] bytes = new Byte[file.getBytes().length];
+        byte[] bytesArray = file.getBytes();
+
+        Byte[] bytes = new Byte[bytesArray.length];
 
         int i = 0;
-
-        for (byte b : file.getBytes()) {
+        for (byte b : bytesArray) {
             bytes[i++] = b;
         }
         user.setProfileImg(bytes);
         userRepository.save(user);
 
-
         return UserProfileRes.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
-    private String convertByteArrayToString(Byte[] bytes) {
-        if (bytes==null){
-            return null;
-        }
-        byte [] primitiveBytes = new byte[bytes.length];
-        int j = 0;
-        for (Byte b: bytes) {
-            primitiveBytes[j++] = b;
-        }
-        return new String(primitiveBytes);
-    }
 
     public FollowRes follow(Long yourId) {
         String myName = getCurrentUsername();
@@ -251,7 +268,8 @@ public class UserService {
         if (follow.isPresent()){
             isFollowing = false;
             followRepository.deleteById(follow.get().getFollowId());
-            System.out.println(followRepository.findAll());
+            you.getFollowers().remove(follow.get());
+
         } else {
             isFollowing = true;
             followRepository.save(Follow.builder()
