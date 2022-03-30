@@ -26,9 +26,7 @@ function ChangeData() {
             <Tab label="비밀번호수정" value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1">
-          <ChangeUserInfo></ChangeUserInfo>
-        </TabPanel>
+        <TabPanel value="1">{/* <ChangeUserInfo></ChangeUserInfo> */}</TabPanel>
         <TabPanel value="2">
           <ChangePassword></ChangePassword>
         </TabPanel>

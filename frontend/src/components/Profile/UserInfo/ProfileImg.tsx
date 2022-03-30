@@ -1,7 +1,10 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState, useRef } from "react";
-import defaultImg from "../../../assets/img/defaultImg.png";
+import { AccountReducer } from "../../../redux/rootReducer";
+import { connect } from "react-redux";
+import { setProfileImg } from "../../../redux/account/actions";
+import { customAxios } from "../../../lib/customAxios";
 import axios from "axios";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -12,36 +15,51 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ProfileImg() {
-  const user_id = 1; //데이터 받아옴
+function ProfileImg({ profileImg, isLogin, userId, setProfileImg }: Props) {
+  console.log(profileImg);
   const classes = useStyles();
-  const [imageUrl, setImageUrl] = useState(defaultImg);
   const imgRef = useRef(
     document.getElementById("inputFile") as HTMLInputElement
   );
   const onChangeImage = () => {
     let reader = new FileReader();
+    const formData = new FormData();
     const file = imgRef.current.files;
     if (file !== null) {
       reader.readAsDataURL(file[0]);
+      formData.append("file", file[0]);
       reader.onload = () => {
         if (reader.readyState === 2) {
           if (typeof reader.result == "string") {
             //null값 제외 시키기 위해서 필요
-            setImageUrl(reader.result);
+            setProfileImg(reader.result);
           }
-          console.log("이미지주소", reader.result);
+
+          // console.log("이미지주소", reader.result);
+          // console.log(file[0]);
+          console.log("여기보세요", formData);
         }
+        const token = localStorage.getItem("accessToken") || "";
+
         axios({
           method: "post",
-          url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${user_id}/profile`,
-          data: file,
+          url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}/profile`,
+          data: formData,
+          headers: {
+            Authorization: token,
+            "Content-Type": "multipart/form-data",
+          },
+          // customAxios({
+          //   method: "post",
+          //   url: `/users/${userId}/profile`,
+          //   data: formData,
         })
           .then((res) => {
             console.log(res);
           })
           .catch((err) => {
             console.log(err);
+            console.log(token);
           });
       };
     }
@@ -49,9 +67,10 @@ function ProfileImg() {
   const onClickFileBtn = () => {
     imgRef.current.click();
   };
+
   return (
     <div>
-      <img src={imageUrl} className={classes.myImg}></img>
+      <img src={profileImg} className={classes.myImg}></img>
       <div>
         <input
           type="file"
@@ -74,4 +93,18 @@ function ProfileImg() {
     </div>
   );
 }
-export default ProfileImg;
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    isLogin: account.isLogin,
+    profileImg: account.profileImg,
+    userId: account.userId,
+  };
+};
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setProfileImg: (profileImg: string) => dispatch(setProfileImg(profileImg)),
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileImg);
