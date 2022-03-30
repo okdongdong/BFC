@@ -1,5 +1,4 @@
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import TextFieldWithButton from "../../Accounts/TextFieldWithButton";
 import {
   Button,
@@ -10,6 +9,11 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import DeleteAccount from "./DeleteAccount";
+import { AccountReducer } from "../../../redux/rootReducer";
+import { connect } from "react-redux";
+import { customAxios } from "../../../lib/customAxios";
+import { SetUserInfo } from "../../../types/account";
+import { getUserInfo, setUserInfo } from "../../../redux/account/actions";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -27,36 +31,26 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface UserInfo {
-  user_id: number;
-  username: string;
-  password: string;
-  passwordConfirmation: string;
-  nickname: string;
-  birthday: string;
-  gender: number; // 남자: 1, 여자: 0
-  [key: string]: any; // 이거를 쓰면 ts를 쓰는 의미가 없긴한데 일단 오류를 해결하기 위해 사용
-}
-function ChangeUserInfo() {
+function ChangeUserInfo({
+  getUserInfo,
+  setUserInfo,
+  userId,
+  username,
+  nickname,
+  birthday,
+  gender,
+}: Props) {
   const classes = useStyles();
+  //회원정보가져오기
+  getUserInfo(userId);
 
-  // 유저정보 기본값
-  const initUserInfo: UserInfo = {
-    user_id: 1,
-    username: "jhj20071@naver.com",
-    password: "jj12341234!",
-    passwordConfirmation: "jj12341234!",
-    nickname: "ho빵",
-    birthday: "1998-03-11",
-    gender: 0,
+  const userInfo: SetUserInfo = {
+    username: username,
+    nickname: nickname,
+    gender: gender,
+    birthday: birthday,
   };
-
-  //   console.log(initUserInfo);
-
-  // 유저정보 state
-  const [userInfo, setUserInfo] = useState<UserInfo>(initUserInfo);
-
-  // 인증관련 state
+  //인증관련 state
   const [nicknameConfirmation, setNicknameConfirmation] =
     useState<boolean>(false);
   const [sendCheckNickname, setSendCheckNickname] = useState<boolean>(false);
@@ -65,25 +59,14 @@ function ChangeUserInfo() {
   const [nickNameMessage, setNickNameMessage] = useState<string>("");
 
   // 회원정보수정요청
-  function requestChangeUser(userInfo: UserInfo): void {
-    console.log(userInfo);
-    axios({
+  function requestChangeUser(): void {
+    customAxios({
       method: "put",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userInfo.user_id}`,
+      url: `/users/${userId}`,
       data: userInfo,
     })
       .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
-  }
-  //테스트할때 적용
-  function getUserData(): void {
-    axios({
-      method: "get",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userInfo.user_id}`,
-      params: { nickname: userInfo.nickname },
-    }).then((res) => {
-      setUserInfo(() => res.data);
-    });
   }
 
   // 닉네임 중복검사요청
@@ -95,12 +78,11 @@ function ChangeUserInfo() {
     } else {
       // 닉네임 인증
       console.log("닉네임 중복검사 요청");
-      console.log(userInfo);
       setSendCheckNickname(() => true);
-      axios({
+      customAxios({
         method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/nickname`,
-        params: { nickname: userInfo.nickname },
+        url: `/auth/nickname`,
+        params: { nickname: nickname },
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
@@ -115,22 +97,22 @@ function ChangeUserInfo() {
 
   // 성별버튼
   function selectGender(gender: number): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SetUserInfo = { ...userInfo };
     if (gender === 1) {
       newUserInfo.gender = 1;
-      setUserInfo(() => newUserInfo);
+      setUserInfo(newUserInfo);
     } else {
       newUserInfo.gender = 0;
-      setUserInfo(() => newUserInfo);
+      setUserInfo(newUserInfo);
     }
   }
 
   // 회원정보수정폼 정보입력
   function changeUserInfo(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: UserInfo = { ...userInfo };
+    const newUserInfo: SetUserInfo = { ...userInfo };
     const targetId: string = event.target.id;
     newUserInfo[targetId] = event.target.value;
-    setUserInfo(() => newUserInfo);
+    setUserInfo(newUserInfo);
 
     // 유효성 검사
     switch (targetId) {
@@ -163,7 +145,7 @@ function ChangeUserInfo() {
             fullWidth
             id="certificationNumber"
             label="이메일"
-            defaultValue={initUserInfo.username}
+            defaultValue={username}
             type="text"
             name="certificationNumber"
           />
@@ -174,7 +156,7 @@ function ChangeUserInfo() {
             onChange={changeUserInfo}
             onClickButton={requestCheckNickname}
             buttonText="닉네임중복확인"
-            value={userInfo.nickname}
+            value={nickname}
             disabled={sendCheckNickname}
             helperText={nickNameMessage}
           ></TextFieldWithButton>
@@ -184,13 +166,13 @@ function ChangeUserInfo() {
             className={classes.form}
           >
             <Button
-              variant={userInfo.gender === 1 ? "contained" : "outlined"}
+              variant={gender === 1 ? "contained" : "outlined"}
               onClick={() => selectGender(1)}
             >
               남
             </Button>
             <Button
-              variant={userInfo.gender === 0 ? "contained" : "outlined"}
+              variant={gender === 0 ? "contained" : "outlined"}
               onClick={() => selectGender(0)}
             >
               여
@@ -204,7 +186,7 @@ function ChangeUserInfo() {
             label="생년월일"
             type="date"
             id="birthday"
-            defaultValue={userInfo.birthday}
+            defaultValue={birthday}
             onChange={changeUserInfo}
           />
 
@@ -224,5 +206,24 @@ function ChangeUserInfo() {
     </Container>
   );
 }
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    isLogin: account.isLogin,
+    userId: account.userId,
+    nickname: account.nickname,
+    username: account.username,
+    gender: account.gender,
+    birthday: account.birthday,
+  };
+};
 
-export default ChangeUserInfo;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    getUserInfo: (userId: number) => dispatch(getUserInfo(userId)),
+    setUserInfo: (userInfo: SetUserInfo) => dispatch(setUserInfo(userInfo)),
+  };
+};
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeUserInfo);

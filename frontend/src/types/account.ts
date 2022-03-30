@@ -17,6 +17,22 @@ export interface LoginUserInfo {
   password: string;
 }
 
+export interface SetPasswordInfo {
+  username: string;
+  oldPassword: string;
+  newPassword: string;
+  passwordCheck: string;
+  [key: string]: any;
+}
+
+export interface SetUserInfo {
+  username: string;
+  nickname: string;
+  gender: number;
+  birthday: string;
+  [key: string]: any;
+}
+
 export interface SignupUserInfo {
   username: string;
   password: string;

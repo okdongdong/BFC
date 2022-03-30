@@ -42,7 +42,6 @@ function MyFullCourse({ fullCourseDetailList }: FullCourseDetailListProps) {
               }}
             >
               <MyFullCourseContent
-                thumbnailList={fullCourseDetail.thumbnailList}
                 startOn={fullCourseDetail.startOn}
                 finishedOn={fullCourseDetail.finishedOn}
                 fullCourseId={fullCourseDetail.fullCourseId}
