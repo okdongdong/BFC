@@ -3,7 +3,9 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
+import com.busanfullcourse.bfc.api.response.SharingListRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
+import com.busanfullcourse.bfc.api.service.ShareService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.Map;
 public class FullCourseController {
 
     private final FullCourseService fullCourseService;
+    private final ShareService shareService;
     private final UserService userService;
 
     @PostMapping
@@ -52,5 +55,11 @@ public class FullCourseController {
     public ResponseEntity<Map<String, Boolean>> getLikeFullCourse(@PathVariable Long fullCourseId) {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(fullCourseService.getLikeFullCourse(fullCourseId, username));
+    }
+
+    @PostMapping("/{fullCourseId}/share")
+    public ResponseEntity<List<SharingListRes>> shareFullCourse(@PathVariable Long fullCourseId, @RequestBody List<String> userList) throws IllegalAccessException {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(shareService.shareFullCourse(fullCourseId, username, userList));
     }
 }
