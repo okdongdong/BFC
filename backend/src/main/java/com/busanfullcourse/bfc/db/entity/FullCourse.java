@@ -1,8 +1,6 @@
 package com.busanfullcourse.bfc.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -43,6 +41,9 @@ public class FullCourse {
     private User user;
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> scheduleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sharing> sharings = new ArrayList<>();
 
     @ToString.Exclude
@@ -53,4 +54,6 @@ public class FullCourse {
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishPlace> wishPlaces = new ArrayList<>();
 
+    @Column(name = "like_count")
+    private Integer likeCnt;
 }

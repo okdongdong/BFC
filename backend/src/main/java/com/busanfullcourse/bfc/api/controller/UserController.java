@@ -3,11 +3,15 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.request.ChangePasswordReq;
 import com.busanfullcourse.bfc.api.request.UserDeleteReq;
 import com.busanfullcourse.bfc.api.request.UserUpdateReq;
-import com.busanfullcourse.bfc.api.response.FollowRes;
-import com.busanfullcourse.bfc.api.response.MyInfoRes;
-import com.busanfullcourse.bfc.api.response.UserProfileRes;
+import com.busanfullcourse.bfc.api.response.*;
+import com.busanfullcourse.bfc.api.service.FullCourseService;
+import com.busanfullcourse.bfc.api.service.InterestService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +24,8 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
+    private final InterestService interestService;
+    private final FullCourseService fullCourseService;
 
     @GetMapping("/{nickname}/profile")
     public ResponseEntity<UserProfileRes> getUserProfile(@PathVariable String nickname) {
@@ -58,5 +64,19 @@ public class UserController {
     public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.follow(userId));
     }
+
+
+    @GetMapping("/{userId}/interest")
+    public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
+                                                                       @PageableDefault(size = 4, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
+    }
+
+    @GetMapping("/{userId}/like")
+    public ResponseEntity<Page<FullCourseListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
+                                                                          @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(fullCourseService.getMoreLikedFullCourse(userId, pageable));
+    }
+
 
 }
