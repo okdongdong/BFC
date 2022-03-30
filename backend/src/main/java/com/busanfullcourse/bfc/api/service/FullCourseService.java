@@ -2,9 +2,12 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
+import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ public class FullCourseService {
     private final WishFoodRepository wishFoodRepository;
     private final WishPlaceRepository wishPlaceRepository;
     private final ScheduleRepository scheduleRepository;
+    private final LikeRepository likeRepository;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
@@ -56,9 +60,19 @@ public class FullCourseService {
         return map;
     }
 
+    public List<FullCourseListRes> getPopularFullCourseList() {
+        List<FullCourse> list = fullCourseRepository.findTop8ByLikeListSizeAndIsPublic();
+        List<FullCourseListRes> listRes = FullCourseListRes.of(list);
+        for (FullCourseListRes res : listRes) {
+            res.setThumbnailList(FullCourseListRes
+                    .ofThumbnailList(res.getScheduleList()));
+        }
+        return listRes;
+    }
+
     public FullCourseRes getFullCourse(Long fullCourseId) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
-        List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseId(fullCourseId);
+        List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourseId);
         return FullCourseRes.builder()
                 .fullCourseId(fullCourseId)
                 .title(fullCourse.getTitle())
@@ -70,8 +84,65 @@ public class FullCourseService {
                 .scheduleDetailList(FullCourseRes.ScheduleDetail.of(scheduleList))
                 .WishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
                 .WishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
+                .LikeCnt(fullCourse.getLikeCnt())
                 .build();
     }
 
 
+    public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+
+        Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
+
+        Boolean isLiked;
+        if (like.isPresent()) {
+            isLiked = false;
+            likeRepository.delete(like.get());
+            fullCourse.setLikeCnt(fullCourse.getLikeCnt()-1);
+        } else{
+            isLiked = true;
+            likeRepository.save(Like.builder()
+                            .user(user)
+                            .fullCourse(fullCourse)
+                    .build());
+            fullCourse.setLikeCnt(fullCourse.getLikeCnt()+1);
+        }
+
+        fullCourseRepository.save(fullCourse);
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("isLiked", isLiked);
+        return map;
+
+    }
+
+    public Map<String, Boolean> getLikeFullCourse(Long fullCourseId, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("isLiked", like.isPresent());
+        return map;
+    }
+
+    public void deleteFullCourse(Long fullCourseId) {
+        if (fullCourseRepository.existsById(fullCourseId)) {
+            fullCourseRepository.deleteById(fullCourseId);
+        } else {
+            throw new NoSuchElementException("풀코스가 없습니다.");
+        }
+    }
+
+    public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
+        Page<Like> page = likeRepository.findAllByUserId(userId, pageable);
+
+        return page.map(like -> FullCourseListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(like.getFullCourse().getLikeCnt())
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
+                .build());
+    }
 }
