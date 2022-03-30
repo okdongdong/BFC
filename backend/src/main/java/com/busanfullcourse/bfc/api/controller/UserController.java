@@ -65,11 +65,16 @@ public class UserController {
         return ResponseEntity.ok(userService.follow(userId));
     }
 
-
     @GetMapping("/{userId}/interest")
     public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
                                                                        @PageableDefault(size = 4, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
         return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
+    }
+
+    @GetMapping("/{userId}/user")
+    public ResponseEntity<Page<FullCourseListRes>> getMoreUserFullCourse(@PathVariable Long userId,
+                                                                         @PageableDefault(size = 4, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(fullCourseService.getMoreUserFullCourse(userId, pageable));
     }
 
     @GetMapping("/{userId}/like")
