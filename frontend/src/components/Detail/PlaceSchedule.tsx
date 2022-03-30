@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Fade from "@mui/material/Fade";

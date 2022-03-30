@@ -2,7 +2,6 @@ import React from "react";
 import LikePlace from "./LikePlace";
 import LikeFullCourse from "./LikeFullCourse";
 import MyFullCourse from "./MyFullCourse";
-import VisitedPlace from "./VisitedPlace";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import KakaoMap from "../../FullCourse/CreateFullCourse/KakaoMap";

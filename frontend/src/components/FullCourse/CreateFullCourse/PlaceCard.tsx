@@ -1,6 +1,5 @@
 import {
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
   Chip,
@@ -8,7 +7,6 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { PlaceCardProps } from "../../../types/main";
 import StarScore from "../../Main/StarScore";
 

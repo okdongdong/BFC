@@ -1,7 +1,6 @@
 import { AnyAction } from "redux";
 import { placeList as dummyPlaceList } from "../../assets/dummyData/dummyData";
 import { PlaceCardProps } from "../../types/main";
-import { MOVE_CARD } from "./types";
 
 export interface PlaceListDnd {
   placeList: Array<{ id: string; content: PlaceCardProps }> | Array<null>;

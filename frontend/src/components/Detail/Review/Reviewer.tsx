@@ -1,6 +1,6 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ReviewProps } from "../../../types/Review";
+import { ReviewProps } from "../../../types/review";
 const useStyles = makeStyles((theme: Theme) => ({
   myImg: {
     borderRadius: theme.spacing(100),

@@ -8,8 +8,8 @@ import PlaceRating from "./PlaceRating";
 import AnotherPlatform from "./AnotherPlatform";
 import PlaceLike from "./PlaceLike";
 import Menu from "./Menu";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { customAxios } from "../../lib/customAxios";
 const PlaceNameStyle = styled("h2")(() => ({
   display: "flex",
   alignItems: "center",
@@ -21,9 +21,9 @@ function RestaurantDetail() {
   const [averageScore, setAverageScore] = useState(1);
   //평점가져오기
   function getScore() {
-    axios({
+    customAxios({
       method: "get",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/place/${place_id}/score`,
+      url: `/place/${place_id}/score`,
     }).then((res) => {
       console.log(res);
       setAverageScore(res.data);

@@ -1,4 +1,3 @@
-import { Action } from "history";
 import { AnyAction } from "redux";
 import { NavUserInfo } from "../../types/account";
 import {

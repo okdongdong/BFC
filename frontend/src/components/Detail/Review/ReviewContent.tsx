@@ -1,4 +1,4 @@
-import { ReviewProps } from "../../../types/Review";
+import { ReviewProps } from "../../../types/review";
 import axios from "axios";
 import { TextField } from "@mui/material";
 import { useState } from "react";

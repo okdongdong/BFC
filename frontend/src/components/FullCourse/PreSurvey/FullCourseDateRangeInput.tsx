@@ -1,9 +1,8 @@
 import { DateRangePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import { DateRange, RangeInput } from "@mui/lab/DateRangePicker/RangeTypes";
-import { Box, TextField, Typography } from "@mui/material";
+import { RangeInput } from "@mui/lab/DateRangePicker/RangeTypes";
+import { Box, TextField } from "@mui/material";
 import React from "react";
-import DatePicker from "../CreateFullCourse/DatePicker";
 
 function FullCourseDateRangeInput() {
   const [value, setValue] = React.useState<RangeInput<Date>>([null, null]);

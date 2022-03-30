@@ -1,4 +1,3 @@
-import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 import { AnyAction } from "redux";
 import { placeList } from "../../assets/dummyData/dummyData";
 import { PlaceCardProps } from "../../types/main";

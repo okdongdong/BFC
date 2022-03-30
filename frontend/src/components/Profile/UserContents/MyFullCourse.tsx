@@ -87,6 +87,7 @@ export default function MyFullCourse() {
               borderRadius: "10px",
             }}
             src={placesList[i].thumbnail}
+            alt="fullCourseImg"
           ></img>
           <div
             style={{

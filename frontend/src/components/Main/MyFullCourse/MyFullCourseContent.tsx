@@ -1,6 +1,8 @@
 import { Box, styled } from "@mui/material";
-import React from "react";
-import { FullCourseDetailProps } from "../../../types/main";
+import {
+  FullCourseContentProps,
+  MyFullCourseContentDayProps,
+} from "../../../types/main";
 import MyFullCourseContentDay from "./MyFullCourseContentDay";
 
 const BoxStyle = styled(Box)(() => ({
@@ -13,11 +15,9 @@ const BoxStyle = styled(Box)(() => ({
 function MyFullCourseContent({
   startOn,
   finishedOn,
-  fullCourseId,
-  thumbnailList,
   title,
   dayPlaceList,
-}: FullCourseDetailProps) {
+}: FullCourseContentProps) {
   const today = new Date().getTime();
 
   let nowStatus = "";
@@ -35,7 +35,7 @@ function MyFullCourseContent({
       <p style={{ marginBottom: 5 }}>{nowStatus}</p>
       <h1 style={{ fontSize: 32, marginTop: 0 }}>{title}</h1>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        {dayPlaceList.map((place) => (
+        {dayPlaceList.map((place: MyFullCourseContentDayProps) => (
           <MyFullCourseContentDay
             courseDate={place.courseDate}
             day={place.day}

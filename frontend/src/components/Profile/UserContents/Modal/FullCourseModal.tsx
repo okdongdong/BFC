@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia, Modal, Typography } from "@mui/material";
+import { Modal } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
 
@@ -75,8 +75,9 @@ function FullCourseModal({ open, setOpen, contentList, title }: ModalProps) {
               marginLeft: "90px",
             }}
           >
-            {contentList.map((item, key) => (
+            {contentList.map((item, idx) => (
               <div
+                key={idx}
                 style={{
                   position: "relative",
                 }}
@@ -91,6 +92,7 @@ function FullCourseModal({ open, setOpen, contentList, title }: ModalProps) {
                     borderRadius: "10px",
                   }}
                   src={item.thumbnail}
+                  alt="fullCourseImg"
                 ></img>
                 <div
                   style={{
