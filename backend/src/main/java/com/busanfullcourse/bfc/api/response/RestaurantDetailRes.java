@@ -25,7 +25,7 @@ public class RestaurantDetailRes {
 
     private String address;
 
-    private String category;
+    private Boolean category;
 
     private String phone;
 
