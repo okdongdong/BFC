@@ -1,7 +1,5 @@
 package com.busanfullcourse.bfc.common.util;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +14,6 @@ public class ConvertUtil {
         for (Byte b: bytes) {
             primitiveBytes[j++] = b;
         }
-        return "data:image/png;base64," +
-                StringUtils.newStringUtf8(Base64.encodeBase64(primitiveBytes, false));
+        return new String(primitiveBytes);
     }
 }

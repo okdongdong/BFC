@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -235,16 +234,16 @@ public class UserService {
         if (!username.equals(user.getUsername())) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
-        byte[] bytesArray = file.getBytes();
-
-        Byte[] bytes = new Byte[bytesArray.length];
+        Byte[] bytes = new Byte[file.getBytes().length];
 
         int i = 0;
-        for (byte b : bytesArray) {
+
+        for (byte b : file.getBytes()) {
             bytes[i++] = b;
         }
         user.setProfileImg(bytes);
         userRepository.save(user);
+
 
         return UserProfileRes.builder()
                 .username(user.getUsername())
