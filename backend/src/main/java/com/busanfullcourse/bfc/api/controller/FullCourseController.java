@@ -62,4 +62,17 @@ public class FullCourseController {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(shareService.shareFullCourse(fullCourseId, username, userList));
     }
+
+    @GetMapping("/{fullCourseId}/share")
+    public ResponseEntity<List<SharingListRes>> getShareMember(@PathVariable Long fullCourseId) throws IllegalAccessException {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(shareService.getShareMember(fullCourseId, username));
+    }
+
+    @DeleteMapping("/{fullCourseId}/share")
+    public ResponseEntity<String> deleteShareMember(@PathVariable Long fullCourseId, @RequestBody Map<String, Long> map) throws IllegalAccessException {
+        String username = userService.getCurrentUsername();
+        shareService.deleteShareMember(fullCourseId, username, map);
+        return ResponseEntity.ok("멤버가 제외되었습니다.");
+    }
 }
