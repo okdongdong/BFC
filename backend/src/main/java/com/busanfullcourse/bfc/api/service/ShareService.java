@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,5 +44,23 @@ public class ShareService {
 //            List<Sharing> sharings = sharingRepository.findAllByFullCourse(fullCourse);
 
         return SharingListRes.of(sharings);
+    }
+
+    public List<SharingListRes> getShareMember(Long fullCourseId, String username) throws IllegalAccessException {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        if (!fullCourse.getUser().getUsername().equals(username)) {
+            throw new IllegalAccessException("풀코스의 주인만 조회할 수 있습니다.");
+        }
+
+        return SharingListRes.of(sharingRepository.findAllByFullCourseFullCourseId(fullCourseId));
+    }
+
+    public void deleteShareMember(Long fullCourseId, String username, Map<String, Long> map) throws IllegalAccessException {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        if (!fullCourse.getUser().getUsername().equals(username)) {
+            throw new IllegalAccessException("풀코스의 주인만 수정할 수 있습니다.");
+        }
+
+        sharingRepository.deleteById(sharingRepository.findByUserId(map.get("bannedMember")).getSharingId());
     }
 }
