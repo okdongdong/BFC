@@ -14,7 +14,7 @@ function ChangeData() {
   };
 
   return (
-    <Box sx={{ width: "100%", typography: "body1", marginTop: "100px" }}>
+    <Box sx={{ width: "100%", typography: "body1", marginTop: "50px" }}>
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
@@ -26,9 +26,7 @@ function ChangeData() {
             <Tab label="비밀번호수정" value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1">
-          <ChangeUserInfo></ChangeUserInfo>
-        </TabPanel>
+        <TabPanel value="1">{/* <ChangeUserInfo></ChangeUserInfo> */}</TabPanel>
         <TabPanel value="2">
           <ChangePassword></ChangePassword>
         </TabPanel>

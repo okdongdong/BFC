@@ -36,7 +36,7 @@ function RestaurantDetail() {
   return (
     <div
       style={{
-        marginTop: "150px",
+        marginTop: "50px",
         width: "53%",
         marginLeft: "auto",
         marginRight: "auto",
