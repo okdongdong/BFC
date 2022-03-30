@@ -31,10 +31,23 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
 }));
 
 // Date를 yyyy-MM-dd로 변환해주는 함수
-export const toStringByFormatting = (source: Date, delimiter: string = "-") => {
+export const toStringByFormatting = (
+  source: Date | string | null,
+  delimiter: string = "-"
+) => {
+  if (source === null) {
+    return null;
+  }
+
+  if (typeof source === "string") {
+    return source.split("-").join(delimiter);
+  }
+
   const year = source.getFullYear();
-  const month = source.getMonth() + 1;
-  const day = source.getDate();
+  const tempMonth = source.getMonth() + 1;
+  const tempDay = source.getDate();
+  const month = tempMonth < 10 ? `0${tempMonth}` : tempMonth;
+  const day = tempDay < 10 ? `0${tempDay}` : tempDay;
   return [year, month, day].join(delimiter);
 };
 

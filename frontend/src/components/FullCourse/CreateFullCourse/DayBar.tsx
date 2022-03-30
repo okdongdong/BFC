@@ -2,6 +2,7 @@ import { DateRange } from "@mui/lab/DateRangePicker/RangeTypes";
 import { Box, Icon, Stack, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 import { setFullCourseDate } from "../../../redux/createFullCourse/actions";
 
 const ContentBox = styled(Stack)(() => ({
@@ -27,7 +28,6 @@ const ContentBox = styled(Stack)(() => ({
   },
 }));
 
-
 function DayBar({
   fullCourseDate,
   setFullCourseDate,
@@ -40,7 +40,8 @@ function DayBar({
   setDayChange: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [dayList, setDayList] = useState<Array<string>>([]);
-  const [startDate, endDate]: DateRange<Date> = fullCourseDate;
+  const startDate: Date = new Date(fullCourseDate[0]);
+  const endDate: Date = new Date(fullCourseDate[1]);
   const DayTextStyle = styled("div")((attr: { idx: number }) => ({
     backgroundColor: `${attr.idx === pickedDay ? "#47A3EC" : "white"}`,
     color: `${attr.idx !== pickedDay || "white"}`,
@@ -88,9 +89,15 @@ function DayBar({
   const addDate = () => {
     if (startDate !== null && endDate !== null) {
       const nextDate = new Date(endDate.setDate(endDate.getDate() + 1));
-      setFullCourseDate([startDate, nextDate]);
+      setFullCourseDate([
+        toStringByFormatting(startDate),
+        toStringByFormatting(nextDate),
+      ]);
     } else {
-      setFullCourseDate([new Date(), new Date()]);
+      setFullCourseDate([
+        toStringByFormatting(new Date()),
+        toStringByFormatting(new Date()),
+      ]);
     }
   };
 
@@ -130,7 +137,7 @@ const mapStateToProps = ({ createFullCourse }: any) => ({
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setFullCourseDate: (newDate: DateRange<Date>) =>
+    setFullCourseDate: (newDate: Array<string | null>) =>
       dispatch(setFullCourseDate(newDate)),
   };
 };

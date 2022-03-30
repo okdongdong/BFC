@@ -1,5 +1,11 @@
-import { Stack } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  Backdrop,
+  CircularProgress,
+  Collapse,
+  Stack,
+} from "@mui/material";
+import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
 import { placeList as dummyPlaceList } from "../../assets/dummyData/dummyData";
@@ -8,12 +14,25 @@ import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyF
 import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
 import { reorder } from "../../components/FullCourse/CreateFullCourse/dndFunction";
 import KakaoMap from "../../components/FullCourse/CreateFullCourse/KakaoMap";
+import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
 import PlaceCardList from "../../components/FullCourse/CreateFullCourse/PlaceCardList";
 import PlaceCardListDnd from "../../components/FullCourse/CreateFullCourse/PlaceCardListDnd";
 import PlaceDetail from "../../components/FullCourse/CreateFullCourse/PlaceDetail";
 import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
-import { moveCard } from "../../redux/createFullCourse/actions";
+import {
+  createNewSchedule,
+  deleteSchedule,
+  errorControl,
+  moveCard,
+  updateSchedule,
+} from "../../redux/createFullCourse/actions";
 import { CreateFullCourseDnd } from "../../redux/createFullCourse/createFullCourseReducer";
+import {
+  CreateNewScheduleProps,
+  DeleteScheduleProps,
+  FullCourseListProps,
+  UpdateScheduleProps,
+} from "../../redux/createFullCourse/types";
 
 const getItems = (count: number, offset = 0) =>
   Array.from({ length: count }, (v, k) => k).map((k) => ({
@@ -21,7 +40,7 @@ const getItems = (count: number, offset = 0) =>
     content: `item ${k + offset}`,
   }));
 
-const move = (
+export const move = (
   source: any,
   destination: any,
   droppableSource: any,
@@ -62,7 +81,16 @@ dummyPlaceList.map((place: any) =>
   })
 );
 
-function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
+function CreateFullCourse({
+  fullCourseList,
+  fullCourseId,
+  placeList,
+  nowLoading,
+  moveCard,
+  createNewSchedule,
+  updateSchedule,
+  deleteSchedule,
+}: Props) {
   const [pickedDay, setPickedDay] = useState<number>(1);
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
@@ -73,20 +101,25 @@ function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
     if (!destination || destination.dropableId === "placeList") {
       return;
     }
-    console.log(111111111, source);
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
 
     if (source.droppableId === "placeList") {
       const result = move(placeList, fullCourseList[dInd], source, destination);
-      const newState: any = [...fullCourseList];
+      const newState: FullCourseListProps = [...fullCourseList];
       newState[dInd] = result[dInd];
-      moveCard(newState);
-      // 스케줄 추가 구현중
-      // creatNewSchedule({...placeList[source.index], day:dInd+1, sequence:destination.index+1});
+      createNewSchedule({
+        newScheduleListInfo: newState,
+        day: dInd,
+        sequence: destination.index,
+        fullCourseId: fullCourseId,
+      });
 
       return;
     }
+
+    const scheduleId = fullCourseList[sInd][source.index].content.scheduleId;
+    const placeId = fullCourseList[sInd][source.index].content.placeId;
 
     if (sInd === dInd) {
       if (source.index === destination.index) {
@@ -100,7 +133,16 @@ function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
       );
       const newState: any = [...fullCourseList];
       newState[sInd] = items;
-      moveCard(newState);
+      updateSchedule({
+        placeId: placeId,
+        updateScheduleListInfo: newState,
+        fullCourseId: fullCourseId,
+        scheduleId: scheduleId,
+        day: sInd,
+        day2: dInd,
+        sequence: source.index,
+        sequence2: destination.index,
+      });
     } else {
       const result = move(
         fullCourseList[sInd],
@@ -111,76 +153,103 @@ function CreateFullCourse({ fullCourseList, placeList, moveCard }: Props) {
       const newState: any = [...fullCourseList];
       newState[sInd] = result[sInd];
       newState[dInd] = result[dInd];
-      moveCard(newState);
+      updateSchedule({
+        placeId: placeId,
+        updateScheduleListInfo: newState,
+        fullCourseId: fullCourseId,
+        scheduleId: scheduleId,
+        day: sInd,
+        day2: dInd,
+        sequence: source.index,
+        sequence2: destination.index,
+      });
     }
   };
 
   return (
-    <div style={{ width: "100%" }}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {/* <DayBar></DayBar> */}
-        <PlaceDetail></PlaceDetail>
-        <PlaceSearch></PlaceSearch>
-        <div style={{ display: "flex", position: "relative" }}>
-          <DayBar
-            pickedDay={pickedDay}
-            setPickedDay={setPickedDay}
-            setDayChange={setDayChange}
-          ></DayBar>
-          <CollapseContainer
-            dayChange={dayChange}
-            buttonPositionY={0}
-            setNowScrollPosition={setNowScrollPosition}
-          >
-            풀코스
-            <Stack
-              spacing={2}
-              sx={{ alignItems: "center", position: "relative" }}
+    <>
+      <Notice></Notice>
+      <div style={{ width: "100%" }}>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={nowLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <DragDropContext onDragEnd={onDragEnd}>
+          {/* <DayBar></DayBar> */}
+          <PlaceDetail></PlaceDetail>
+          <PlaceSearch></PlaceSearch>
+          <div style={{ display: "flex", position: "relative" }}>
+            <DayBar
+              pickedDay={pickedDay}
+              setPickedDay={setPickedDay}
+              setDayChange={setDayChange}
+            ></DayBar>
+            <CollapseContainer
+              dayChange={dayChange}
+              buttonPositionY={0}
+              setNowScrollPosition={setNowScrollPosition}
             >
-              {fullCourseList.map((placeList: any, idx: number) => (
-                <div key={idx}>
-                  <div>DAY{idx + 1}</div>
-                  <DailyFullCourse
-                    setDayChange={setDayChange}
-                    nowScrollPosition={nowScrollPosition}
-                    idx={idx}
-                    pickedDay={pickedDay}
-                    placeList={placeList}
-                    droppableId={`${idx}`}
-                  ></DailyFullCourse>
-                </div>
-              ))}
-            </Stack>
-          </CollapseContainer>
-          <CollapseContainer buttonPositionY={200} backgroundColor="#dee">
-            검색창
-            <hr />
-            구분|구분|구분
-            <Stack
-              spacing={2}
-              sx={{ alignItems: "center", position: "relative" }}
-            >
-              <PlaceCardList placeList={createNewItem()}></PlaceCardList>
-              <PlaceCardListDnd placeList={createNewItem()}></PlaceCardListDnd>
-            </Stack>
-          </CollapseContainer>
-          <CollapseContainer buttonPositionY={400} backgroundColor="#cdd">
-            디테일
-          </CollapseContainer>
-          <KakaoMap></KakaoMap>
-        </div>
-      </DragDropContext>
-    </div>
+              풀코스
+              <Stack
+                spacing={2}
+                sx={{ alignItems: "center", position: "relative" }}
+              >
+                {fullCourseList.map((placeList: any, idx: number) => (
+                  <div key={idx}>
+                    <div>DAY{idx + 1}</div>
+                    <DailyFullCourse
+                      setDayChange={setDayChange}
+                      nowScrollPosition={nowScrollPosition}
+                      idx={idx}
+                      pickedDay={pickedDay}
+                      placeList={placeList}
+                      droppableId={`${idx}`}
+                    ></DailyFullCourse>
+                  </div>
+                ))}
+              </Stack>
+            </CollapseContainer>
+            <CollapseContainer buttonPositionY={200} backgroundColor="#dee">
+              검색창
+              <hr />
+              구분|구분|구분
+              <Stack
+                spacing={2}
+                sx={{ alignItems: "center", position: "relative" }}
+              >
+                <PlaceCardList placeList={createNewItem()}></PlaceCardList>
+                <PlaceCardListDnd
+                  placeList={createNewItem()}
+                ></PlaceCardListDnd>
+              </Stack>
+            </CollapseContainer>
+            <CollapseContainer buttonPositionY={400} backgroundColor="#cdd">
+              디테일
+            </CollapseContainer>
+            <KakaoMap></KakaoMap>
+          </div>
+        </DragDropContext>
+      </div>
+    </>
   );
 }
 const mapStateToProps = ({ createFullCourse, createPlaceList }: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: createPlaceList.placeList,
+  fullCourseId: createFullCourse.fullCourseId,
+  nowLoading: createFullCourse.nowLoading,
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    moveCard: (newState: Array<CreateFullCourseDnd>) =>
-      dispatch(moveCard(newState)),
+    moveCard: (newState: FullCourseListProps) => dispatch(moveCard(newState)),
+    createNewSchedule: (newState: CreateNewScheduleProps) =>
+      dispatch(createNewSchedule(newState)),
+    updateSchedule: (newState: UpdateScheduleProps) =>
+      dispatch(updateSchedule(newState)),
+    deleteSchedule: (newState: DeleteScheduleProps) =>
+      dispatch(deleteSchedule(newState)),
   };
 };
 

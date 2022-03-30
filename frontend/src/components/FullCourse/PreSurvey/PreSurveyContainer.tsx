@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 import { creatNewFullCourse } from "../../../redux/createFullCourse/actions";
 import { CreateFullCourseRequestData } from "../../../redux/createFullCourse/types";
@@ -10,12 +11,18 @@ import CompanionList from "./CompanionList";
 import IsPublicButton from "./IsPublicButton";
 import WishKeywordList from "./WishKeywordList";
 
-function PreSuveyContainer({ fullCourseDate, creatNewFullCourse }: Props) {
+function PreSuveyContainer({
+  fullCourseDate,
+  fullCourseId,
+  creatNewFullCourse,
+}: Props) {
   const [title, setTitle] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [meogEoBoJaList, setMeogEoBoJaList] = useState<Array<string>>([]);
   const [gaBoJaList, setGaBoJa] = useState<Array<string>>([]);
   const [companionList, setCompanionList] = useState<Array<string>>([]);
+
+  const navigate = useNavigate();
 
   // 풀코스 제목 변경 핸들러
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +45,12 @@ function PreSuveyContainer({ fullCourseDate, creatNewFullCourse }: Props) {
 
     creatNewFullCourse(data);
   };
+
+  useEffect(() => {
+    if (fullCourseId) {
+      navigate("/createFullCourse");
+    }
+  }, [fullCourseId]);
 
   return (
     <div>
@@ -68,7 +81,10 @@ function PreSuveyContainer({ fullCourseDate, creatNewFullCourse }: Props) {
 }
 
 const mapStateToProps = ({ createFullCourse }: any) => {
-  return { fullCourseDate: createFullCourse.fullCourseDate };
+  return {
+    fullCourseDate: createFullCourse.fullCourseDate,
+    fullCourseId: createFullCourse.fullCourseId,
+  };
 };
 
 const mapDispatchToProps = (dispatch: any) => {

@@ -22,9 +22,9 @@ function MyFullCourseContent({
 
   let nowStatus = "";
 
-  if (today - finishedOn.getTime() > 0) {
+  if (today - new Date(finishedOn).getTime() > 0) {
     nowStatus = "종료된 여행";
-  } else if (today - startOn.getTime() > 0) {
+  } else if (today - new Date(startOn).getTime() > 0) {
     nowStatus = "현재 여행중";
   } else {
     nowStatus = "예정된 여행";

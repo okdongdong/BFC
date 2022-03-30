@@ -12,6 +12,7 @@ import MuiDateRangePickerDay, {
 import { connect } from "react-redux";
 import { setFullCourseDate } from "../../../redux/createFullCourse/actions";
 import { Button } from "@mui/material";
+import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 
 const DateRangePickerDay = styled(MuiDateRangePickerDay)(
   ({ theme, isHighlighting, isStartOfHighlighting, isEndOfHighlighting }) => ({
@@ -39,8 +40,6 @@ function DatePicker({
   setFullCourseDate,
   closePicker,
 }: Props & { closePicker?: any }) {
-  console.log(fullCourseDate);
-
   const renderWeekPickerDay = (
     date: Date,
     dateRangePickerDayProps: DateRangePickerDayProps<Date>
@@ -48,6 +47,13 @@ function DatePicker({
     return <DateRangePickerDay {...dateRangePickerDayProps} />;
   };
 
+  const onChangeHandler = (newValue: DateRange<Date>) => {
+    const startedOn = toStringByFormatting(newValue[0]);
+    const finishedOn = toStringByFormatting(newValue[1]);
+    console.log("------", fullCourseDate);
+
+    setFullCourseDate([startedOn, finishedOn]);
+  };
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <StaticDateRangePicker
@@ -55,8 +61,7 @@ function DatePicker({
         label="date range"
         value={fullCourseDate}
         onChange={(newValue) => {
-          console.log(newValue);
-          setFullCourseDate(newValue);
+          onChangeHandler(newValue);
         }}
         renderDay={renderWeekPickerDay}
         renderInput={(startProps, endProps) => (
@@ -81,7 +86,7 @@ const mapStateToProps = ({ createFullCourse }: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setFullCourseDate: (newDate: DateRange<Date>) =>
+    setFullCourseDate: (newDate: Array<string | null>) =>
       dispatch(setFullCourseDate(newDate)),
   };
 };
