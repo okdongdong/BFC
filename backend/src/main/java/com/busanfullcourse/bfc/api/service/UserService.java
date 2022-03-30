@@ -265,7 +265,6 @@ public class UserService {
                 .build();
     }
 
-
     public FollowRes follow(Long yourId) {
         String myName = getCurrentUsername();
         User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
@@ -295,6 +294,30 @@ public class UserService {
                 .followingCnt(you.getFollowings().size())
                 .isFollowing(isFollowing)
                 .build();
+    }
+
+    public List<FollowListRes> followFromList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        List<Follow> followList = followRepository.findAllByToUser(user);
+
+        return followList.stream().map(follow -> FollowListRes.builder()
+                .id(follow.getFromUser().getId())
+                .nickname(follow.getFromUser().getNickname())
+                .profileImg(follow.getFromUser().getProfileImg())
+                .build())
+            .collect(Collectors.toList());
+    }
+
+    public List<FollowListRes> followToList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        List<Follow> followList = followRepository.findAllByFromUser(user);
+
+        return followList.stream().map(follow -> FollowListRes.builder()
+                        .id(follow.getToUser().getId())
+                        .nickname(follow.getToUser().getNickname())
+                        .profileImg(follow.getToUser().getProfileImg())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

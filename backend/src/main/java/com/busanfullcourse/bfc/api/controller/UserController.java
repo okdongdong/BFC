@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -63,6 +64,16 @@ public class UserController {
     @PostMapping("/{userId}/follow")
     public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.follow(userId));
+    }
+
+    @GetMapping("/{userId}/followFrom")
+    public ResponseEntity<List<FollowListRes>> followFromList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followFromList(userId));
+    }
+
+    @GetMapping("/{userId}/followTo")
+    public ResponseEntity<List<FollowListRes>> followToList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followToList(userId));
     }
 
     @GetMapping("/{userId}/interest")
