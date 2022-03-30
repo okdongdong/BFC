@@ -9,11 +9,20 @@ import lombok.*;
 @Builder
 public class CustomPlaceScheduleReq {
 
-    private Long customPlaceId;
+    private String name;
+
+    private String address;
+
+    private Float lat;
+
+    private Float lng;
+
+    private Long fullCourseId;
 
     private Integer day;
 
     private Integer sequence;
 
     private String memo;
+
 }
