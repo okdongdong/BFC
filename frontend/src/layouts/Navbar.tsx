@@ -1,8 +1,8 @@
 import { alpha, AppBar, Box, styled, Toolbar } from "@mui/material";
 import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
-import Logo from "../components/Logo";
-import NavbarText from "../components/NavbarText";
+import Logo from "../components/Navbar/Logo";
+import NavbarText from "../components/Navbar/NavbarText";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
@@ -12,12 +12,12 @@ const RootStyle = styled(AppBar)(({ theme }) => ({
   backgroundColor: alpha(theme.palette.background.default, 0.72),
 }));
 
-const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
-  height: 108,
+const ToolbarStyle = styled(Toolbar)({
+  height: 80,
   padding: "0px !important",
   letterSpacing: "0px",
   width: "100%",
-}));
+});
 
 const Navbar = ({ isLogin, nickname, profileImg }: Props) => {
   return (
@@ -64,4 +64,3 @@ const mapDispatchToProps = {};
 type Props = ReturnType<typeof mapStateToProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
-

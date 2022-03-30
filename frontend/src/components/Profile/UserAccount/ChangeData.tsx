@@ -4,7 +4,6 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import ChangeUserInfo from "./ChangeUserInfo";
 import ChangePassword from "./ChangePassword";
 function ChangeData() {
   const [value, setValue] = React.useState("1");
@@ -14,7 +13,7 @@ function ChangeData() {
   };
 
   return (
-    <Box sx={{ width: "100%", typography: "body1", marginTop: "100px" }}>
+    <Box sx={{ width: "100%", typography: "body1", marginTop: "50px" }}>
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
@@ -26,9 +25,7 @@ function ChangeData() {
             <Tab label="비밀번호수정" value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1">
-          <ChangeUserInfo></ChangeUserInfo>
-        </TabPanel>
+        <TabPanel value="1">{/* <ChangeUserInfo></ChangeUserInfo> */}</TabPanel>
         <TabPanel value="2">
           <ChangePassword></ChangePassword>
         </TabPanel>

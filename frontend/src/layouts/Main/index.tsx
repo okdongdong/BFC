@@ -12,11 +12,11 @@ const MainLayout = () => {
     overflow: "hidden",
   });
 
-  const MainStyle = styled("div")(({ theme }) => ({
+  const MainStyle = styled("div")({
     flexGrow: 1,
     overflow: "auto",
-    marginTop: 108,
-  }));
+    marginTop: 80,
+  });
 
   return (
     <RootStyle>
