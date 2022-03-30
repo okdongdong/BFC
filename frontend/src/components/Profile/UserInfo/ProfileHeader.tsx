@@ -1,7 +1,6 @@
 import BadgeItem from "./Badge";
 import Profileimg from "./ProfileImg";
 import ProfileInfo from "./ProfileInfo";
-import ProfileName from "./ProfileName";
 import FollowFollower from "./FollowFollower";
 import { orange } from "@mui/material/colors";
 import { makeStyles } from "@mui/styles";
@@ -9,7 +8,6 @@ import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   bg: {
-    marginTop: theme.spacing(14),
     height: theme.spacing(15),
     backgroundColor: orange[500],
     position: "relative",
@@ -45,7 +43,7 @@ function ProfileHeader() {
       </div>
       <div className={classes.myImg}>
         <Profileimg></Profileimg>
-        <ProfileName></ProfileName>
+        {/* <ProfileName></ProfileName> */}
       </div>
       <div className={classes.badges}>
         <BadgeItem></BadgeItem>

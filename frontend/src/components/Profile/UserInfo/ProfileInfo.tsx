@@ -1,7 +1,9 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { AccountReducer } from "../../../redux/rootReducer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
@@ -11,16 +13,23 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ProfileInfo() {
-  const nickname: string = "나는 윈터야";
+function ProfileInfo({ nickname, isLogin }: Props) {
   const classes = useStyles();
   return (
     <div>
       <span style={{ fontWeight: "bold", fontSize: 20 }}>{nickname}</span>
-      <RouterLink to="/changeUser">
+      <Link to="/changeUser">
         <button className={classes.btn}>회원정보관리</button>
-      </RouterLink>
+      </Link>
     </div>
   );
 }
-export default ProfileInfo;
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    isLogin: account.isLogin,
+    nickname: account.nickname,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(ProfileInfo);
