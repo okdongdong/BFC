@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
@@ -33,5 +34,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     // 특정 day에서, seqA보다 크거나 같고 seqB보다 작은
     List<Schedule> findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqualAndSequenceLessThan(
             Long fullCourseId, Integer day, Integer seqA, Integer seqB);
+
+    // 수정용... 기준일자
+    Optional<Schedule> findTop1ByFullCourseFullCourseIdAndDayOrderBySequenceDesc(Long fullCourseId, Integer day);
+
+    // 수정해야할 스케줄들
+    List<Schedule> findAllByFullCourseFullCourseIdAndDayGreaterThanOrderByDayAscSequenceAsc(Long fullCourseId, Integer day);
 
 }
