@@ -19,9 +19,9 @@ public class RestaurantDetailRes {
 
     private String openTime;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     private String address;
 

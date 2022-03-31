@@ -8,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 
 import javax.persistence.*;
@@ -40,9 +41,9 @@ public class Place {
     @Column(name = "open_time")
     private String openTime;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     @Field(type = FieldType.Text)
     private String address;
@@ -74,15 +75,15 @@ public class Place {
 
     @javax.persistence.Transient
     @GeoPointField
-    private String location;
+    private GeoPoint location; // = new GeoPoint(this.getLat(), this.getLon());
 
 
     @PersistenceConstructor
-    public Place(Long placeId, String name, String info, String address, String station, String phone, @Value("#root.thumbnail ?: ''") String thumbnail, Float lat, Float lng, Boolean category, String label) {
+    public Place(Long placeId, String name, String info, String address, String station, String phone, @Value("#root.thumbnail?: ' '") String thumbnail, Double lat, Double lon, Boolean category, String label) {
         this.placeId = placeId;
         this.name = name;
         this.lat = lat;
-        this.lng = lng;
+        this.lon = lon;
         this.category = category;
         this.label = label;
         this.info = info;
@@ -90,6 +91,6 @@ public class Place {
         this.station = station;
         this.phone = phone;
         this.thumbnail = thumbnail;
-        this.location = this.lat.toString() + ", " + this.lng.toString();
+        this.location = new GeoPoint(lat, lon);
     }
 }

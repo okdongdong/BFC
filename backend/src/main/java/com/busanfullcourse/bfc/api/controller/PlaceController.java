@@ -104,4 +104,12 @@ public class PlaceController {
         searchService.deleteAll();
         return ResponseEntity.ok("성공적으로 삭제되었습니다.");
     }
+
+    @GetMapping("/search/distance")
+    public ResponseEntity<?> searchByDistance(@RequestParam Double lat,
+            @RequestParam Double lon,
+            @RequestParam Integer distance,
+            @PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchByDistance(lat, lon, distance, pageable));
+    }
 }
