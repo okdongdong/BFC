@@ -17,13 +17,13 @@ public class ElasticSearchSettingUtil {
     }
 
 
-//    @PostConstruct
-//    public void init() {
-//        elasticSearchService.saveAll();
-//    }
-//
-//    @PreDestroy
-//    public void close() {
-//        elasticSearchService.deleteAll();
-//    }
+    @PostConstruct
+    public void init() {
+        elasticSearchService.saveAll();
+    }
+
+    @PreDestroy
+    public void close() {
+        elasticSearchService.deleteAll();
+    }
 }
