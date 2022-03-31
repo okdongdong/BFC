@@ -21,12 +21,9 @@ const useStyles = makeStyles(() => ({
 }));
 
 function Logo() {
-  const APPBAR_MOBILE = 64;
-  const APPBAR_DESKTOP = 92;
-
   const classes = useStyles();
   const TextStyle = styled("h3")(() => ({
-    fontSize: "22px",
+    fontSize: "20px",
     paddingLeft: 8,
     paddingRight: 24,
     margin: "0px",
@@ -35,11 +32,7 @@ function Logo() {
   }));
 
   const LogoStyle = styled(Box)(({ theme }) => ({
-    maxHeight: APPBAR_MOBILE,
-    marginTop: theme.spacing(2),
-    [theme.breakpoints.up("lg")]: {
-      minHeight: APPBAR_DESKTOP,
-    },
+    maxHeight: 80,
   }));
 
   return (

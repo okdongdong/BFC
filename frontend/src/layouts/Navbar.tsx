@@ -1,8 +1,21 @@
-import { alpha, AppBar, Box, styled, Toolbar } from "@mui/material";
+import {
+  alpha,
+  AppBar,
+  Box,
+  Button,
+  Menu,
+  MenuItem,
+  styled,
+  Toolbar,
+} from "@mui/material";
 import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
 import Logo from "../components/Navbar/Logo";
 import NavbarText from "../components/Navbar/NavbarText";
+import React from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { userLogout } from "../redux/account/actions";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
@@ -19,7 +32,36 @@ const ToolbarStyle = styled(Toolbar)({
   width: "100%",
 });
 
-const Navbar = ({ isLogin, nickname, profileImg }: Props) => {
+const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const token = localStorage.getItem("accessToken") || "";
+  const refreshToken = localStorage.getItem("refreshToken") || "";
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    console.log("작동");
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  function requestLogOut() {
+    axios({
+      method: "post",
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/logout`,
+      headers: {
+        Authorization: token,
+        RefreshToken: refreshToken,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        userLogout();
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -39,7 +81,80 @@ const Navbar = ({ isLogin, nickname, profileImg }: Props) => {
                 style={{ width: 64, height: 64, borderRadius: "50%" }}
               />
             </Box>
-            <NavbarText to="profile" text={nickname}></NavbarText>
+
+            <div>
+              <Button
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onMouseEnter={handleClick}
+                onMouseLeave={handleClick}
+              >
+                <div
+                  style={{
+                    alignItems: "center",
+                    textDecoration: "none",
+                    color: "#0787EC",
+                    margin: "16px",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    height: 36,
+                  }}
+                >
+                  {nickname}님
+                </div>
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem
+                  onClick={handleClose}
+                  style={{
+                    width: "200px",
+                    height: "30px",
+                    fontSize: "20px",
+                    color: "#0787EC",
+                  }}
+                >
+                  <p style={{ marginLeft: "auto", marginRight: "auto" }}>
+                    <Link
+                      to="/profile"
+                      style={{ textDecoration: "none", color: "#0787EC" }}
+                    >
+                      Profile
+                    </Link>
+                  </p>
+                </MenuItem>
+                <MenuItem
+                  onClick={handleClose}
+                  style={{
+                    width: "200px",
+                    height: "30px",
+                    fontSize: "20px",
+                    color: "#0787EC",
+                  }}
+                >
+                  <p
+                    style={{ marginLeft: "auto", marginRight: "auto" }}
+                    onClick={requestLogOut}
+                  >
+                    <Link
+                      to="/login"
+                      style={{ textDecoration: "none", color: "#0787EC" }}
+                    >
+                      Logout
+                    </Link>
+                  </p>
+                </MenuItem>
+              </Menu>
+            </div>
           </Box>
         ) : (
           <Box sx={{ display: "flex" }}>
@@ -58,9 +173,13 @@ const mapStateToProps = ({ account }: AccountReducer) => ({
   nickname: account.nickname,
   profileImg: account.profileImg,
 });
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    userLogout: () => dispatch(userLogout()),
+  };
+};
 
-const mapDispatchToProps = {};
-
-type Props = ReturnType<typeof mapStateToProps>;
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar);
