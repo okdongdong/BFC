@@ -8,6 +8,7 @@ import {
   USER_LOGIN_FAILURE,
   SET_PROFILE_IMG,
   SET_USER_INFO,
+  USER_LOGOUT,
 } from "./types";
 
 const userLoginRequest = () => {
@@ -28,7 +29,11 @@ const userLoginFailure = (err: any) => {
     payload: err,
   };
 };
-
+export const userLogout = () => {
+  return {
+    type: USER_LOGOUT,
+  };
+};
 export const setProfileImg = (imgUrl: string) => {
   return {
     type: SET_PROFILE_IMG,
