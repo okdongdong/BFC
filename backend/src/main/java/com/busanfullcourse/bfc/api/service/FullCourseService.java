@@ -125,6 +125,18 @@ public class FullCourseService {
         fullCourseRepository.save(fullCourse);
     }
 
+    public void changeFullCoursePublic(Long fullCourseId, Map<String, Boolean> isPublic) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        fullCourse.setIsPublic(isPublic.get("isPublic"));
+        fullCourseRepository.save(fullCourse);
+    }
+
+    public void changeFullCourseReview(Long fullCourseId, Map<String, String> review) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        fullCourse.setReview(review.get("review"));
+        fullCourseRepository.save(fullCourse);
+    }
+
     public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
