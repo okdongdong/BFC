@@ -1,19 +1,13 @@
 import axios from "axios";
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
-import {
-  LoginUserInfo,
-  NavUserInfo,
-  SetPasswordInfo,
-  SetUserInfo,
-} from "../../types/account";
+import { LoginUserInfo, NavUserInfo, SetUserInfo } from "../../types/account";
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAILURE,
   SET_PROFILE_IMG,
   SET_USER_INFO,
-  SET_PASSWORD_INFO,
 } from "./types";
 
 const userLoginRequest = () => {
@@ -39,13 +33,6 @@ export const setProfileImg = (imgUrl: string) => {
   return {
     type: SET_PROFILE_IMG,
     payload: imgUrl,
-  };
-};
-
-export const setPasswordInfo = (passwordInfo: SetPasswordInfo) => {
-  return {
-    type: SET_PASSWORD_INFO,
-    payload: passwordInfo,
   };
 };
 
