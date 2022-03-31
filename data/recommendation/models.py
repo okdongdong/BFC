@@ -44,7 +44,7 @@ class FullCourse(models.Model):
     review = models.TextField(blank=True, null=True)
     started_on = models.DateField()
     finished_on = models.DateField()
-    user = models.ForeignKey('User', models.DO_NOTHING)
+    user_id = models.ForeignKey('User', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -52,8 +52,8 @@ class FullCourse(models.Model):
 
 class Like(models.Model):
     like_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('User', models.DO_NOTHING)
-    full_course = models.ForeignKey(FullCourse, models.DO_NOTHING)
+    user_id = models.ForeignKey('User', models.DO_NOTHING)
+    full_course = models.ForeignKey('FullCourse', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -63,31 +63,17 @@ class Like(models.Model):
 class Score(models.Model):
     score_id = models.BigAutoField(primary_key=True)
     score = models.FloatField()
-    user = models.ForeignKey('User', models.DO_NOTHING)
-    place = models.ForeignKey(Place, models.DO_NOTHING)
+    user_id = models.ForeignKey('User', models.DO_NOTHING)
+    place_id = models.ForeignKey('Place', models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'score'
 
-class FullCourse(models.Model):
-    full_course_id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=45)
-    is_public = models.IntegerField()
-    view = models.PositiveIntegerField()
-    review = models.TextField(blank=True, null=True)
-    started_on = models.DateField()
-    finished_on = models.DateField()
-    user = models.ForeignKey('User', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'full_course'
-
 class WishFood(models.Model):
     wish_food_id = models.BigAutoField(primary_key=True)
     keyword = models.CharField(max_length=10)
-    full_course = models.ForeignKey(FullCourse, models.DO_NOTHING)
+    full_course_id = models.ForeignKey('FullCourse', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -97,7 +83,7 @@ class WishFood(models.Model):
 class WishPlace(models.Model):
     wish_place_id = models.BigAutoField(primary_key=True)
     keyword = models.CharField(max_length=10)
-    full_course = models.ForeignKey(FullCourse, models.DO_NOTHING)
+    full_course_id = models.ForeignKey('FullCourse', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -105,8 +91,8 @@ class WishPlace(models.Model):
 
 class Interest(models.Model):
     interest_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey('User', models.DO_NOTHING)
-    place = models.ForeignKey('Place', models.DO_NOTHING)
+    user_id = models.ForeignKey('User', models.DO_NOTHING)
+    place_id = models.ForeignKey('Place', models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -114,8 +100,8 @@ class Interest(models.Model):
 
 class Recommend(models.Model):
     recommend_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey('User', models.DO_NOTHING)
-    place = models.ForeignKey(Place, models.DO_NOTHING)
+    user_id = models.ForeignKey('User', models.DO_NOTHING)
+    place_id = models.ForeignKey('Place', models.DO_NOTHING)
     category = models.SmallIntegerField()
 
     class Meta:
@@ -124,8 +110,8 @@ class Recommend(models.Model):
 
 class SurveyRecommend(models.Model):
     survey_recommend_id = models.BigAutoField(db_column='survey__recommend_id', primary_key=True)  # Field renamed because it contained more than one '_' in a row.
-    full_course = models.ForeignKey(FullCourse, models.DO_NOTHING)
-    place = models.ForeignKey(Place, models.DO_NOTHING)
+    full_course_id = models.ForeignKey(FullCourse, models.DO_NOTHING)
+    place_id = models.ForeignKey('Place', models.DO_NOTHING)
 
     class Meta:
         managed = False
