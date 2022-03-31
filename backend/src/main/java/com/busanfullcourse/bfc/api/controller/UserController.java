@@ -85,13 +85,13 @@ public class UserController {
     @GetMapping("/{userId}/user")
     public ResponseEntity<Page<FullCourseListRes>> getMoreUserFullCourse(@PathVariable Long userId,
                                                                          @PageableDefault(size = 4, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(fullCourseService.getMoreUserFullCourse(userId, pageable));
+        return ResponseEntity.ok(userService.getMoreUserFullCourse(userId, pageable));
     }
 
     @GetMapping("/{userId}/like")
     public ResponseEntity<Page<FullCourseListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
                                                                           @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(fullCourseService.getMoreLikedFullCourse(userId, pageable));
+        return ResponseEntity.ok(userService.getMoreLikedFullCourse(userId, pageable));
     }
 
 
