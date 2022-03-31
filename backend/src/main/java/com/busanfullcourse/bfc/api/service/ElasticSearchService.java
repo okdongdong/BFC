@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -33,5 +36,12 @@ public class ElasticSearchService {
 
     public void deleteAll() {
         placeSearchRepository.deleteAll();
+    }
+
+    public Page<SearchPlaceListRes> searchByDistance(Double lat, Double lon, Integer distance, Pageable pageable) {
+        List<String> ids = placeSearchRepository.searchByGeoPointAndDistance(lat, lon, distance);
+
+        return SearchPlaceListRes.of(placeSearchRepository
+                .findAllByPlaceId(ids.stream().map(Long::parseLong).collect(Collectors.toList()), pageable));
     }
 }

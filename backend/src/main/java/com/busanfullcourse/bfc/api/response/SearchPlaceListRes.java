@@ -18,9 +18,9 @@ public class SearchPlaceListRes {
 
     private Float averageScore;
 
-    private Float lng;
+    private Double lon;
 
-    private Float lat;
+    private Double lat;
 
     private String thumbnail;
 
@@ -28,7 +28,7 @@ public class SearchPlaceListRes {
         return list.map(place -> SearchPlaceListRes.builder()
                 .placeId(place.getPlaceId())
                 .name(place.getName())
-                .lng(place.getLng())
+                .lon(place.getLon())
                 .lat(place.getLat())
                 .averageScore(place.getAverageScore())
                 .thumbnail(place.getThumbnail())

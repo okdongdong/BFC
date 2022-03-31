@@ -37,7 +37,7 @@ public class CustomPlaceService {
                         .name(req.getName())
                         .address(req.getAddress())
                         .lat(req.getLat())
-                        .lng(req.getLng())
+                        .lng(req.getLon())
                         .user(user)
                         .build()
         );
@@ -79,7 +79,7 @@ public class CustomPlaceService {
         }
         customPlace.setAddress(req.getAddress());
         customPlace.setLat(req.getLat());
-        customPlace.setLng(req.getLng());
+        customPlace.setLon(req.getLon());
         customPlace.setName(req.getName());
         customPlaceRepository.save(customPlace);
 
