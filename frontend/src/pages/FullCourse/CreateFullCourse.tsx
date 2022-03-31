@@ -1,8 +1,10 @@
-import { Backdrop, CircularProgress, Stack } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Stack } from "@mui/material";
+import { styled } from "@mui/styles";
 import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
 import { placeList as dummyPlaceList } from "../../assets/dummyData/dummyData";
+import AddCustomPlaceModal from "../../components/FullCourse/CreateFullCourse/AddCustomPlaceModal";
 import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
 import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
@@ -26,6 +28,15 @@ import {
   UpdateScheduleProps,
 } from "../../redux/createFullCourse/types";
 
+const MapContainer = styled("div")({
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  position: "fixed",
+  backgroundColor: "#cdcdcd",
+});
+
+// 카드를 이동하는 함수
 export const move = (
   source: any,
   destination: any,
@@ -49,6 +60,8 @@ export const move = (
 
   return result;
 };
+
+// DND를 위한 id가 부착된 객체 생성
 const createNewItem = () => {
   const plt: any = [];
   dummyPlaceList.map((place: any) =>
@@ -59,14 +72,8 @@ const createNewItem = () => {
   );
   return plt;
 };
-const plt2: any = [];
-dummyPlaceList.map((place: any) =>
-  plt2.push({
-    id: `place2-${place.placeId}-${new Date().getTime()}`,
-    content: place,
-  })
-);
 
+// 풀코스 생성페이지
 function CreateFullCourse({
   fullCourseList,
   fullCourseId,
@@ -80,10 +87,11 @@ function CreateFullCourse({
   const [pickedDay, setPickedDay] = useState<number>(1);
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
 
-    // dropped outside the list
+    // 리스트 바깥이나 place영역에 카드를 놓았을 때
     if (!destination || destination.dropableId === "placeList") {
       return;
     }
@@ -109,9 +117,11 @@ function CreateFullCourse({
 
     if (sInd === dInd) {
       if (source.index === destination.index) {
+        // 같은칸, 같은위치로 움직이는 경우
         return;
       }
 
+      // 같은 칸 내부에서 움직이는 경우
       const items = reorder(
         fullCourseList[sInd],
         source.index,
@@ -130,6 +140,7 @@ function CreateFullCourse({
         sequence2: destination.index,
       });
     } else {
+      // 다른 칸으로 움직이는 경우
       const result = move(
         fullCourseList[sInd],
         fullCourseList[dInd],
@@ -162,11 +173,18 @@ function CreateFullCourse({
         >
           <CircularProgress color="inherit" />
         </Backdrop>
+
+        <AddCustomPlaceModal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+        ></AddCustomPlaceModal>
         <DragDropContext onDragEnd={onDragEnd}>
-          {/* <DayBar></DayBar> */}
           <PlaceDetail></PlaceDetail>
           <PlaceSearch></PlaceSearch>
           <div style={{ display: "flex", position: "relative" }}>
+            <MapContainer>
+              <KakaoMap></KakaoMap>
+            </MapContainer>
             <DayBar
               pickedDay={pickedDay}
               setPickedDay={setPickedDay}
@@ -177,14 +195,16 @@ function CreateFullCourse({
               buttonPositionY={0}
               setNowScrollPosition={setNowScrollPosition}
             >
-              풀코스
+              풀코스{" "}
+              <Button onClick={() => setOpenModal((val) => !val)}>
+                나만의 장소 추가하기
+              </Button>
               <Stack
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
               >
                 {fullCourseList.map((placeList: any, idx: number) => (
                   <div key={idx}>
-                    <div>DAY{idx + 1}</div>
                     <DailyFullCourse
                       setDayChange={setDayChange}
                       nowScrollPosition={nowScrollPosition}
@@ -214,7 +234,6 @@ function CreateFullCourse({
             <CollapseContainer buttonPositionY={400} backgroundColor="#cdd">
               디테일
             </CollapseContainer>
-            <KakaoMap></KakaoMap>
           </div>
         </DragDropContext>
       </div>

@@ -12,6 +12,7 @@ import {
   CREATE_FULL_COURSE_SUCCESS,
   CREATE_FULL_COURSE_FAILURE,
   ERROR_CONTROL,
+  ADD_CUSTOM_PLACE,
 } from "./types";
 
 export interface CreateFullCourseDnd {
@@ -37,7 +38,7 @@ placeList.map((place: PlaceCardProps) =>
 );
 
 const initialState: CreateFullCourseDnd = {
-  fullCourseList: [[...plt2]],
+  fullCourseList: [],
   fullCourseDate: [null, null],
   nowLoading: false,
 };
@@ -99,6 +100,13 @@ const createFullCourseReducer = (
       return {
         ...state,
         fullCourseDate: [...action.payload],
+      };
+
+    case ADD_CUSTOM_PLACE:
+      newState.fullCourseList[action.payload.day].push(action.payload.schedule);
+      return {
+        ...newState,
+        nowLoading: false,
       };
 
     // 로딩중..

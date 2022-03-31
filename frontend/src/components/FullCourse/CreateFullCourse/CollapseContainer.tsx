@@ -2,7 +2,8 @@ import { Icon, Theme } from "@mui/material";
 import { styled } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import ScrollableBox from "../ScrollableBox";
 
 const useCollapseStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -59,35 +60,10 @@ function CollapseContainer({
 }: CollapseContainerProps) {
   const [expanded, setExpanded] = useState(true);
 
-  const ContentBox = styled("div")(() => ({
-    height: "calc(100vh - 80px)",
-    width: 400,
-    backgroundColor: backgroundColor,
-    position: "relative",
-    overflowY: "scroll",
-    // scrollBehavior: "smooth",
-
-    /* 스크롤바 설정*/
-    "&::-webkit-scrollbar": {
-      width: "6px",
-    },
-    /* 스크롤바 막대 설정*/
-    "&::-webkit-scrollbar-thumb": {
-      height: "17%",
-      backgroundColor: "rgba(33,133,133,1)",
-      borderRadius: " 10px",
-    },
-    /* 스크롤바 뒷 배경 설정*/
-    "&::-webkit-scrollbar-track": {
-      backgroundColor: " rgba(33,133,133,0.33)",
-    },
-  }));
-
   useEffect(() => {
     setExpanded(false);
   }, []);
 
-  const ref = useRef<HTMLDivElement>(null);
   // useEffect(() => {
   //   console.log(typeof setNowScrollPosition, ref.current !== null, dayChange);
   //   if (
@@ -125,7 +101,13 @@ function CollapseContainer({
         orientation="horizontal"
         classes={useCollapseStyles()}
       >
-        <ContentBox ref={ref}>{children}</ContentBox>
+        <ScrollableBox
+          height={"calc(100vh - 80px)"}
+          width={400}
+          backgroundColor={backgroundColor}
+        >
+          {children}
+        </ScrollableBox>
       </Collapse>
       <div style={{}}>
         <ExpandButton onClick={() => setExpanded(!expanded)}>
