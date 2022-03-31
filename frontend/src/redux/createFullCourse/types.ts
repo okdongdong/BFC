@@ -16,6 +16,9 @@ export const SET_FULL_COURSE_DATE = "SET_FULL_COURSE_DATE";
 export const CREATE_FULL_COURSE_SUCCESS = "CREATE_FULL_COURSE_SUCCESS";
 export const CREATE_FULL_COURSE_FAILURE = "CREATE_FULL_COURSE_FAILURE";
 
+// 새로운 커스텀장소를 일정에 추가
+export const ADD_CUSTOM_PLACE = "ADD_CUSTOM_PLACE";
+
 // 에러관리
 export const ERROR_CONTROL = "ERROR_CONTROL";
 
@@ -61,6 +64,24 @@ interface ScheduleProps {
   day: number;
   sequence: number;
   fullCourseId: number;
+}
+
+export interface AddCustomPlaceProps {
+  day: number;
+  schedule: {
+    id: string;
+    content: {
+      scheduleId: number;
+    };
+  };
+}
+
+export interface CustomPlaceInfoProps extends ScheduleProps {
+  name: string;
+  memo: string;
+  address: string;
+  lat: number;
+  lng: number;
 }
 
 // 스케줄 생성

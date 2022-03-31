@@ -135,6 +135,8 @@ export const fullCourseList = [
 export const placeList = [
   {
     placeId: 123,
+    lat: 35.199160225802785,
+    lng: 128.05748018601798,
     name: "관광지",
     thumbnail:
       "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
@@ -146,6 +148,8 @@ export const placeList = [
   },
   {
     placeId: 124,
+    lat: 35.199160225802785,
+    lng: 127.05748018601798,
     name: "다른 관광지",
     thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
     address: "부산광역시 금정구 장전동",
@@ -155,6 +159,8 @@ export const placeList = [
   },
   {
     placeId: 153,
+    lat: 35.199160225802785,
+    lng: 126.05748018601798,
     name: "관광지",
     thumbnail:
       "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
@@ -165,6 +171,8 @@ export const placeList = [
   },
   {
     placeId: 1264,
+    lat: 35.199160225802785,
+    lng: 125.05748018601798,
     name: "다른 관광지",
     thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
 

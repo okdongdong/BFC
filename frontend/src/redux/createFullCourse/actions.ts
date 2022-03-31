@@ -2,12 +2,15 @@
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import {
+  AddCustomPlaceProps,
+  ADD_CUSTOM_PLACE,
   CreateFullCourseRequestData,
   CreateNewScheduleProps,
   CreateScheduleRequestDataProps,
   CREATE_CARD,
   CREATE_FULL_COURSE_FAILURE,
   CREATE_FULL_COURSE_SUCCESS,
+  CustomPlaceInfoProps,
   DeleteScheduleProps,
   ERROR_CONTROL,
   FullCourseListProps,
@@ -17,6 +20,8 @@ import {
   UpdateScheduleProps,
   UpdateScheduleRequestDataProps,
 } from "./types";
+import defaultImg from "../../assets/img/defaultImg.png";
+import { AxiosError } from "axios";
 
 export const moveCard = (newState: FullCourseListProps) => {
   return {
@@ -28,6 +33,14 @@ export const moveCard = (newState: FullCourseListProps) => {
 export const createCard = (newState: FullCourseListProps) => {
   return {
     type: CREATE_CARD,
+    payload: newState,
+  };
+};
+
+// 나만의 장소 일정에 추가
+const addCustomPlace = (newState: AddCustomPlaceProps) => {
+  return {
+    type: ADD_CUSTOM_PLACE,
     payload: newState,
   };
 };
@@ -127,8 +140,9 @@ export const createNewSchedule = ({
       dispatch(moveCard(newScheduleListInfo));
 
       //
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
+      console.log(err.response);
       dispatch(createFullCourseFailure("스케줄 추가 실패 ㅠ.ㅠ"));
     }
   };
@@ -210,6 +224,34 @@ export const deleteSchedule = ({
       //
     } catch (err) {
       dispatch(createFullCourseFailure("스케줄 삭제 실패!!"));
+    }
+  };
+};
+
+// 새로운 나만의 장소 생성
+export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(fullCourseRequest());
+
+    try {
+      const res = await customAxios({ method: "post", data: customPlaceInfo });
+
+      const newContent = {
+        scheduleId: res.data.scheduleId,
+        name: customPlaceInfo.name,
+        address: customPlaceInfo.address,
+        thumbnail: defaultImg,
+      };
+      const newSchedule = {
+        id: `customPlace-${new Date().getTime()}`,
+        content: newContent,
+      };
+
+      const newState = { day: customPlaceInfo.day, schedule: newSchedule };
+      dispatch(addCustomPlace(newState));
+    } catch (e) {
+      console.log(e);
+      dispatch(createFullCourseFailure("나만의 장소 추가 실패"));
     }
   };
 };

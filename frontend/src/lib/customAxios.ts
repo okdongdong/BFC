@@ -11,5 +11,68 @@ export const customAxios: AxiosInstance = axios.create({
   },
 });
 
-// 리프레쉬 토큰 처리
-// 추후 할 예정 => Axios.Interceptor이용
+// 응답 성공시 실행할 함수
+const successResponse = async (response: any) => {
+  return response;
+};
+
+// 응답 실패시(에러발생) 실행할 함수
+const failureResponse = async (error: any) => {
+  const originalRequest = error.config;
+  if (error.response.status === 401 && !originalRequest._retry) {
+    originalRequest._retry = true
+    return unauthorizedError(error);
+  }
+  return Promise.reject(error);
+};
+
+// 401에러 발생시 실행할 함수
+const unauthorizedError = async (error: any) => {
+  const refreshToken = localStorage.getItem("refreshToken") || "";
+  // 토큰 refresh요청
+
+  try {
+
+    const res = await customAxios({
+      method: "post",
+      url: `/auth/reissue`,
+      headers: {
+        RefreshToken: refreshToken,
+      },
+    });
+
+    // localStorage 초기화
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    // 토큰 재설정
+    const grantType = res.data.grantType;
+    const newAccessToken = grantType + res.data.accessToken;
+    const newRefreshToken = grantType + res.data.refreshToken;
+
+    // localStorage 설정
+    localStorage.setItem("accessToken", newAccessToken);
+    localStorage.setItem("refreshToken", newRefreshToken);
+
+    // 새로받아온 토큰으로 axios요청 header재설정
+    const originalRequest = error.config;
+    customAxios.defaults.headers.common.Authorization = newAccessToken;
+    originalRequest.headers.Authorization = newAccessToken;
+
+    //실패했던 요청 재요청
+    return customAxios(originalRequest);
+
+    
+  } catch (e) {
+    console.log("토큰 갱신 실패");
+  }
+  return Promise.reject(error);
+};
+
+// 응답(response) interceptor
+customAxios.interceptors.response.use(
+  (response) => successResponse(response), // 정상적인 응답을 반환한 경울
+  (error) => failureResponse(error) // 에러가 발생한 경우
+);
+
+
