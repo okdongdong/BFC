@@ -20,4 +20,6 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     List<Like> findTop6ByUser(User user);
 
     Page<Like> findAllByUserId(Long userId, Pageable pageable);
+
+    List<Like> customfindTop6ByUser(User user);
 }

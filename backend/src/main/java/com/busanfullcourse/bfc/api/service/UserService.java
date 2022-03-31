@@ -12,6 +12,8 @@ import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -90,46 +92,83 @@ public class UserService {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         String reqUsername = getCurrentUsername();
         User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        Optional<Follow> follow = followRepository.findByFromUserAndToUser(reqUser, user);
-        Boolean isFollowing;
-        isFollowing = follow.isPresent();
         List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
-        List<FullCourse> fullCourseList = fullCourseRepository.findTop6ByUserOrderByStartedOn(user);
-        List<FullCourseListRes> myFullCourseListRes = fullCourseList.stream().map(fullCourse -> FullCourseListRes.builder()
-                .fullCourseId(fullCourse.getFullCourseId())
-                .likeCnt(fullCourse.getLikeCnt())
-                .title(fullCourse.getTitle())
-                .startedOn(fullCourse.getStartedOn())
-                .finishedOn(fullCourse.getFinishedOn())
-                .thumbnailList(FullCourseListRes.ofThumbnailList(
-                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
-                                fullCourse.getFullCourseId())))
-                .build()).collect(Collectors.toList());
 
-        List<Like> likeList = likeRepository.findTop6ByUser(user);
-        List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
-                .fullCourseId(like.getFullCourse().getFullCourseId())
-                .likeCnt(like.getFullCourse().getLikeCnt())
-                .title(like.getFullCourse().getTitle())
-                .startedOn(like.getFullCourse().getStartedOn())
-                .finishedOn(like.getFullCourse().getFinishedOn())
-                .thumbnailList(FullCourseListRes.ofThumbnailList(
-                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
-                                like.getFullCourse().getFullCourseId())))
-                .build()).collect(Collectors.toList());
+        if (user == reqUser) {
+            List<FullCourse> fullCourseList = fullCourseRepository.findTop6ByUserOrderByStartedOn(user);
+            List<FullCourseListRes> myFullCourseListRes = fullCourseList.stream().map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .build()).collect(Collectors.toList());
 
-        return UserProfileRes.builder()
-                .userId(user.getId())
-                .username(user.getUsername())
-                .nickname(user.getNickname())
-                .followerCnt(user.getFollowers().size())
-                .followingCnt(user.getFollowings().size())
-                .isFollowing(isFollowing)
-                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
-                .interestList(InterestListRes.of(interestList))
-                .myList(myFullCourseListRes)
-                .likeList(fullCourseListRes)
-                .build();
+            List<Like> likeList = likeRepository.findTop6ByUser(user);
+            List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
+                    .fullCourseId(like.getFullCourse().getFullCourseId())
+                    .likeCnt(like.getFullCourse().getLikeCnt())
+                    .title(like.getFullCourse().getTitle())
+                    .startedOn(like.getFullCourse().getStartedOn())
+                    .finishedOn(like.getFullCourse().getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    like.getFullCourse().getFullCourseId())))
+                    .build()).collect(Collectors.toList());
+
+            return UserProfileRes.builder()
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .nickname(user.getNickname())
+                    .followerCnt(user.getFollowers().size())
+                    .followingCnt(user.getFollowings().size())
+                    .isFollowing(null)
+                    .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
+                    .interestList(InterestListRes.of(interestList))
+                    .myList(myFullCourseListRes)
+                    .likeList(fullCourseListRes)
+                    .build();
+        } else {
+            List<FullCourse> fullCourseList = fullCourseRepository.findTop6ByIsPublicAndUserOrderByStartedOn(true, user);
+            List<FullCourseListRes> myFullCourseListRes = fullCourseList.stream().map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .build()).collect(Collectors.toList());
+
+            List<Like> likeList = likeRepository.findTop6ByUser(user);
+            List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
+                    .fullCourseId(like.getFullCourse().getFullCourseId())
+                    .likeCnt(like.getFullCourse().getLikeCnt())
+                    .title(like.getFullCourse().getTitle())
+                    .startedOn(like.getFullCourse().getStartedOn())
+                    .finishedOn(like.getFullCourse().getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    like.getFullCourse().getFullCourseId())))
+                    .build()).collect(Collectors.toList());
+
+            return UserProfileRes.builder()
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .nickname(user.getNickname())
+                    .followerCnt(user.getFollowers().size())
+                    .followingCnt(user.getFollowings().size())
+                    .isFollowing(followRepository.findByFromUserAndToUser(reqUser, user).isPresent())
+                    .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
+                    .interestList(InterestListRes.of(interestList))
+                    .myList(myFullCourseListRes)
+                    .likeList(fullCourseListRes)
+                    .build();
+        }
     }
     // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
@@ -320,4 +359,51 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public Page<FullCourseListRes> getMoreUserFullCourse(Long userId, Pageable pageable) {
+        User user = userRepository.getById(userId);
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        if (user == reqUser) {
+            Page<FullCourse> page = fullCourseRepository.findAllByUserOrderByStartedOn(user, pageable);
+
+            return page.map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .build());
+        } else {
+            Page<FullCourse> page = fullCourseRepository.findAllByIsPublicAndUserOrderByStartedOn(true, user, pageable);
+
+            return page.map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .build());
+        }
+    }
+
+    public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
+        Page<Like> page = likeRepository.findAllByUserId(userId, pageable);
+
+        return page.map(like -> FullCourseListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(like.getFullCourse().getLikeCnt())
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                like.getFullCourse().getFullCourseId())))
+                .build());
+    }
 }
