@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.controller;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
+import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.response.SharingListRes;
@@ -37,6 +38,13 @@ public class FullCourseController {
     @GetMapping("/{fullCourseId}")
     public ResponseEntity<FullCourseRes> getFullCourse(@PathVariable Long fullCourseId) {
         return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId));
+    }
+
+    @PutMapping("/{fullCourseId}/date")
+    public ResponseEntity<String> changeFullCourseDate(@PathVariable Long fullCourseId,
+                                                       @RequestBody FullCourseUpdateReq fullCourseUpdateReq) {
+        fullCourseService.changeFullCourseDate(fullCourseId, fullCourseUpdateReq);
+        return ResponseEntity.ok("풀코스가 변경되었습니다.");
     }
 
     @DeleteMapping("/{fullCourseId}")

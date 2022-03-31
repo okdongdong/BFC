@@ -1,16 +1,18 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
+import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -88,6 +90,40 @@ public class FullCourseService {
                 .build();
     }
 
+    public void changeFullCourseDate(Long fullCourseId, FullCourseUpdateReq fullCourseUpdateReq) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        LocalDate oldStartedOn, oldFinishedOn, newStartedOn, newFinishedOn;
+        oldStartedOn = fullCourse.getStartedOn();
+        oldFinishedOn = fullCourse.getFinishedOn();
+        newStartedOn = LocalDate.parse(fullCourseUpdateReq.getNewStartedOn(), DateTimeFormatter.ISO_LOCAL_DATE);
+        newFinishedOn = LocalDate.parse(fullCourseUpdateReq.getNewFinishedOn(), DateTimeFormatter.ISO_LOCAL_DATE);
+
+        long oldDiff = ChronoUnit.DAYS.between(oldStartedOn, oldFinishedOn);
+        long newDiff = ChronoUnit.DAYS.between(newStartedOn, newFinishedOn);
+        if (newDiff < oldDiff) {
+            // 바뀐 기간이 더 짧으면 모든 스케쥴을 마지막날로 밀어넣어야함
+            Integer lastDay = Math.toIntExact(newDiff + 1);  // 마지막 날짜
+            Optional<Schedule> finSchedule = scheduleRepository.findTop1ByFullCourseFullCourseIdAndDayOrderBySequenceDesc(fullCourseId, lastDay);
+            Integer lastSeq = 0;
+            if (finSchedule.isPresent()) {
+                lastSeq = finSchedule.get().getSequence();
+            }
+
+            List<Schedule> changeSchedules = scheduleRepository.findAllByFullCourseFullCourseIdAndDayGreaterThanOrderByDayAscSequenceAsc(fullCourseId, lastDay);
+
+            for (Schedule changeSchedule : changeSchedules) {
+                lastSeq ++;
+                changeSchedule.setDay(lastDay);
+                changeSchedule.setSequence(lastSeq);
+            }
+
+            scheduleRepository.saveAll(changeSchedules);
+        }
+        // 바뀐 날짜 적용
+        fullCourse.setStartedOn(newStartedOn);
+        fullCourse.setFinishedOn(newFinishedOn);
+        fullCourseRepository.save(fullCourse);
+    }
 
     public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
