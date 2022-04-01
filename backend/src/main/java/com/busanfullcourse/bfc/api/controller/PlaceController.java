@@ -2,11 +2,12 @@ package com.busanfullcourse.bfc.api.controller;
 
 import com.busanfullcourse.bfc.api.request.ScoreReq;
 import com.busanfullcourse.bfc.api.response.*;
-import com.busanfullcourse.bfc.api.service.InterestService;
-import com.busanfullcourse.bfc.api.service.PlaceService;
-import com.busanfullcourse.bfc.api.service.ScoreService;
-import com.busanfullcourse.bfc.api.service.UserService;
+import com.busanfullcourse.bfc.api.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class PlaceController {
     private final ScoreService scoreService;
     private final UserService userService;
     private final InterestService interestService;
+    private final ElasticSearchService searchService;
 
     @GetMapping("/restaurant/{placeId}")
     public ResponseEntity<RestaurantDetailRes> getRestaurantDetail(@PathVariable Long placeId) {
@@ -79,5 +81,35 @@ public class PlaceController {
     public ResponseEntity<Map<String, Boolean>> getPlaceInterest(@PathVariable Long placeId) {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(interestService.getPlaceInterest(placeId, username));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<SearchPlaceListRes>> searchPlace(@RequestParam String name,
+                                         @PageableDefault(size = 4, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
+    }
+    @GetMapping("/search/test")
+    public ResponseEntity<?> searchAll(@PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchAll(pageable));
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveAll() {
+        searchService.saveAll();
+        return ResponseEntity.ok("성공적으로 저장되었습니다.");
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteAll() {
+        searchService.deleteAll();
+        return ResponseEntity.ok("성공적으로 삭제되었습니다.");
+    }
+
+    @GetMapping("/search/near")
+    public ResponseEntity<Page<SearchPlaceListRes>> searchByDistance(@RequestParam Long placeId,
+            @RequestParam Integer distance,
+            @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable
+            ) {
+        return ResponseEntity.ok(searchService.searchByDistance(placeId, distance, pageable));
     }
 }

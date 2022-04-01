@@ -13,9 +13,9 @@ public class CustomPlaceScheduleReq {
 
     private String address;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     private Long fullCourseId;
 
