@@ -5,6 +5,7 @@ import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
 import com.busanfullcourse.bfc.api.response.AttractionListRes;
 import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.api.response.RestaurantListRes;
+import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,6 @@ import java.util.NoSuchElementException;
 @Transactional
 public class PlaceService {
 
-//    private final UserService userService;
     private final PlaceRepository placeRepository;
 
 
@@ -31,7 +31,7 @@ public class PlaceService {
                 .placeId(restaurant.getPlaceId())
                 .name(restaurant.getName())
                 .info(restaurant.getInfo())
-                .openTime(restaurant.getOpenTime())
+                .openTime(ProcessUtil.processOpenTime(restaurant.getOpenTime()))
                 .lat(restaurant.getLat())
                 .lon(restaurant.getLon())
                 .address(restaurant.getAddress())
@@ -53,7 +53,7 @@ public class PlaceService {
                 .placeId(attraction.getPlaceId())
                 .name(attraction.getName())
                 .info(attraction.getInfo())
-                .openTime(attraction.getOpenTime())
+                .openTime(ProcessUtil.processOpenTime(attraction.getOpenTime()))
                 .lat(attraction.getLat())
                 .lon(attraction.getLon())
                 .address(attraction.getAddress())

@@ -17,7 +17,7 @@ public class RestaurantDetailRes {
 
     private String info;
 
-    private String openTime;
+    private List<String> openTime;
 
     private Double lat;
 
