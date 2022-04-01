@@ -77,21 +77,28 @@ function CollapseContainer({
   // }, [dayChange]);
 
   const ExpandButton = styled("div")(() => ({
-    width: 30,
-    height: 200,
+    width: 15,
+    height: 150,
     "&:hover": {
       backgroundColor: "black",
+      color: "white",
+      width: 30,
     },
+    transition: "width .2s",
+    color: "rgba(0,0,0,0)",
     backgroundColor: "white",
     borderRadius: "0 25px 25px 0",
     textAlign: "center",
     display: "flex",
     alignItems: "center",
-    fontSize: 24,
     boxShadow: "1.2px 2px 1px 1px rgba(0,0,0,0.2)",
     position: "absolute",
     top: buttonPositionY,
     zIndex: 1000,
+  }));
+
+  const IconStyle = styled(Icon)(() => ({
+    fontSize: 30,
   }));
 
   return (
@@ -112,9 +119,9 @@ function CollapseContainer({
       <div style={{}}>
         <ExpandButton onClick={() => setExpanded(!expanded)}>
           {expanded ? (
-            <Icon sx={{ fontSize: 30 }}>arrow_left_sharp</Icon>
+            <IconStyle>arrow_left_sharp</IconStyle>
           ) : (
-            <Icon sx={{ fontSize: 30 }}>arrow_right_sharp</Icon>
+            <IconStyle>arrow_right_sharp</IconStyle>
           )}
         </ExpandButton>
       </div>

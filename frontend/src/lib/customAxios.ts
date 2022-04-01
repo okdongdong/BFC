@@ -11,6 +11,16 @@ export const customAxios: AxiosInstance = axios.create({
   },
 });
 
+// 요청 보내기 전 실행할 함수
+const successRequest = async (config: any) => {
+  return config;
+};
+
+// 요청 실패시 실행할 함수
+const failureRequest = async (error: any) => {
+  return Promise.reject(error);
+};
+
 // 응답 성공시 실행할 함수
 const successResponse = async (response: any) => {
   return response;
@@ -77,6 +87,12 @@ const unauthorizedError = async (error: any) => {
   }
   return Promise.reject(error);
 };
+
+// 요청(request)) interceptor
+customAxios.interceptors.request.use(
+  (config) => successRequest(config), // 정상적인 응답을 반환한 경울
+  (error) => failureRequest(error) // 에러가 발생한 경우
+);
 
 // 응답(response) interceptor
 customAxios.interceptors.response.use(

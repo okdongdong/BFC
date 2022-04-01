@@ -3,17 +3,19 @@ import { styled } from "@mui/styles";
 import { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
-import { placeList as dummyPlaceList } from "../../assets/dummyData/dummyData";
+import { placeCardList as dummy } from "../../assets/dummyData/dummyData";
 import AddCustomPlaceModal from "../../components/FullCourse/CreateFullCourse/AddCustomPlaceModal";
 import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
 import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
 import { reorder } from "../../components/FullCourse/CreateFullCourse/dndFunction";
-import KakaoMap from "../../components/FullCourse/CreateFullCourse/KakaoMap";
+import FullCourseHeader from "../../components/FullCourse/CreateFullCourse/FullCourseHeader";
+import FullCourseKakaoMap from "../../components/FullCourse/CreateFullCourse/FullCourseKakaoMap";
 import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
 import PlaceCardList from "../../components/FullCourse/CreateFullCourse/PlaceCardList";
 import PlaceCardListDnd from "../../components/FullCourse/CreateFullCourse/PlaceCardListDnd";
 import PlaceDetail from "../../components/FullCourse/CreateFullCourse/PlaceDetail";
+import PlaceHeader from "../../components/FullCourse/CreateFullCourse/PlaceHeader";
 import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
 import {
   createNewSchedule,
@@ -47,6 +49,10 @@ export const move = (
   const destClone = Array.from(destination);
   const [removed]: any = sourceClone.splice(droppableSource.index, 1);
   const removedClone = { ...removed };
+  console.log(sourceClone);
+  console.log(destClone);
+  console.log(removed);
+  console.log(removedClone);
   if (droppableSource.dropableId !== "placeList") {
     removedClone.id = `${removed.id}-${new Date().getTime()}`;
   }
@@ -61,17 +67,17 @@ export const move = (
   return result;
 };
 
-// DND를 위한 id가 부착된 객체 생성
-const createNewItem = () => {
-  const plt: any = [];
-  dummyPlaceList.map((place: any) =>
-    plt.push({
-      id: `place-${place.placeId}-${new Date().getTime()}`,
-      content: place,
-    })
-  );
-  return plt;
-};
+// // DND를 위한 id가 부착된 객체 생성
+// const createNewItem = () => {
+//   const plt: any = [];
+//   dummyPlaceList.map((place: any) =>
+//     plt.push({
+//       id: `place-${place.placeId}-${new Date().getTime()}`,
+//       content: place,
+//     })
+//   );
+//   return plt;
+// };
 
 // 풀코스 생성페이지
 function CreateFullCourse({
@@ -88,9 +94,11 @@ function CreateFullCourse({
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [nowPage, setNowPage] = useState<number>(0);
+  const SIZE = 8;
+
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
-
     // 리스트 바깥이나 place영역에 카드를 놓았을 때
     if (!destination || destination.dropableId === "placeList") {
       return;
@@ -183,7 +191,7 @@ function CreateFullCourse({
           <PlaceSearch></PlaceSearch>
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
-              <KakaoMap></KakaoMap>
+              <FullCourseKakaoMap></FullCourseKakaoMap>
             </MapContainer>
             <DayBar
               pickedDay={pickedDay}
@@ -195,10 +203,8 @@ function CreateFullCourse({
               buttonPositionY={0}
               setNowScrollPosition={setNowScrollPosition}
             >
-              풀코스{" "}
-              <Button onClick={() => setOpenModal((val) => !val)}>
-                나만의 장소 추가하기
-              </Button>
+              <FullCourseHeader setOpenModal={setOpenModal}></FullCourseHeader>
+
               <Stack
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
@@ -217,21 +223,21 @@ function CreateFullCourse({
                 ))}
               </Stack>
             </CollapseContainer>
-            <CollapseContainer buttonPositionY={200} backgroundColor="#dee">
-              검색창
-              <hr />
-              구분|구분|구분
+            <CollapseContainer buttonPositionY={150} backgroundColor="#dee">
+              <PlaceHeader
+                nowPage={nowPage}
+                setNowPage={setNowPage}
+                SIZE={SIZE}
+              ></PlaceHeader>
               <Stack
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
               >
-                <PlaceCardList placeList={createNewItem()}></PlaceCardList>
-                <PlaceCardListDnd
-                  placeList={createNewItem()}
-                ></PlaceCardListDnd>
+                <PlaceCardList placeList={dummy}></PlaceCardList>
+                <PlaceCardListDnd placeList={dummy}></PlaceCardListDnd>
               </Stack>
             </CollapseContainer>
-            <CollapseContainer buttonPositionY={400} backgroundColor="#cdd">
+            <CollapseContainer buttonPositionY={300} backgroundColor="#cdd">
               디테일
             </CollapseContainer>
           </div>
@@ -240,11 +246,15 @@ function CreateFullCourse({
     </>
   );
 }
-const mapStateToProps = ({ createFullCourse, createPlaceList }: any) => ({
+const mapStateToProps = ({
+  createFullCourse,
+  placeListReducer,
+  baseInfo,
+}: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
-  placeList: createPlaceList.placeList,
+  placeList: placeListReducer.placeList,
   fullCourseId: createFullCourse.fullCourseId,
-  nowLoading: createFullCourse.nowLoading,
+  nowLoading: baseInfo.nowLoading,
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {

@@ -8,20 +8,23 @@ import {
   CreateNewScheduleProps,
   CreateScheduleRequestDataProps,
   CREATE_CARD,
-  CREATE_FULL_COURSE_FAILURE,
   CREATE_FULL_COURSE_SUCCESS,
   CustomPlaceInfoProps,
   DeleteScheduleProps,
-  ERROR_CONTROL,
   FullCourseListProps,
-  FULL_COURSE_REQUEST,
   MOVE_CARD,
   SET_FULL_COURSE_DATE,
   UpdateScheduleProps,
   UpdateScheduleRequestDataProps,
 } from "./types";
 import defaultImg from "../../assets/img/defaultImg.png";
-import { AxiosError } from "axios";
+import {
+  errorControl,
+  loadingControl,
+  setErrorMessage,
+  setNowError,
+  setNowLoading,
+} from "../baseInfo/actions";
 
 export const moveCard = (newState: FullCourseListProps) => {
   return {
@@ -52,30 +55,10 @@ export const setFullCourseDate = (newDate: Array<string | null>) => {
   };
 };
 
-export const fullCourseRequest = () => {
-  return {
-    type: FULL_COURSE_REQUEST,
-  };
-};
-
 export const createFullCourseSuccess = (fullCourseId: number) => {
   return {
     type: CREATE_FULL_COURSE_SUCCESS,
     payload: fullCourseId,
-  };
-};
-
-export const createFullCourseFailure = (errorMessage: string) => {
-  return {
-    type: CREATE_FULL_COURSE_FAILURE,
-    payload: errorMessage,
-  };
-};
-
-export const errorControl = (state: boolean) => {
-  return {
-    type: ERROR_CONTROL,
-    payload: state,
   };
 };
 
@@ -85,7 +68,7 @@ export const creatNewFullCourse = (
 ) => {
   return async (dispatch: Dispatch) => {
     // 서버에 요청 => 로딩중 표시
-    dispatch(fullCourseRequest());
+    loadingControl(dispatch, true);
 
     console.log("fullCourseInfo", fullCourseInfo);
 
@@ -100,9 +83,11 @@ export const creatNewFullCourse = (
       dispatch(createFullCourseSuccess(fullCourseId));
       console.log(res);
     } catch (e) {
-      dispatch(createFullCourseFailure("풀코스 생성실패.."));
+      errorControl(dispatch,"풀코스 생성실패..")
+      
       console.log(e);
     }
+    loadingControl(dispatch, false);
   };
 };
 
@@ -114,7 +99,8 @@ export const createNewSchedule = ({
   fullCourseId,
 }: CreateNewScheduleProps) => {
   return async (dispatch: Dispatch) => {
-    dispatch(fullCourseRequest());
+    loadingControl(dispatch, true);
+    console.log("실행이 안되나아아아?");
 
     const data: CreateScheduleRequestDataProps = {
       placeId: newScheduleListInfo[day][sequence].content.placeId,
@@ -143,8 +129,10 @@ export const createNewSchedule = ({
     } catch (err: any) {
       console.log(err);
       console.log(err.response);
-      dispatch(createFullCourseFailure("스케줄 추가 실패 ㅠ.ㅠ"));
+      errorControl(dispatch,"스케줄 추가 실패 ㅠ.ㅠ")
+      
     }
+    loadingControl(dispatch, false);
   };
 };
 
@@ -160,7 +148,7 @@ export const updateSchedule = ({
   scheduleId,
 }: UpdateScheduleProps) => {
   return async (dispatch: Dispatch) => {
-    dispatch(fullCourseRequest());
+    loadingControl(dispatch, true);
 
     const data: UpdateScheduleRequestDataProps = {
       placeId: placeId,
@@ -188,8 +176,11 @@ export const updateSchedule = ({
       //
     } catch (err) {
       console.log(err);
-      dispatch(createFullCourseFailure("스케줄 변경 실패!!"));
+       
+      errorControl(dispatch,"스케줄 변경 실패!!")
+      
     }
+    loadingControl(dispatch, false);
   };
 };
 
@@ -201,7 +192,7 @@ export const deleteSchedule = ({
   fullCourseId,
 }: DeleteScheduleProps) => {
   return async (dispatch: Dispatch) => {
-    dispatch(fullCourseRequest());
+    loadingControl(dispatch, true);
 
     const data: CreateScheduleRequestDataProps = {
       placeId: deleteScheduleListInfo[day][sequence].content.placeId,
@@ -223,15 +214,17 @@ export const deleteSchedule = ({
 
       //
     } catch (err) {
-      dispatch(createFullCourseFailure("스케줄 삭제 실패!!"));
+      errorControl(dispatch,"스케줄 삭제 실패!!")
+      
     }
+    loadingControl(dispatch, false);
   };
 };
 
 // 새로운 나만의 장소 생성
 export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
   return async (dispatch: Dispatch) => {
-    dispatch(fullCourseRequest());
+    loadingControl(dispatch, true);
 
     try {
       const res = await customAxios({ method: "post", data: customPlaceInfo });
@@ -251,7 +244,9 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
       dispatch(addCustomPlace(newState));
     } catch (e) {
       console.log(e);
-      dispatch(createFullCourseFailure("나만의 장소 추가 실패"));
+      errorControl(dispatch,"나만의 장소 추가 실패")
+      
     }
+    loadingControl(dispatch, false);
   };
 };

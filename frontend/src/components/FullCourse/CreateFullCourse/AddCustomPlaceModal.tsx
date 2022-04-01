@@ -1,6 +1,9 @@
 import {
   Button,
   FormControl,
+  Icon,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Modal,
@@ -122,6 +125,15 @@ function AddCustomPlaceModal({
               label="장소주소"
               fullWidth
               onChange={placeAddressChangeHandler}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <Icon>search</Icon>
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             ></TextField>
 
             <MapContainer>
