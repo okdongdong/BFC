@@ -20,9 +20,9 @@ public class InterestListRes {
 
     private Float averageScore;
 
-    private Float lng;
+    private Double lon;
 
-    private Float lat;
+    private Double lat;
 
     private String thumbnail;
 
@@ -30,7 +30,7 @@ public class InterestListRes {
         return list.stream().map(interest -> InterestListRes.builder()
                 .placeId(interest.getPlace().getPlaceId())
                 .name(interest.getPlace().getName())
-                .lng(interest.getPlace().getLng())
+                .lon(interest.getPlace().getLon())
                 .lat(interest.getPlace().getLat())
                 .averageScore(interest.getPlace().getAverageScore())
                 .thumbnail(interest.getPlace().getThumbnail())
@@ -42,7 +42,7 @@ public class InterestListRes {
         return list.map(interest -> InterestListRes.builder()
                 .placeId(interest.getPlace().getPlaceId())
                 .name(interest.getPlace().getName())
-                .lng(interest.getPlace().getLng())
+                .lon(interest.getPlace().getLon())
                 .lat(interest.getPlace().getLat())
                 .averageScore(interest.getPlace().getAverageScore())
                 .thumbnail(interest.getPlace().getThumbnail())
