@@ -23,13 +23,6 @@ public class EmailController {
         return ResponseEntity.ok(emailService.sendCode(email.get("email")));
     }
 
-    @PostMapping("/verification/reset")
-    public ResponseEntity<EmailAuthRes> emailPasswordAuth(
-            @RequestBody Map<String, String> email
-    ) throws Exception {
-        return ResponseEntity.ok(emailService.sendResetCode(email.get("email")));
-    }
-
     @PostMapping("/{fullCourseId}/share")
     public ResponseEntity<String> shareFullCourse(
             @PathVariable Long fullCourseId,
