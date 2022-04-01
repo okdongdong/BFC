@@ -4,7 +4,7 @@ import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
-import com.busanfullcourse.bfc.api.response.SharingListRes;
+import com.busanfullcourse.bfc.api.response.SharingRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.ShareService;
 import com.busanfullcourse.bfc.api.service.UserService;
@@ -80,8 +80,23 @@ public class FullCourseController {
     }
 
     @PostMapping("/{fullCourseId}/share")
-    public ResponseEntity<List<SharingListRes>> shareFullCourse(@PathVariable Long fullCourseId, @RequestBody List<String> userList) throws IllegalAccessException {
+    public ResponseEntity<String> shareFullCourse(
+            @PathVariable Long fullCourseId,
+            @RequestParam String email) throws IllegalAccessException {
+        shareService.shareFullCourse(fullCourseId, email);
+        return ResponseEntity.ok("풀코스가 공유되었습니다.");
+    }
+
+    @GetMapping("/{fullCourseId}/share")
+    public ResponseEntity<List<SharingRes>> getShareMember(@PathVariable Long fullCourseId) throws IllegalAccessException {
         String username = userService.getCurrentUsername();
-        return ResponseEntity.ok(shareService.shareFullCourse(fullCourseId, username, userList));
+        return ResponseEntity.ok(shareService.getShareMember(fullCourseId, username));
+    }
+
+    @DeleteMapping("/{fullCourseId}/share")
+    public ResponseEntity<String> deleteShareMember(@PathVariable Long fullCourseId, @RequestBody Map<String, Long> map) throws IllegalAccessException {
+        String username = userService.getCurrentUsername();
+        shareService.deleteShareMember(fullCourseId, username, map);
+        return ResponseEntity.ok("멤버가 제외되었습니다.");
     }
 }
