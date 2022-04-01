@@ -18,16 +18,14 @@ public class EmailController {
 
     @PostMapping("/verification")
     public ResponseEntity<EmailAuthRes> emailAuth(
-            @RequestBody
-            Map<String, String> email
+            @RequestBody Map<String, String> email
     ) throws Exception {
         return ResponseEntity.ok(emailService.sendCode(email.get("email")));
     }
 
     @PostMapping("/verification/reset")
     public ResponseEntity<EmailAuthRes> emailPasswordAuth(
-            @RequestBody
-            Map<String, String> email
+            @RequestBody Map<String, String> email
     ) throws Exception {
         return ResponseEntity.ok(emailService.sendResetCode(email.get("email")));
     }
@@ -35,7 +33,7 @@ public class EmailController {
     @PostMapping("/{fullCourseId}/share")
     public ResponseEntity<String> shareFullCourse(
             @PathVariable Long fullCourseId,
-            @RequestBody Map<String, String> invitedUser) throws IllegalAccessException {
+            @RequestBody Map<String, String> invitedUser) throws Exception {
         emailService.shareFullCourse(fullCourseId, invitedUser);
         return ResponseEntity.ok("초대메일이 발송되었습니다.");
     }

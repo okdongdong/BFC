@@ -59,7 +59,7 @@ public class FullCourseController {
 
     @PostMapping("/{fullCourseId}/share")
     public ResponseEntity<String> shareFullCourse(
-            @RequestParam Long fullCourseId,
+            @PathVariable Long fullCourseId,
             @RequestParam String email) throws IllegalAccessException {
         shareService.shareFullCourse(fullCourseId, email);
         return ResponseEntity.ok("풀코스가 공유되었습니다.");
