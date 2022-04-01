@@ -145,6 +145,22 @@ public class EmailService {
         return EmailAuthRes.builder().code(code).build();
     }
 
+    public EmailAuthRes sendCodeToUser(String email) throws Exception{
+        if (checkUsername(email)) {
+            throw new IllegalArgumentException();
+        }
+        String code = createKey();
+        MimeMessage message = createMessage(email, code);
+        try {
+            javaMailSender.send(message);
+        } catch (MailException mailException) {
+            mailException.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+
+        return EmailAuthRes.builder().code(code).build();
+    }
+
     public void sendResetCode(String email) throws Exception{
         User user = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
         String newPassword = createPassword();

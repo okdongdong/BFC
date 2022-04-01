@@ -65,6 +65,13 @@ public class AuthController {
     }
 
     @PostMapping("/verification")
+    public ResponseEntity<EmailAuthRes> emailAuth(
+            @RequestBody Map<String, String> email
+    ) throws Exception {
+        return ResponseEntity.ok(emailService.sendCodeToUser(email.get("email")));
+    }
+
+    @PostMapping("/verification/reset")
     public ResponseEntity<String> emailPasswordAuth(
             @RequestBody Map<String, String> email
     ) throws Exception {
