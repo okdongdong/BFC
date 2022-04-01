@@ -19,8 +19,15 @@ const successResponse = async (response: any) => {
 // 응답 실패시(에러발생) 실행할 함수
 const failureResponse = async (error: any) => {
   const originalRequest = error.config;
+
+  if (originalRequest.url === "/auth/reissue") {
+    // 401에러가 발생하는 요청이 토큰갱신요청이면 무한재귀
+    console.log("토큰 갱신 실패");
+    return Promise.reject(error);
+  }
+
   if (error.response.status === 401 && !originalRequest._retry) {
-    originalRequest._retry = true
+    originalRequest._retry = true;
     return unauthorizedError(error);
   }
   return Promise.reject(error);
@@ -28,15 +35,19 @@ const failureResponse = async (error: any) => {
 
 // 401에러 발생시 실행할 함수
 const unauthorizedError = async (error: any) => {
+  // 저장된 토큰을 다시 불러옴
   const refreshToken = localStorage.getItem("refreshToken") || "";
+  const token = localStorage.getItem("accessToken") || "";
+
   // 토큰 refresh요청
+  console.log("401에러 발생", error.config);
 
   try {
-
     const res = await customAxios({
       method: "post",
       url: `/auth/reissue`,
       headers: {
+        Authorization: token,
         RefreshToken: refreshToken,
       },
     });
@@ -61,8 +72,6 @@ const unauthorizedError = async (error: any) => {
 
     //실패했던 요청 재요청
     return customAxios(originalRequest);
-
-    
   } catch (e) {
     console.log("토큰 갱신 실패");
   }
@@ -74,5 +83,3 @@ customAxios.interceptors.response.use(
   (response) => successResponse(response), // 정상적인 응답을 반환한 경울
   (error) => failureResponse(error) // 에러가 발생한 경우
 );
-
-
