@@ -7,10 +7,11 @@ import com.busanfullcourse.bfc.db.repository.elasticsearch.PlaceSearchRepository
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,17 +32,26 @@ public class ElasticSearchService {
     }
 
     public void saveAll() {
-        placeSearchRepository.saveAll(placeRepository.findAll());
+        placeSearchRepository.saveAll(placeRepository.findAll().stream()
+                .peek(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())))
+                .collect(Collectors.toList()));
     }
 
     public void deleteAll() {
         placeSearchRepository.deleteAll();
     }
 
-    public Page<SearchPlaceListRes> searchByDistance(Double lat, Double lon, Integer distance, Pageable pageable) {
-        List<String> ids = placeSearchRepository.searchByGeoPointAndDistance(lat, lon, distance);
-
-        return SearchPlaceListRes.of(placeSearchRepository
-                .findAllByPlaceId(ids.stream().map(Long::parseLong).collect(Collectors.toList()), pageable));
+    public Page<SearchPlaceListRes> searchByDistance(Long placeId, Integer distance, Pageable pageable) {
+        Place selected = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("식당이 없습니다."));
+        Page<Place> list = placeSearchRepository.searchByGeoPointAndDistance(selected.getLat(), selected.getLon(), distance, pageable);
+        Iterator<Place> iterator = list.iterator();
+        while(iterator.hasNext()) {
+            Place now = iterator.next();
+            if (Objects.equals(now.getPlaceId(), placeId)){
+                iterator.remove();
+                break;
+            }
+        }
+        return SearchPlaceListRes.of(list);
     }
 }

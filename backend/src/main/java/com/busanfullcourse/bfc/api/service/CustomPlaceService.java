@@ -37,7 +37,7 @@ public class CustomPlaceService {
                         .name(req.getName())
                         .address(req.getAddress())
                         .lat(req.getLat())
-                        .lng(req.getLon())
+                        .lon(req.getLon())
                         .user(user)
                         .build()
         );

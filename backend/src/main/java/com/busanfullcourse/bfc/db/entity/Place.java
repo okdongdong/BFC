@@ -41,8 +41,10 @@ public class Place {
     @Column(name = "open_time")
     private String openTime;
 
+    @Field(type=FieldType.Double)
     private Double lat;
 
+    @Field(type=FieldType.Double)
     private Double lon;
 
     @Field(type = FieldType.Text)
@@ -62,6 +64,7 @@ public class Place {
     private Float averageScore;
 
     @Builder.Default
+    @Field(type = FieldType.Integer)
     @Column(name = "score_count")
     private Integer scoreCount = 0;
 
@@ -75,7 +78,7 @@ public class Place {
 
     @javax.persistence.Transient
     @GeoPointField
-    private GeoPoint location; // = new GeoPoint(this.getLat(), this.getLon());
+    public GeoPoint location;
 
 
     @PersistenceConstructor
@@ -91,6 +94,6 @@ public class Place {
         this.station = station;
         this.phone = phone;
         this.thumbnail = thumbnail;
-        this.location = new GeoPoint(lat, lon);
+        this.location = new GeoPoint(lat,lon);
     }
 }
