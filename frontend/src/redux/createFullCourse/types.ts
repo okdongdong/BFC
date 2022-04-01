@@ -14,7 +14,7 @@ export const SET_FULL_COURSE_DATE = "SET_FULL_COURSE_DATE";
 
 // 사전조사 후 풀코스를 새로 만드는 요청
 export const CREATE_FULL_COURSE_SUCCESS = "CREATE_FULL_COURSE_SUCCESS";
-export const CREATE_FULL_COURSE_FAILURE = "CREATE_FULL_COURSE_FAILURE";
+export const REQUEST_FAILURE = "REQUEST_FAILURE";
 
 // 새로운 커스텀장소를 일정에 추가
 export const ADD_CUSTOM_PLACE = "ADD_CUSTOM_PLACE";

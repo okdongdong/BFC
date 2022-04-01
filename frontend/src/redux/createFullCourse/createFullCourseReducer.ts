@@ -8,10 +8,7 @@ import {
   SET_FULL_COURSE_DATE,
   FullCourseListProps,
   CREATE_CARD,
-  FULL_COURSE_REQUEST,
   CREATE_FULL_COURSE_SUCCESS,
-  CREATE_FULL_COURSE_FAILURE,
-  ERROR_CONTROL,
   ADD_CUSTOM_PLACE,
 } from "./types";
 
@@ -19,9 +16,6 @@ export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
   fullCourseDate: Array<string | null>;
   fullCourseId?: number;
-  nowLoading?: boolean;
-  nowError?: boolean;
-  errorMessage?: string;
 }
 
 const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
@@ -38,9 +32,8 @@ placeList.map((place: PlaceCardProps) =>
 );
 
 const initialState: CreateFullCourseDnd = {
-  fullCourseList: [],
+  fullCourseList: [[]],
   fullCourseDate: [null, null],
-  nowLoading: false,
 };
 
 const createFullCourseReducer = (
@@ -52,10 +45,11 @@ const createFullCourseReducer = (
     // 스케줄 DND에서 카드 옮길 때
     case MOVE_CARD:
       console.log(action.payload);
+      console.log('실행이 안되나?');
+      
       const newFullCourseList = deepcopy(action.payload);
       return {
         ...newState,
-        nowLoading: false,
         fullCourseList: newFullCourseList,
       };
 
@@ -92,7 +86,6 @@ const createFullCourseReducer = (
         }
         return {
           ...state,
-          nowLoading: false,
           fullCourseList: newFullCourseList,
           fullCourseDate: [...action.payload],
         };
@@ -106,35 +99,12 @@ const createFullCourseReducer = (
       newState.fullCourseList[action.payload.day].push(action.payload.schedule);
       return {
         ...newState,
-        nowLoading: false,
-      };
-
-    // 로딩중..
-    case FULL_COURSE_REQUEST:
-      return {
-        ...newState,
-        nowLoading: true,
       };
 
     case CREATE_FULL_COURSE_SUCCESS:
       return {
         ...newState,
-        nowLoading: false,
         fullCourseId: action.payload,
-      };
-
-    case CREATE_FULL_COURSE_FAILURE:
-      return {
-        ...newState,
-        nowLoading: false,
-        nowError: true,
-        errorMessage: action.payload,
-      };
-
-    case ERROR_CONTROL:
-      return {
-        ...newState,
-        nowError: action.payload,
       };
 
     default:
