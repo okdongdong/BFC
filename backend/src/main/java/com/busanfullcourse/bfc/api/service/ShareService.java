@@ -23,7 +23,7 @@ public class ShareService {
     private final SharingRepository sharingRepository;
     private final FullCourseRepository fullCourseRepository;
 
-    public List<SharingRes> shareFullCourse(Long fullCourseId, String email) throws IllegalAccessException {
+    public void shareFullCourse(Long fullCourseId, String email) throws IllegalAccessException {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
         Optional<User> user = userRepository.findByUsername(email);
         if (user.isEmpty()) {
@@ -38,10 +38,7 @@ public class ShareService {
                     .fullCourse(fullCourse)
                     .user(user.get())
                     .build());
-
         }
-
-        return SharingRes.of(sharings);
     }
 
     public List<SharingRes> getShareMember(Long fullCourseId, String username) throws IllegalAccessException {

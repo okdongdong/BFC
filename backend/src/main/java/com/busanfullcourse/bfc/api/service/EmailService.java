@@ -45,9 +45,9 @@ public class EmailService {
         mimeMessage.setSubject("BusanFullCourse Code: " + code);
 
         String message = "";
-        message += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
+        message += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">가입 확인 코드</h1>";
         message += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">아래 확인 코드를 BusanFullCourse 가입 창이 있는 브라우저 창에 입력하세요.</p>";
-        message += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
+        message += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 15px  40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
         message += code;
         message += "</td></tr></tbody></table></div>";
         message += "<a href=\"https://slack.com\" style=\"text-decoration: none; color: #434245;\" rel=\"noreferrer noopener\" target=\"_blank\">BFC Technologies, Inc</a>";
@@ -58,10 +58,19 @@ public class EmailService {
         return mimeMessage;
     }
 
-    private MimeMessage createShareMessage(String to, Long fullCourseId) throws Exception {
+    private MimeMessage createShareMessage(String to, FullCourse fullCourse) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         mimeMessage.addRecipients(Message.RecipientType.TO, to);
         mimeMessage.setSubject("BusanFullCourse Share!!");
+
+        String message = "";
+        message += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">같이 여행가요!</h1>";
+        message += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">";
+        message += fullCourse.getTitle();
+        message += "의 부산여행 풀코스로 모시겠습니다!</p>";
+        message += "<p style=\"font-size: 17px; padding-right: 30px; padding-left: 30px;\">확인버튼을 통해 풀코스에 참여하세요!</p>";
+        mimeMessage.setText(message, "utf-8", "html");
+        mimeMessage.setFrom(new InternetAddress("busanfullcourse@gmail.com", "busanfullcourse"));
         return mimeMessage;
     }
 
@@ -107,7 +116,7 @@ public class EmailService {
         return EmailAuthRes.builder().code(code).build();
     }
 
-    public void shareFullCourse(Long fullCourseId, Map<String, String> invitedUser) throws IllegalAccessException {
+    public void shareFullCourse(Long fullCourseId, Map<String, String> invitedUser) throws Exception {
         String username = userService.getCurrentUsername();
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
         if (!fullCourse.getUser().getUsername().equals(username)) {
@@ -115,16 +124,18 @@ public class EmailService {
         }
         String email = invitedUser.get("invitedUser");
         User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
-
-        Optional<Sharing> optionalSharing = sharingRepository.findByFullCourseAndUser(fullCourse, reqUser);
-
-        if (optionalSharing.isEmpty()) {
-            Sharing sharing = sharingRepository.save(Sharing.builder()
-                    .fullCourse(fullCourse)
-                    .user(reqUser)
-                    .build());
-        } else {
+        if (sharingRepository.findByFullCourseAndUser(fullCourse, reqUser).isPresent()) {
             throw new IllegalAccessException("이미 공유된 사용자입니다.");
+        } else {
+            MimeMessage message = createShareMessage(email, fullCourse);
+            try {
+                javaMailSender.send(message);
+            } catch (MailException mailException) {
+                mailException.printStackTrace();
+                throw new IllegalArgumentException();
+            }
         }
+
+
     }
 }
