@@ -1,21 +1,24 @@
 package com.busanfullcourse.bfc.db.repository.elasticsearch;
 
 
+import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.RequiredArgsConstructor;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.DistanceUnit;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,34 +26,26 @@ import java.util.stream.Collectors;
 @Component
 public class NearPlaceSearchRepositoryImpl implements NearPlaceSearchRepository{
 
+    private final ElasticsearchOperations elasticsearchOperations;
 
-    private final RestHighLevelClient client;
 
 
     @Override
-    public List<String> searchByGeoPointAndDistance(Double lat, Double lon, Integer distance) {
+    public Page<Place> searchByGeoPointAndDistance(Double lat, Double lon, Integer distance, Pageable pageable) {
 
-        QueryBuilder qb = QueryBuilders.geoDistanceQuery("places.location")
+        GeoDistanceQueryBuilder qb = QueryBuilders.geoDistanceQuery("location")
                 .point(lat, lon)
                 .distance(distance, DistanceUnit.METERS);
 
-
-        SearchSourceBuilder source = new SearchSourceBuilder().query(qb);
-        SearchRequest searchRequest = new SearchRequest();
-        searchRequest.source(source);
-
-        try {
-            SearchResponse response = client.search(searchRequest, RequestOptions.DEFAULT);
-            return Arrays.stream(response.getHits()
-                            .getHits())
-                    .map(SearchHit::getId)
-                    .collect(Collectors.toList());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(qb)
+//                .withSort(SortBuilders.geoDistanceSort("location", lat, lon).order(SortOrder.ASC))
+                .withSort(SortBuilders.fieldSort("averageScore").order(SortOrder.DESC))
+                .build();
+        List<Place> list = elasticsearchOperations.search(searchQuery, Place.class).stream().map(SearchHit::getContent).collect(Collectors.toList());
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start,end), pageable, list.size());
 
     }
 }

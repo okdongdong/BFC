@@ -5,6 +5,9 @@ import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,6 +25,10 @@ public class SearchPlaceListRes {
 
     private Double lat;
 
+    private String address;
+
+    private Integer scoreCount;
+
     private String thumbnail;
 
     public static Page<SearchPlaceListRes> of (Page<Place> list) {
@@ -31,7 +38,22 @@ public class SearchPlaceListRes {
                 .lon(place.getLon())
                 .lat(place.getLat())
                 .averageScore(place.getAverageScore())
+                .scoreCount(place.getScoreCount())
+                .address(place.getAddress())
                 .thumbnail(place.getThumbnail())
                 .build());
+    }
+
+    public static List<SearchPlaceListRes> of (List<Place> list) {
+        return list.stream().map(place -> SearchPlaceListRes.builder()
+                .placeId(place.getPlaceId())
+                .name(place.getName())
+                .lon(place.getLon())
+                .lat(place.getLat())
+                .averageScore(place.getAverageScore())
+                .scoreCount(place.getScoreCount())
+                .address(place.getAddress())
+                .thumbnail(place.getThumbnail())
+                .build()).collect(Collectors.toList());
     }
 }

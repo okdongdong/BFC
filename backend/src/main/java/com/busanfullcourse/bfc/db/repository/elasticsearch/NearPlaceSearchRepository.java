@@ -1,8 +1,11 @@
 package com.busanfullcourse.bfc.db.repository.elasticsearch;
 
-import java.util.List;
+import com.busanfullcourse.bfc.db.entity.Place;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface NearPlaceSearchRepository {
 
-    List<String> searchByGeoPointAndDistance(Double lat, Double lon, Integer distance);
+    Page<Place> searchByGeoPointAndDistance(Double lat, Double lon, Integer distance, Pageable pageable);
+
 }
