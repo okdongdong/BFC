@@ -7,7 +7,10 @@ import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.api.response.RestaurantListRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
+import com.busanfullcourse.bfc.db.entity.User;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
+import com.busanfullcourse.bfc.db.repository.RecommendRepository;
+import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,8 @@ import java.util.NoSuchElementException;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
+    private final UserRepository userRepository;
+    private final RecommendRepository recommendRepository;
 
 
     public RestaurantDetailRes getRestaurantDetail(Long placeId){
@@ -72,5 +77,15 @@ public class PlaceService {
 
     public List<AttractionListRes> getPopularAttractionList() {
         return AttractionListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
+    }
+
+    public List<RestaurantListRes> getRecommendRestaurantList(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        return RestaurantListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user,true));
+    }
+
+    public List<AttractionListRes> getRecommendAttractionList(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        return AttractionListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user, false));
     }
 }
