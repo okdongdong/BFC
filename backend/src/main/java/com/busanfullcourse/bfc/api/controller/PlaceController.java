@@ -118,10 +118,11 @@ public class PlaceController {
     }
 
     @GetMapping("/search/near")
-    public ResponseEntity<Page<SearchPlaceListRes>> searchByDistance(@RequestParam Long placeId,
+    public ResponseEntity<Page<SearchPlaceListRes>> searchByDistance(
+            @RequestParam Long scheduleId,
             @RequestParam Integer distance,
             @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable
             ) {
-        return ResponseEntity.ok(searchService.searchByDistance(placeId, distance, pageable));
+        return ResponseEntity.ok(searchService.searchByDistance(scheduleId, distance, pageable));
     }
 }
