@@ -12,6 +12,8 @@ import com.busanfullcourse.bfc.db.repository.PlaceRepository;
 import com.busanfullcourse.bfc.db.repository.RecommendRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import com.busanfullcourse.bfc.common.cache.CacheKey;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,10 +73,11 @@ public class PlaceService {
                 .build();
     }
 
+    @Cacheable(value = CacheKey.POPULAR_RESTAURANT)
     public List<RestaurantListRes> getPopularRestaurantList() {
         return RestaurantListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(70, true));
     }
-
+    @Cacheable(value = CacheKey.POPULAR_ATTRACTION)
     public List<AttractionListRes> getPopularAttractionList() {
         return AttractionListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
     }
