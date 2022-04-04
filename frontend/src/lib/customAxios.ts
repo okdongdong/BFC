@@ -83,7 +83,7 @@ const unauthorizedError = async (error: any) => {
     //실패했던 요청 재요청
     return customAxios(originalRequest);
   } catch (e) {
-    console.log("토큰 갱신 실패");
+    console.log("reissue fail");
   }
   return Promise.reject(error);
 };

@@ -9,12 +9,19 @@ interface KakaoMapProps {
   mapId?: string;
   lat?: number;
   lng?: number;
+  setLocation: React.Dispatch<
+    React.SetStateAction<{
+      lat: number;
+      lng: number;
+    }>
+  >;
 }
 
-function KakaoMap({
+function ModalKakaoMap({
   mapId = "map",
   lat = 35.1797913,
   lng = 129.074987,
+  setLocation,
 }: KakaoMapProps) {
   const loadMap = () => {
     const container = document.getElementById(mapId);
@@ -38,7 +45,7 @@ function KakaoMap({
       marker.setPosition(latlng);
       var message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
       message += "경도는 " + latlng.getLng() + " 입니다";
-
+      setLocation({ lat: latlng.getLat(), lng: latlng.getLng() });
       console.log(message);
     });
   };
@@ -68,4 +75,4 @@ function KakaoMap({
   return <Box id={mapId} sx={{ flexGrow: 1 }}></Box>;
 }
 
-export default KakaoMap;
+export default ModalKakaoMap;

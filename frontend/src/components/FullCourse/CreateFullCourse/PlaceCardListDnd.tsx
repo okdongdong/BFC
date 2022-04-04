@@ -11,7 +11,6 @@ function PlaceCardListDnd({
   placeList,
   droppableId = "placeList",
 }: PlaceCardListDndProps) {
-  console.log(placeList[0]);
   const getRenderItem =
     (items: any) => (provided: any, snapshot: any, rubric: any) =>
       (
@@ -35,8 +34,12 @@ function PlaceCardListDnd({
   const renderItem = getRenderItem(items);
 
   return (
-    <div style={{ position: "absolute", top: 0, zIndex: 100, opacity: 0.5 }}>
-      <Droppable droppableId={droppableId} renderClone={renderItem}>
+    <div style={{ position: "absolute", top: 0, zIndex: 100, opacity: 0 }}>
+      <Droppable
+        droppableId={droppableId}
+        renderClone={renderItem}
+        isDropDisabled
+      >
         {(provided: any, snapshot: any) => (
           <div
             ref={provided.innerRef}
