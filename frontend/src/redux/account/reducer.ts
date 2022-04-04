@@ -1,7 +1,6 @@
 import { AnyAction } from "redux";
 import { NavUserInfo } from "../../types/account";
 import {
-  SET_PASSWORD_INFO,
   SET_PROFILE_IMG,
   SET_USER_INFO,
   USER_LOGIN_FAILURE,
@@ -64,12 +63,7 @@ const accountReducer = (
         ...state,
         profileImg: action.payload,
       };
-    case SET_PASSWORD_INFO:
-      return {
-        ...state,
-        password: action.payload.password,
-        passwordConfirmation: action.payload.passwordCheck,
-      };
+
     case SET_USER_INFO:
       return {
         ...state,
