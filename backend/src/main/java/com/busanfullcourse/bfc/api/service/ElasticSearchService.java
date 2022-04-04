@@ -1,8 +1,11 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.SearchPlaceListRes;
+import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.Place;
+import com.busanfullcourse.bfc.db.entity.Schedule;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
+import com.busanfullcourse.bfc.db.repository.ScheduleRepository;
 import com.busanfullcourse.bfc.db.repository.elasticsearch.PlaceSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,7 @@ public class ElasticSearchService {
 
     private final PlaceSearchRepository placeSearchRepository;
     private final PlaceRepository placeRepository;
+    private final ScheduleRepository scheduleRepository;
 
     public Page<SearchPlaceListRes> searchPlaceByName(String name, Pageable pageable) {
         Page<Place> list = placeSearchRepository.findByNameContains(name, pageable);
@@ -41,15 +45,26 @@ public class ElasticSearchService {
         placeSearchRepository.deleteAll();
     }
 
-    public Page<SearchPlaceListRes> searchByDistance(Long placeId, Integer distance, Pageable pageable) {
-        Place selected = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("식당이 없습니다."));
-        Page<Place> list = placeSearchRepository.searchByGeoPointAndDistance(selected.getLat(), selected.getLon(), distance, pageable);
-        Iterator<Place> iterator = list.iterator();
-        while(iterator.hasNext()) {
-            Place now = iterator.next();
-            if (Objects.equals(now.getPlaceId(), placeId)){
-                iterator.remove();
-                break;
+    public Page<SearchPlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(NoSuchElementException::new);
+        Place place = schedule.getPlace();
+        Page<Place> list;
+
+        if (place == null) {
+            CustomPlace customPlace = schedule.getCustomPlace();
+            list = placeSearchRepository.searchByGeoPointAndDistance(customPlace.getLat(), customPlace.getLon(), distance, pageable);
+        } else {
+            list = placeSearchRepository.searchByGeoPointAndDistance(place.getLat(), place.getLon(), distance, pageable);
+        }
+
+        if (place != null) {
+            Iterator<Place> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                Place now = iterator.next();
+                if (Objects.equals(now.getPlaceId(), place.getPlaceId())) {
+                    iterator.remove();
+                    break;
+                }
             }
         }
         return SearchPlaceListRes.of(list);
