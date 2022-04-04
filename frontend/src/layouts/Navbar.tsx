@@ -23,6 +23,7 @@ const RootStyle = styled(AppBar)(({ theme }) => ({
   backdropFilter: "blur(6px)",
   WebkitBackdropFilter: "blur(6px)",
   backgroundColor: alpha(theme.palette.background.default, 0.72),
+  [theme.breakpoints.down("sm")]: {},
 }));
 
 const ToolbarStyle = styled(Toolbar)({
@@ -70,6 +71,7 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
         <NavbarText to="attraction" text="여행지"></NavbarText>
         <NavbarText to="restaurant" text="맛집"></NavbarText>
         <NavbarText to="info" text="이용방법"></NavbarText>
+        <NavbarText to="/fullcourse/presurvey" text="풀코스만들기"></NavbarText>
         <Box sx={{ flexGrow: 2 }} />
 
         {isLogin ? (
