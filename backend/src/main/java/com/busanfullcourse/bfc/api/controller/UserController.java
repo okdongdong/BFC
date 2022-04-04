@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -65,6 +66,15 @@ public class UserController {
         return ResponseEntity.ok(userService.follow(userId));
     }
 
+    @GetMapping("/{userId}/followFrom")
+    public ResponseEntity<List<FollowListRes>> followFromList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followFromList(userId));
+    }
+
+    @GetMapping("/{userId}/followTo")
+    public ResponseEntity<List<FollowListRes>> followToList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followToList(userId));
+    }
 
     @GetMapping("/{userId}/interest")
     public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
@@ -72,10 +82,16 @@ public class UserController {
         return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
     }
 
+    @GetMapping("/{userId}/user")
+    public ResponseEntity<Page<FullCourseListRes>> getMoreUserFullCourse(@PathVariable Long userId,
+                                                                         @PageableDefault(size = 4, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(userService.getMoreUserFullCourse(userId, pageable));
+    }
+
     @GetMapping("/{userId}/like")
     public ResponseEntity<Page<FullCourseListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
                                                                           @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(fullCourseService.getMoreLikedFullCourse(userId, pageable));
+        return ResponseEntity.ok(userService.getMoreLikedFullCourse(userId, pageable));
     }
 
 
