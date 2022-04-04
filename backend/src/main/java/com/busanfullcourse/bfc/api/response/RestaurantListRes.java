@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.response;
 import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RestaurantListRes {
+public class RestaurantListRes implements Serializable {
     private Long placeId;
 
     private String name;
