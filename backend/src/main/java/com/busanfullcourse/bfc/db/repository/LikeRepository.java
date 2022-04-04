@@ -16,8 +16,18 @@ import java.util.Optional;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Optional<Like> findByUserAndFullCourse(User user, FullCourse fullCourse);
 
+    // 내 프로필 조회할 때 가져올 상위 6개
     @EntityGraph(attributePaths = {"fullCourse"})
     List<Like> findTop6ByUser(User user);
 
+    // 내 프로필 조회할 때 가져올 페이징
     Page<Like> findAllByUserId(Long userId, Pageable pageable);
+
+    // 다른 사람 프로필 조회할 때 가져올 상위 6개
+    @EntityGraph(attributePaths = {"fullCourse"})
+    List<Like> findTop6ByUserAndFullCourseIsPublic(User user, Boolean isPublic);
+
+    // 다른 사람 프로필 조회할 때 가져올 페이징
+    Page<Like> findAllByUserIdAndFullCourseIsPublic(Long userId, Pageable pageable, Boolean isPublic);
+
 }

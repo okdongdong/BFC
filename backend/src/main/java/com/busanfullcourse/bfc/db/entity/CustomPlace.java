@@ -22,9 +22,9 @@ public class CustomPlace {
 
     private String address;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

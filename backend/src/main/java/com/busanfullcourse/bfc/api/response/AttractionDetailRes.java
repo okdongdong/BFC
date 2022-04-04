@@ -3,6 +3,8 @@ package com.busanfullcourse.bfc.api.response;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,11 +18,11 @@ public class AttractionDetailRes {
 
     private String info;
 
-    private String openTime;
+    private List<String> openTime;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     private String address;
 

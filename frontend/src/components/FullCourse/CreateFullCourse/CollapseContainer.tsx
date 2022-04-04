@@ -2,7 +2,8 @@ import { Icon, Theme } from "@mui/material";
 import { styled } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import ScrollableBox from "../ScrollableBox";
 
 const useCollapseStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -59,35 +60,10 @@ function CollapseContainer({
 }: CollapseContainerProps) {
   const [expanded, setExpanded] = useState(true);
 
-  const ContentBox = styled("div")(() => ({
-    height: "calc(100vh - 80px)",
-    width: 400,
-    backgroundColor: backgroundColor,
-    position: "relative",
-    overflowY: "scroll",
-    // scrollBehavior: "smooth",
-
-    /* 스크롤바 설정*/
-    "&::-webkit-scrollbar": {
-      width: "6px",
-    },
-    /* 스크롤바 막대 설정*/
-    "&::-webkit-scrollbar-thumb": {
-      height: "17%",
-      backgroundColor: "rgba(33,133,133,1)",
-      borderRadius: " 10px",
-    },
-    /* 스크롤바 뒷 배경 설정*/
-    "&::-webkit-scrollbar-track": {
-      backgroundColor: " rgba(33,133,133,0.33)",
-    },
-  }));
-
   useEffect(() => {
     setExpanded(false);
   }, []);
 
-  const ref = useRef<HTMLDivElement>(null);
   // useEffect(() => {
   //   console.log(typeof setNowScrollPosition, ref.current !== null, dayChange);
   //   if (
@@ -101,21 +77,28 @@ function CollapseContainer({
   // }, [dayChange]);
 
   const ExpandButton = styled("div")(() => ({
-    width: 30,
-    height: 200,
+    width: 15,
+    height: 150,
     "&:hover": {
       backgroundColor: "black",
+      color: "white",
+      width: 30,
     },
+    transition: "width .2s",
+    color: "rgba(0,0,0,0)",
     backgroundColor: "white",
     borderRadius: "0 25px 25px 0",
     textAlign: "center",
     display: "flex",
     alignItems: "center",
-    fontSize: 24,
     boxShadow: "1.2px 2px 1px 1px rgba(0,0,0,0.2)",
     position: "absolute",
     top: buttonPositionY,
     zIndex: 1000,
+  }));
+
+  const IconStyle = styled(Icon)(() => ({
+    fontSize: 30,
   }));
 
   return (
@@ -125,14 +108,20 @@ function CollapseContainer({
         orientation="horizontal"
         classes={useCollapseStyles()}
       >
-        <ContentBox ref={ref}>{children}</ContentBox>
+        <ScrollableBox
+          height={"calc(100vh - 80px)"}
+          width={400}
+          backgroundColor={backgroundColor}
+        >
+          {children}
+        </ScrollableBox>
       </Collapse>
       <div style={{}}>
         <ExpandButton onClick={() => setExpanded(!expanded)}>
           {expanded ? (
-            <Icon sx={{ fontSize: 30 }}>arrow_left_sharp</Icon>
+            <IconStyle>arrow_left_sharp</IconStyle>
           ) : (
-            <Icon sx={{ fontSize: 30 }}>arrow_right_sharp</Icon>
+            <IconStyle>arrow_right_sharp</IconStyle>
           )}
         </ExpandButton>
       </div>

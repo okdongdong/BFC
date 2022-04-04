@@ -3,7 +3,7 @@ import { Button, Container, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import { AccountReducer } from "../../../redux/rootReducer";
-import { customAxios } from "../../../lib/customAxios";
+import axios from "axios";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -48,25 +48,25 @@ function ChangePassword({ username, userId }: Props) {
     useState<string>("");
 
   // 비밀번호 수정 요청전송
-  function requestSetpassword(userInfo: UserInfo): void {
-    console.log("눌림");
-    // const token = localStorage.getItem("accessToken") || "";
-    // axios({
-    //   method: "post",
-    //   url: `/users/${userId}/password`,
-    //   data: userInfo,
-    //   headers: {
-    //     Authorization: token,
-    //     "Content-Type": "multipart/form-data",
-    //   },
-    // })
-    //   .then((res) => {
-    //     console.log(res);
-    //     console.log("바뀜바뀜");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  function requestSetpassword() {
+    const token = localStorage.getItem("accessToken") || "";
+    axios({
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}/password`,
+      data: userInfo,
+      headers: {
+        Authorization: token,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        console.log("바뀜바뀜");
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("기존비밀번호가 틀렸습니다.");
+      });
   }
 
   // 비밀번호수정 정보입력
@@ -162,7 +162,7 @@ function ChangePassword({ username, userId }: Props) {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => requestSetpassword}
+            onClick={requestSetpassword}
             disabled={
               userInfo.newPassword !== userInfo.passwordCheck ||
               userInfo.oldPassword === ""
