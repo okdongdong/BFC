@@ -3,29 +3,7 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 import { setFullCourseDate } from "../../../redux/createFullCourse/actions";
-
-const ContentBox = styled(Stack)(() => ({
-  height: "calc(100vh - 80px)",
-  width: 100,
-  backgroundColor: "#a2a2a2",
-  position: "relative",
-  alignItems: "center",
-  overflowY: "auto",
-  /* 스크롤바 설정*/
-  "&::-webkit-scrollbar": {
-    width: "6px",
-  },
-  /* 스크롤바 막대 설정*/
-  "&::-webkit-scrollbar-thumb": {
-    height: "17%",
-    backgroundColor: "rgba(33,133,133,1)",
-    borderRadius: " 10px",
-  },
-  /* 스크롤바 뒷 배경 설정*/
-  "&::-webkit-scrollbar-track": {
-    backgroundColor: " rgba(33,133,133,0.33)",
-  },
-}));
+import ScrollableBox from "../ScrollableBox";
 
 function DayBar({
   fullCourseDate,
@@ -70,6 +48,7 @@ function DayBar({
     },
   }));
 
+  // 풀코스 일정 길이 계산
   const calDayLength = () => {
     if (startDate !== null && endDate !== null) {
       const diffDate = startDate.getTime() - endDate.getTime();
@@ -85,6 +64,7 @@ function DayBar({
     }
   };
 
+  // 일정 하루 추가
   const addDate = () => {
     if (startDate !== null && endDate !== null) {
       const nextDate = new Date(endDate.setDate(endDate.getDate() + 1));
@@ -110,7 +90,11 @@ function DayBar({
   };
 
   return (
-    <ContentBox>
+    <ScrollableBox
+      height="calc(100vh - 80px)"
+      width={100}
+      backgroundColor="#ddd"
+    >
       {dayList.map((day, idx) => (
         <DayTextBox key={idx} onClick={() => dayChangeHandler(idx)}>
           <DayTextStyle idx={idx}>
@@ -127,7 +111,7 @@ function DayBar({
           </p>
         </DayTextStyle>
       </DayTextBox>
-    </ContentBox>
+    </ScrollableBox>
   );
 }
 
