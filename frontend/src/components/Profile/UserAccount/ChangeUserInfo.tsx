@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import TextFieldWithButton from "../../Accounts/TextFieldWithButton";
 import {
+  Backdrop,
   Button,
   ButtonGroup,
+  CircularProgress,
   Container,
   TextField,
   Theme,
@@ -11,9 +13,7 @@ import { makeStyles } from "@mui/styles";
 import DeleteAccount from "./DeleteAccount";
 import { AccountReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
-import { customAxios } from "../../../lib/customAxios";
-import { SetUserInfo } from "../../../types/account";
-import { getUserInfo, setUserInfo } from "../../../redux/account/actions";
+import axios from "axios";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -31,25 +31,45 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ChangeUserInfo({
-  getUserInfo,
-  setUserInfo,
-  userId,
-  username,
-  nickname,
-  birthday,
-  gender,
-}: Props) {
-  const classes = useStyles();
-  //회원정보가져오기
-  getUserInfo(userId);
+interface UserInfo {
+  userId: number;
+  username: string;
+  nickname: string;
+  gender: boolean;
+  birthday: string;
+  profileImg: string;
+  [key: string]: any;
+}
 
-  const userInfo: SetUserInfo = {
-    username: username,
-    nickname: nickname,
-    gender: gender,
-    birthday: birthday,
+function ChangeUserInfo({ userId }: Props) {
+  const initUserInfo: UserInfo = {
+    userId: userId,
+    username: "",
+    nickname: "",
+    birthday: "",
+    gender: false,
+    profileImg: "",
   };
+  const classes = useStyles();
+  const [userInfo, setUserInfo] = useState<UserInfo>(initUserInfo);
+  const [isLoading, setIsLoading] = useState(false);
+  //회원정보가져오기
+  const token = localStorage.getItem("accessToken") || "";
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios({
+        method: "get",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}`,
+        headers: {
+          Authorization: token,
+        },
+      });
+      setUserInfo(result.data);
+      setIsLoading(true);
+    };
+    fetchData();
+  }, []);
+
   //인증관련 state
   const [nicknameConfirmation, setNicknameConfirmation] =
     useState<boolean>(false);
@@ -57,13 +77,28 @@ function ChangeUserInfo({
 
   // 유효성 검사 처리
   const [nickNameMessage, setNickNameMessage] = useState<string>("");
-
+  console.log(
+    "호호호호호",
+    userInfo.username,
+    userInfo.nickname,
+    userInfo.birthday,
+    userInfo.gender
+  );
   // 회원정보수정요청
-  function requestChangeUser(): void {
-    customAxios({
+  function requestChangeUser() {
+    const userData = {
+      username: userInfo.username,
+      nickname: userInfo.nickname,
+      birthday: userInfo.birthday,
+      gender: userInfo.gender,
+    };
+    axios({
       method: "put",
-      url: `/users/${userId}`,
-      data: userInfo,
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}`,
+      data: userData,
+      headers: {
+        Authorization: token,
+      },
     })
       .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
@@ -79,10 +114,13 @@ function ChangeUserInfo({
       // 닉네임 인증
       console.log("닉네임 중복검사 요청");
       setSendCheckNickname(() => true);
-      customAxios({
+      axios({
         method: "get",
-        url: `/auth/nickname`,
-        params: { nickname: nickname },
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/nickname`,
+        params: { nickname: userInfo.nickname },
+        headers: {
+          Authorization: token,
+        },
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
@@ -96,20 +134,20 @@ function ChangeUserInfo({
   }
 
   // 성별버튼
-  function selectGender(gender: number): void {
-    const newUserInfo: SetUserInfo = { ...userInfo };
-    if (gender === 1) {
-      newUserInfo.gender = 1;
+  function selectGender(gender: boolean): void {
+    const newUserInfo: UserInfo = { ...userInfo };
+    if (gender === true) {
+      newUserInfo.gender = true;
       setUserInfo(newUserInfo);
     } else {
-      newUserInfo.gender = 0;
+      newUserInfo.gender = false;
       setUserInfo(newUserInfo);
     }
   }
 
   // 회원정보수정폼 정보입력
   function changeUserInfo(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newUserInfo: SetUserInfo = { ...userInfo };
+    const newUserInfo: UserInfo = { ...userInfo };
     const targetId: string = event.target.id;
     newUserInfo[targetId] = event.target.value;
     setUserInfo(newUserInfo);
@@ -136,94 +174,93 @@ function ChangeUserInfo({
 
   return (
     <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
-        <form className={classes.form} noValidate>
-          <TextField
-            disabled
-            variant="filled"
-            margin="normal"
-            fullWidth
-            id="certificationNumber"
-            label="이메일"
-            defaultValue={username}
-            type="text"
-            name="certificationNumber"
-          />
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={!isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      {isLoading ? (
+        <div className={classes.paper}>
+          <form className={classes.form} noValidate>
+            {/* {userId} */}
+            <TextField
+              disabled
+              variant="filled"
+              margin="normal"
+              fullWidth
+              id="certificationNumber"
+              label="이메일"
+              defaultValue={userInfo.username}
+              type="text"
+              name="certificationNumber"
+            />
 
-          <TextFieldWithButton
-            label="닉네임"
-            id="nickname"
-            onChange={changeUserInfo}
-            onClickButton={requestCheckNickname}
-            buttonText="닉네임중복확인"
-            value={nickname}
-            disabled={sendCheckNickname}
-            helperText={nickNameMessage}
-          ></TextFieldWithButton>
-          <ButtonGroup
-            color="primary"
-            aria-label="primary button group"
-            className={classes.form}
-          >
-            <Button
-              variant={gender === 1 ? "contained" : "outlined"}
-              onClick={() => selectGender(1)}
+            <TextFieldWithButton
+              label="닉네임"
+              id="nickname"
+              onChange={changeUserInfo}
+              onClickButton={requestCheckNickname}
+              buttonText="닉네임중복확인"
+              value={userInfo.nickname}
+              disabled={sendCheckNickname}
+              helperText={nickNameMessage}
+            ></TextFieldWithButton>
+            <ButtonGroup
+              color="primary"
+              aria-label="primary button group"
+              className={classes.form}
             >
-              남
-            </Button>
-            <Button
-              variant={gender === 0 ? "contained" : "outlined"}
-              onClick={() => selectGender(0)}
-            >
-              여
-            </Button>
-          </ButtonGroup>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="birthday"
-            label="생년월일"
-            type="date"
-            id="birthday"
-            defaultValue={birthday}
-            onChange={changeUserInfo}
-          />
+              <Button
+                variant={userInfo.gender === true ? "contained" : "outlined"}
+                onClick={() => selectGender(true)}
+              >
+                남
+              </Button>
+              <Button
+                variant={userInfo.gender === false ? "contained" : "outlined"}
+                onClick={() => selectGender(false)}
+              >
+                여
+              </Button>
+            </ButtonGroup>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="birthday"
+              label="생년월일"
+              type="date"
+              id="birthday"
+              defaultValue={userInfo.birthday}
+              onChange={changeUserInfo}
+            />
 
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() => requestChangeUser}
-            disabled={nicknameConfirmation === false}
-          >
-            정보수정
-          </Button>
-          <DeleteAccount></DeleteAccount>
-        </form>
-      </div>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={requestChangeUser}
+              disabled={nicknameConfirmation === false}
+            >
+              정보수정
+            </Button>
+            <DeleteAccount></DeleteAccount>
+          </form>
+        </div>
+      ) : (
+        <div></div>
+      )}
     </Container>
   );
 }
+
 const mapStateToProps = ({ account }: AccountReducer) => {
   return {
-    isLogin: account.isLogin,
     userId: account.userId,
-    nickname: account.nickname,
-    username: account.username,
-    gender: account.gender,
-    birthday: account.birthday,
   };
 };
+type Props = ReturnType<typeof mapStateToProps>;
 
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getUserInfo: (userId: number) => dispatch(getUserInfo(userId)),
-    setUserInfo: (userInfo: SetUserInfo) => dispatch(setUserInfo(userInfo)),
-  };
-};
-
-type Props = ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps>;
-export default connect(mapStateToProps, mapDispatchToProps)(ChangeUserInfo);
+export default connect(mapStateToProps)(ChangeUserInfo);

@@ -6,6 +6,8 @@ import Modal from "@mui/material/Modal";
 import { TextField } from "@mui/material";
 import axios from "axios";
 import { Alert } from "@mui/material";
+import { AccountReducer } from "../../../redux/rootReducer";
+import { connect } from "react-redux";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -18,18 +20,31 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal() {
+function DeleteAccount({ userId, username }: Props) {
   const [open, setOpen] = React.useState(false);
+  const [password, setPassword] = React.useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const user_id = 1; //리덕스로 받은 데이터
+  const token = localStorage.getItem("accessToken") || "";
+  function changePassword(e: React.ChangeEvent<HTMLInputElement>): void {
+    setPassword(e.target.value);
+  }
   function requestDeleteAccount(): void {
+    const userInfo = {
+      username: username,
+      password: password,
+    };
     axios({
       method: "delete",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${user_id}`,
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}`,
+      data: userInfo,
+      headers: {
+        Authorization: token,
+      },
     })
-      .then(() => {
-        <Alert severity="success">탈퇴되었습니다.</Alert>;
+      .then((res) => {
+        alert("탈퇴되었습니다");
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -59,6 +74,7 @@ export default function BasicModal() {
               label="비밀번호"
               type="password"
               id="password"
+              onChange={changePassword}
               autoComplete="current-password"
             />
           </Typography>
@@ -86,3 +102,12 @@ export default function BasicModal() {
     </div>
   );
 }
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    userId: account.userId,
+    username: account.username,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(DeleteAccount);

@@ -35,10 +35,7 @@ function PlaceCardListDnd({
   const renderItem = getRenderItem(items);
 
   return (
-    <div style={{ position: "absolute", top: 0, zIndex: 100, opacity: 0 }}>
-      검색창
-      <hr />
-      구분|구분|구분
+    <div style={{ position: "absolute", top: 0, zIndex: 100, opacity: 0.5 }}>
       <Droppable droppableId={droppableId} renderClone={renderItem}>
         {(provided: any, snapshot: any) => (
           <div
