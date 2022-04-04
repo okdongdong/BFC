@@ -17,9 +17,9 @@ public class CustomPlaceListRes {
 
     private String address;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
     public static Page<CustomPlaceListRes> of (Page<CustomPlace> list) {
 
@@ -28,7 +28,7 @@ public class CustomPlaceListRes {
                 .name(customPlace.getName())
                 .address(customPlace.getAddress())
                 .lat(customPlace.getLat())
-                .lng(customPlace.getLng())
+                .lon(customPlace.getLon())
                 .build());
 
     }
