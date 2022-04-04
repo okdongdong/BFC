@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttractionListRes implements Serializable {
+public class PlaceListRes implements Serializable {
 
     private Long placeId;
 
@@ -26,8 +26,8 @@ public class AttractionListRes implements Serializable {
 
     private String thumbnail;
 
-    public static List<AttractionListRes> of (List<Place> list) {
-        return list.stream().map(place -> AttractionListRes.builder()
+    public static List<PlaceListRes> of (List<Place> list) {
+        return list.stream().map(place -> PlaceListRes.builder()
                         .placeId(place.getPlaceId())
                         .name(place.getName())
                         .address(place.getAddress())
