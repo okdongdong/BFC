@@ -2,9 +2,8 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
-import com.busanfullcourse.bfc.api.response.AttractionListRes;
+import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
-import com.busanfullcourse.bfc.api.response.RestaurantListRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -74,21 +73,21 @@ public class PlaceService {
     }
 
     @Cacheable(value = CacheKey.POPULAR_RESTAURANT)
-    public List<RestaurantListRes> getPopularRestaurantList() {
-        return RestaurantListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(70, true));
+    public List<PlaceListRes> getPopularRestaurantList() {
+        return PlaceListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(70, true));
     }
     @Cacheable(value = CacheKey.POPULAR_ATTRACTION)
-    public List<AttractionListRes> getPopularAttractionList() {
-        return AttractionListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
+    public List<PlaceListRes> getPopularAttractionList() {
+        return PlaceListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
     }
 
-    public List<RestaurantListRes> getRecommendRestaurantList(String username) {
+    public List<PlaceListRes> getRecommendRestaurantList(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        return RestaurantListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user,true));
+        return PlaceListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user,true));
     }
 
-    public List<AttractionListRes> getRecommendAttractionList(String username) {
+    public List<PlaceListRes> getRecommendAttractionList(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        return AttractionListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user, false));
+        return PlaceListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user, false));
     }
 }
