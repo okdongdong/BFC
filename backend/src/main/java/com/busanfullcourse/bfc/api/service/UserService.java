@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -215,10 +214,8 @@ public class UserService {
     // 사용자 이름 조회 -> 사용자 이름으로 redis에서 refreshToken 조회 -> 사용자가 보낸 토큰과 redis의 토큰 비교 -> 일치하면 재발급
     public TokenRes reissue(String refreshToken) {
         refreshToken = resolveToken(refreshToken);
-
-        String username = getCurrentUsername();
+        String username = jwtTokenUtil.getUsername(refreshToken);
         RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(username).orElseThrow(NoSuchElementException::new);
-
         if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
             return reissueRefreshToken(refreshToken, username);
         }
@@ -314,7 +311,7 @@ public class UserService {
         return followList.stream().map(follow -> FollowListRes.builder()
                 .id(follow.getFromUser().getId())
                 .nickname(follow.getFromUser().getNickname())
-                .profileImg(follow.getFromUser().getProfileImg())
+                .profileImg(convertUtil.convertByteArrayToString(follow.getFromUser().getProfileImg()))
                 .build())
             .collect(Collectors.toList());
     }
@@ -326,7 +323,7 @@ public class UserService {
         return followList.stream().map(follow -> FollowListRes.builder()
                         .id(follow.getToUser().getId())
                         .nickname(follow.getToUser().getNickname())
-                        .profileImg(follow.getToUser().getProfileImg())
+                        .profileImg(convertUtil.convertByteArrayToString(follow.getFromUser().getProfileImg()))
                         .build())
                 .collect(Collectors.toList());
     }
