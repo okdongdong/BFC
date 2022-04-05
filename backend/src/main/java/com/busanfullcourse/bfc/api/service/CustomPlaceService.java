@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.CustomPlaceUpdateReq;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Schedule;
@@ -31,7 +32,7 @@ public class CustomPlaceService {
     private final ScheduleRepository scheduleRepository;
 
     public Map<String, Long> createCustomPlace(CustomPlaceScheduleReq req, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         CustomPlace customPlace = customPlaceRepository.save(
                 CustomPlace.builder()
                         .name(req.getName())
@@ -54,8 +55,8 @@ public class CustomPlaceService {
         CustomPlace customPlace = customPlaceRepository.getById(customPlaceId);
 
         // 중복된 일정이 있는지 검사
-        if (scheduleRepository.existsByFullCourseFullCourseIdAndDayAndSequence(
-                customPlaceScheduleReq.getFullCourseId(), customPlaceScheduleReq.getDay(), customPlaceScheduleReq.getSequence())) {
+        if (Boolean.TRUE.equals(scheduleRepository.existsByFullCourseFullCourseIdAndDayAndSequence(
+                customPlaceScheduleReq.getFullCourseId(), customPlaceScheduleReq.getDay(), customPlaceScheduleReq.getSequence()))) {
             throw new IllegalArgumentException("해당 일정이 이미 존재합니다.");
         }
         return scheduleRepository.save(
@@ -73,7 +74,7 @@ public class CustomPlaceService {
     }
 
     public void updateCustomPlace(CustomPlaceUpdateReq req, Long customPlaceId, String username) throws IllegalAccessException {
-        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException("나만의 장소가 없습니다."));
+        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
         if (!customPlace.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
@@ -86,7 +87,7 @@ public class CustomPlaceService {
     }
 
     public void deleteCustomPlace(Long customPlaceId, String username) throws IllegalAccessException {
-        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException("나만의 장소가 없습니다."));
+        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
         if (!customPlace.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }

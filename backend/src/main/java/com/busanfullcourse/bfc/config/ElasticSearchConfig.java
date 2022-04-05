@@ -11,9 +11,6 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 
 @EnableElasticsearchRepositories(basePackages = "com.busanfullcourse.bfc.db.repository.elasticsearch")
 @Configuration
@@ -41,6 +38,6 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
     }
 
 //    redis 충돌방지
-//    @PostConstruct void init() { System.setProperty("es.set.netty.runtime.available.processors", "false"); }
+//    @PostConstruct void init() { System.setProperty("es.set.netty.runtime.available.processors", "false"); } //NOSONAR
 
 }

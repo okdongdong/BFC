@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.ReviewUpdateReq;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Review;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -27,8 +28,8 @@ public class ReviewService {
 
 
     public void createReview(ReviewUpdateReq req, String username, Long placeId) {
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         reviewRepository.save(
                 Review.builder()
                         .content(req.getContent())
@@ -43,7 +44,7 @@ public class ReviewService {
     }
 
     public void updateReview(ReviewUpdateReq req, String username, Long reviewId) throws IllegalAccessException {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoReview));
         if (!username.equals(review.getUser().getUsername())) {
             throw new IllegalAccessException("자신이 작성한 리뷰만 수정할 수 있습니다");
         }
@@ -53,7 +54,7 @@ public class ReviewService {
     }
 
     public void deleteReview(Long reviewId, String username) throws IllegalAccessException {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoReview));
         if (!username.equals(review.getUser().getUsername())) {
             throw new IllegalAccessException("자신이 작성한 리뷰만 삭제할 수 있습니다");
         }

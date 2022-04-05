@@ -1,14 +1,13 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.EmailAuthRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
-import com.busanfullcourse.bfc.db.entity.Sharing;
 import com.busanfullcourse.bfc.db.entity.User;
 import com.busanfullcourse.bfc.db.repository.FullCourseRepository;
 import com.busanfullcourse.bfc.db.repository.SharingRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,9 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Random;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -177,12 +174,12 @@ public class EmailService {
 
     public void shareFullCourse(Long fullCourseId, Map<String, String> invitedUser) throws Exception {
         String username = userService.getCurrentUsername();
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 공유할 수 있습니다.");
         }
         String email = invitedUser.get("invitedUser");
-        User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+        User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         if (sharingRepository.findByFullCourseAndUser(fullCourse, reqUser).isPresent()) {
             throw new IllegalAccessException("이미 공유된 사용자입니다.");
         } else {

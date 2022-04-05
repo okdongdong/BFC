@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.api.response.PlaceDetailRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -33,7 +34,7 @@ public class PlaceService {
 
     public PlaceDetailRes getRestaurantDetail(Long placeId){
         Place restaurant = placeRepository.findRestaurantMenusById(placeId);
-//        Place restaurant = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("식당이 없습니다."));
+//        Place restaurant = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
         return PlaceDetailRes.builder()
                 .placeId(restaurant.getPlaceId())
                 .name(restaurant.getName())
@@ -54,7 +55,7 @@ public class PlaceService {
     }
 
     public PlaceDetailRes getAttractionDetail(Long placeId){
-        Place attraction = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("여행지가 없습니다."));
+        Place attraction = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
 
         return PlaceDetailRes.builder()
                 .placeId(attraction.getPlaceId())
@@ -83,17 +84,17 @@ public class PlaceService {
     }
 
     public List<PlaceListRes> getMainRecommendRestaurantList(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user,true));
     }
 
     public List<PlaceListRes> getMainRecommendAttractionList(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user, false));
     }
 
     public Page<PlaceListRes> getRecommendPlaceList(String username, Pageable pageable) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         return PlaceListRes.ofRecommend(recommendRepository.findAllByUser(user, pageable));
     }
 
