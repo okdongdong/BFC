@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { styled } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
+import { ModalScrollableBox } from "../../../lib/customTag";
 import { createCustomPlace } from "../../../redux/createFullCourse/actions";
 import { CustomPlaceInfoProps } from "../../../redux/createFullCourse/types";
-import ScrollableBox from "../ScrollableBox";
 import ModalKakaoMap from "./ModalKakaoMap";
 
 interface AddCustomPlaceModalProps {
@@ -112,7 +112,7 @@ function AddCustomPlaceModal({
         >
           <h1 style={{ marginLeft: 100 }}>나만의 장소 추가</h1>
         </div>
-        <ScrollableBox width={"100%"}>
+        <ModalScrollableBox>
           <Stack
             spacing={2}
             sx={{
@@ -175,7 +175,7 @@ function AddCustomPlaceModal({
               onChange={memoChangeHandler}
             ></TextField>
           </Stack>
-        </ScrollableBox>
+        </ModalScrollableBox>
         <div
           style={{
             width: "100%",

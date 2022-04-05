@@ -12,8 +12,11 @@ import {
   SET_PLACE_LIST_WITH_DISTANCE,
   SET_SEARCH_PLACE_LIST,
   PlaceSearchInfo,
+  PlaceInfoData,
+  RESET_PLACE_LIST_WITH_DISTANCE,
 } from "./types";
 import { loadingControl, errorControl } from "../baseInfo/actions";
+import { setFinished } from "../schedule/actions";
 
 const setPlaceList = (placeList: PlaceCardList) => {
   return {
@@ -31,6 +34,11 @@ const setSearchPlaceList = (placeList: PlaceCardList) => {
   return {
     type: SET_SEARCH_PLACE_LIST,
     payload: placeList,
+  };
+};
+export const resetPlaceListWithDistance = () => {
+  return {
+    type: RESET_PLACE_LIST_WITH_DISTANCE,
   };
 };
 
@@ -78,13 +86,32 @@ export const getPlaceListWithDistance = (
         params: placeListInfoForGet,
       });
 
-      const placeListData: PlaceCard[] = [];
+      console.log(placeListInfoForGet.page);
+      console.log(res.data.totalPages);
 
-      res.data.placeList.map((place: PlaceInfo, idx: number) => {
+      if (placeListInfoForGet.page + 1 === res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      const placeListData: PlaceCard[] = [];
+      console.log(res);
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
             id: `place-${idx}-${new Date()}`,
-            content: place,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
           } || [];
 
         placeListData.push(placeCard);

@@ -13,19 +13,26 @@ import { PlaceSearchInfo } from "../../../redux/placeList/types";
 
 interface PlaceHeaderProps {
   nowPage: number;
+  nowFilterTypeIdx: number;
+  recommendDistance: number;
   setNowPage: React.Dispatch<React.SetStateAction<number>>;
+  setNowFilterTypeIdx: React.Dispatch<React.SetStateAction<number>>;
+  setRecommendDistance: React.Dispatch<React.SetStateAction<number>>;
+
   SIZE: number;
 }
 
 function PlaceHeader({
   getSearchPlaceList,
+  nowFilterTypeIdx,
   nowPage,
-  setNowPage,
+  recommendDistance,
+  setNowFilterTypeIdx,
+  setRecommendDistance,
   SIZE,
 }: Props & PlaceHeaderProps) {
   const filterType = ["평점순", "거리순", "사전설문순"];
   const [placeName, setPlaceName] = useState<string>("");
-  const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
 
   const SearchInput = styled(TextField)({
     "& label.Mui-focused": {
@@ -58,6 +65,23 @@ function PlaceHeader({
     width: "100%",
     position: "relative",
     fontSize: 20,
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#9ACBF2",
+      color: "white",
+    },
+  }));
+  const DistanceTextStyle = styled("div")((attr: { val: number }) => ({
+    backgroundColor: `${attr.val === recommendDistance ? "#57A3EC" : "white"}`,
+    color: `${attr.val !== recommendDistance || "white"}`,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "15px",
+    height: 30,
+    width: "100%",
+    position: "relative",
+    fontSize: 12,
     fontWeight: "bold",
     "&:hover": {
       backgroundColor: "#9ACBF2",
@@ -107,12 +131,14 @@ function PlaceHeader({
   return (
     <div
       style={{
-        marginTop: 32,
+        paddingTop: 32,
         width: "100%",
         justifyContent: "center",
         display: "flex",
         position: "sticky",
         top: 0,
+        zIndex: 500,
+        backgroundColor: "white",
       }}
     >
       <div
@@ -155,6 +181,26 @@ function PlaceHeader({
             </FilterTextBox>
           ))}
         </Stack>
+
+        {nowFilterTypeIdx !== 1 || (
+          <Stack direction="row" spacing={1} sx={{ height: 50, marginTop: 1 }}>
+            {[500, 1000, 2000, 3000, 4000].map((val, idx) => (
+              <DistanceTextStyle
+                key={idx}
+                val={val}
+                onClick={() => setRecommendDistance(val)}
+              >
+                <div style={{ zIndex: 400 }}>
+                  {val < 1000 ? (
+                    <span>{val}m</span>
+                  ) : (
+                    <span>{Math.floor(val / 1000)}km</span>
+                  )}
+                </div>
+              </DistanceTextStyle>
+            ))}
+          </Stack>
+        )}
       </div>
     </div>
   );

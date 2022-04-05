@@ -6,6 +6,7 @@ import baseInfoReducer from "./baseInfo/baseInfoReducer";
 import createFullCourseReducer from "./createFullCourse/createFullCourseReducer";
 import placeListReducer from "./placeList/placeListReducer";
 import profileReducer from "./profile/reducer";
+import scheduleReducer from "./schedule/scheduleReducer";
 
 const persistConfig = {
   key: "root",
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   placeListReducer: placeListReducer,
   // createPlaceList: placeListReducer,
   profile: profileReducer,
+  schedule: scheduleReducer,
 });
 
 export type RootReducer = ReturnType<typeof rootReducer>;
@@ -30,5 +32,6 @@ export type CreateFullCourseReducer = ReturnType<
 >;
 export type PlaceListReducer = ReturnType<typeof placeListReducer>;
 export type ProfileReducer = ReturnType<typeof profileReducer>;
+export type ScheduleReducer = ReturnType<typeof scheduleReducer>;
 
 export default persistReducer(persistConfig, rootReducer);

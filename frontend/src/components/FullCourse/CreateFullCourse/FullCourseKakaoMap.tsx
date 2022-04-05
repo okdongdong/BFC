@@ -31,9 +31,11 @@ interface FullCourseKakaoMapProps {
   expandedFullCourse: boolean;
   expandedPlace: boolean;
   expandedPlaceDetail: boolean;
+  nowFilterTypeIdx: number;
 }
 
 function FullCourseKakaoMap({
+  nowFilterTypeIdx,
   expandedFullCourse,
   expandedPlace,
   expandedPlaceDetail,
@@ -54,6 +56,13 @@ function FullCourseKakaoMap({
   });
   const [map, setMap] = useState<any>();
   const [expandCnt, setExpandCnt] = useState<number>(0);
+
+  const nowSelectedPlaceList = () =>
+    nowFilterTypeIdx === 0
+      ? placeList
+      : nowFilterTypeIdx === 1
+      ? placeListWithDistance
+      : placeList;
 
   const setCenter = ({ lat, lng }: { lat: number; lng: number }) => {
     const newLng =
@@ -151,7 +160,7 @@ function FullCourseKakaoMap({
         onCreate={(map) => setMap(map)}
       >
         <PlaceKakaoMapMarkers
-          placeCardList={placeList}
+          placeCardList={nowSelectedPlaceList()}
           setCenter={setCenter}
         ></PlaceKakaoMapMarkers>
         <Polyline

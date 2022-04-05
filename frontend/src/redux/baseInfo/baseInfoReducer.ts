@@ -14,7 +14,6 @@ const initialState: BaseInfo = {
 };
 
 const baseInfoReducer = (state: BaseInfo = initialState, action: AnyAction) => {
-  console.log("sddddddddd", action);
   switch (action.type) {
     case SET_NOW_LOADING:
       return {
