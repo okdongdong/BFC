@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
 import MoreModal from "./Modal/PlaceModal";
+import { connect } from "react-redux";
 
 interface place {
   place_id: number;
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function LikePlace() {
+function LikePlace({ interestList }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const title = "관심 장소";
@@ -149,6 +150,7 @@ export default function LikePlace() {
     if (i < placesList.length) {
       baseCard.push(
         <div
+          key={i}
           style={{
             display: "flex",
             alignItems: "flex-end",
@@ -226,3 +228,12 @@ export default function LikePlace() {
     </div>
   );
 }
+const mapStateToProps = ({ account, profile }: any) => {
+  return {
+    isLogin: account.isLogin,
+    interestList: profile.interestList,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(LikePlace);

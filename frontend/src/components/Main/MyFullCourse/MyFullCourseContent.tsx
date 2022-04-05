@@ -35,13 +35,16 @@ function MyFullCourseContent({
       <p style={{ marginBottom: 5 }}>{nowStatus}</p>
       <h1 style={{ fontSize: 32, marginTop: 0 }}>{title}</h1>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        {dayPlaceList.map((place: MyFullCourseContentDayProps) => (
-          <MyFullCourseContentDay
-            courseDate={place.courseDate}
-            day={place.day}
-            placeList={place.placeList}
-          ></MyFullCourseContentDay>
-        ))}
+        {dayPlaceList.map(
+          (place: MyFullCourseContentDayProps, index: number) => (
+            <MyFullCourseContentDay
+              key={index}
+              courseDate={place.courseDate}
+              day={place.day}
+              placeList={place.placeList}
+            ></MyFullCourseContentDay>
+          )
+        )}
       </Box>
     </BoxStyle>
   );

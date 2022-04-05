@@ -13,9 +13,10 @@ import { AccountReducer } from "../redux/rootReducer";
 import Logo from "../components/Navbar/Logo";
 import NavbarText from "../components/Navbar/NavbarText";
 import React from "react";
-import { Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import axios from "axios";
 import { userLogout } from "../redux/account/actions";
+import Profile from "../pages/Profile/Profile";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
@@ -39,10 +40,12 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
   const refreshToken = localStorage.getItem("refreshToken") || "";
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    console.log("작동");
+    console.log("열림");
+    console.log(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+    console.log("닫힘");
   };
   function requestLogOut() {
     axios({
@@ -89,7 +92,7 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 onMouseEnter={handleClick}
-                onMouseLeave={handleClick}
+                // onMouseOut={handleClose}
               >
                 <div
                   style={{
@@ -125,7 +128,7 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
                 >
                   <p style={{ marginLeft: "auto", marginRight: "auto" }}>
                     <Link
-                      to="/profile"
+                      to={`/profile/${nickname}`}
                       style={{ textDecoration: "none", color: "#0787EC" }}
                     >
                       Profile
