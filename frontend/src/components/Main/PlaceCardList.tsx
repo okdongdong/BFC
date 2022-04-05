@@ -18,8 +18,9 @@ function PlaceCardList({ placeList, title }: PlaceCardListProps) {
     <div>
       <TitleTextStyle>{title}</TitleTextStyle>
       <PlaceCardListStyle>
-        {placeList.map((place) => (
+        {placeList.map((place, index) => (
           <PlaceCard
+            key={index}
             placeId={place.placeId}
             name={place.name}
             thumbnail={place.thumbnail}

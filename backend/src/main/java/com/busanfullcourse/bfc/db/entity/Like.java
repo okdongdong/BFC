@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "like_full_course")
 @Getter
 @Setter
 @ToString
@@ -14,7 +15,7 @@ import javax.persistence.*;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
+    @Column(name = "like_full_course_id")
     private Long likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,6 +23,6 @@ public class Like {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fullCourse_id", nullable = false)
+    @JoinColumn(name = "full_course_id", nullable = false)
     private FullCourse fullCourse;
 }

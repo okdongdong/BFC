@@ -4,8 +4,13 @@ import Router from "./routes";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme();
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
-function App() {
+function App(): JSX.Element {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">

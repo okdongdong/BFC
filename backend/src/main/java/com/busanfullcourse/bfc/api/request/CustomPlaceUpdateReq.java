@@ -13,8 +13,8 @@ public class CustomPlaceUpdateReq {
 
     private String address;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
 }

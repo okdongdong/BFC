@@ -2,24 +2,20 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.request.*;
-import com.busanfullcourse.bfc.api.response.FollowRes;
-import com.busanfullcourse.bfc.api.response.MyInfoRes;
-import com.busanfullcourse.bfc.api.response.TokenRes;
-import com.busanfullcourse.bfc.api.response.UserProfileRes;
+import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
 import com.busanfullcourse.bfc.common.jwt.LogoutAccessToken;
 import com.busanfullcourse.bfc.common.jwt.RefreshToken;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
-import com.busanfullcourse.bfc.db.entity.Follow;
-import com.busanfullcourse.bfc.db.repository.FollowRepository;
-import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.RefreshTokenRedisRepository;
-import com.busanfullcourse.bfc.db.repository.UserRepository;
+import com.busanfullcourse.bfc.db.entity.*;
+import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.busanfullcourse.bfc.db.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,8 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REISSUE_EXPIRATION_TIME;
@@ -42,10 +40,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final InterestRepository interestRepository;
+    private final LikeRepository likeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ScheduleRepository scheduleRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final LogoutAccessTokenRedisRepository logoutAccessTokenRedisRepository;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ConvertUtil convertUtil;
+    private final FullCourseRepository fullCourseRepository;
 
     public void signup(SignUpReq signUpReq) {
         if (!signUpReq.getPassword().equals(signUpReq.getPasswordCheck())){
@@ -86,16 +89,59 @@ public class UserService {
 
     public UserProfileRes getUserProfile(String nickname) {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        if (!user.getUsername().equals(getCurrentUsername())) {
-            throw new IllegalArgumentException("회원 정보가 일치하지 않습니다.");
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
+
+        List<FullCourse> fullCourseList;
+        List<Like> likeList;
+        Boolean isFollowing;
+
+        if (user == reqUser) {
+            fullCourseList = fullCourseRepository.findTop6ByUserOrderByStartedOn(user);
+            likeList = likeRepository.findTop6ByUser(user);
+            isFollowing = null;
+        } else {
+            fullCourseList = fullCourseRepository.findTop6ByIsPublicAndUserOrderByStartedOn(true, user);
+            likeList = likeRepository.findTop6ByUserAndFullCourseIsPublic(user, true);
+            isFollowing = followRepository.findByFromUserAndToUser(reqUser, user).isPresent();
         }
+        List<FullCourseListRes> myFullCourseListRes = fullCourseList.stream().map(fullCourse -> FullCourseListRes.builder()
+                .fullCourseId(fullCourse.getFullCourseId())
+                .likeCnt(fullCourse.getLikeCnt())
+                .title(fullCourse.getTitle())
+                .startedOn(fullCourse.getStartedOn())
+                .finishedOn(fullCourse.getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                fullCourse.getFullCourseId())))
+                .build()).collect(Collectors.toList());
+
+        List<FullCourseListRes> fullCourseListRes = likeList.stream().map(like -> FullCourseListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(like.getFullCourse().getLikeCnt())
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                like.getFullCourse().getFullCourseId())))
+                .build()).collect(Collectors.toList());
+
         return UserProfileRes.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .followerCnt(user.getFollowers().size())
+                .followingCnt(user.getFollowings().size())
+                .isFollowing(isFollowing)
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
+                .interestList(InterestListRes.of(interestList))
+                .myList(myFullCourseListRes)
+                .likeList(fullCourseListRes)
                 .build();
     }
-
+    // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return MyInfoRes.builder()
@@ -104,19 +150,23 @@ public class UserService {
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
-
+    // 회원 정보 조회에 사용됨
     public MyInfoRes getMyInfo(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        String reqUsername = getCurrentUsername();
+        if (!user.getUsername().equals(reqUsername)) {
+            throw new IllegalArgumentException("본인이 아닙니다.");
+        }
         return MyInfoRes.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .gender(user.getGender())
                 .birthday(user.getBirthday())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
     }
 
@@ -164,10 +214,8 @@ public class UserService {
     // 사용자 이름 조회 -> 사용자 이름으로 redis에서 refreshToken 조회 -> 사용자가 보낸 토큰과 redis의 토큰 비교 -> 일치하면 재발급
     public TokenRes reissue(String refreshToken) {
         refreshToken = resolveToken(refreshToken);
-
-        String username = getCurrentUsername();
+        String username = jwtTokenUtil.getUsername(refreshToken);
         RefreshToken redisRefreshToken = refreshTokenRedisRepository.findById(username).orElseThrow(NoSuchElementException::new);
-
         if (refreshToken.equals(redisRefreshToken.getRefreshToken())) {
             return reissueRefreshToken(refreshToken, username);
         }
@@ -221,20 +269,8 @@ public class UserService {
         return UserProfileRes.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())
-                .profileImg(convertByteArrayToString(user.getProfileImg()))
+                .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
                 .build();
-    }
-
-    private String convertByteArrayToString(Byte[] bytes) {
-        if (bytes==null){
-            return null;
-        }
-        byte [] primitiveBytes = new byte[bytes.length];
-        int j = 0;
-        for (Byte b: bytes) {
-            primitiveBytes[j++] = b;
-        }
-        return new String(primitiveBytes);
     }
 
     public FollowRes follow(Long yourId) {
@@ -251,7 +287,8 @@ public class UserService {
         if (follow.isPresent()){
             isFollowing = false;
             followRepository.deleteById(follow.get().getFollowId());
-            System.out.println(followRepository.findAll());
+            you.getFollowers().remove(follow.get());
+
         } else {
             isFollowing = true;
             followRepository.save(Follow.builder()
@@ -267,4 +304,71 @@ public class UserService {
                 .build();
     }
 
+    public List<FollowListRes> followFromList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        List<Follow> followList = followRepository.findAllByToUser(user);
+
+        return followList.stream().map(follow -> FollowListRes.builder()
+                .id(follow.getFromUser().getId())
+                .nickname(follow.getFromUser().getNickname())
+                .profileImg(convertUtil.convertByteArrayToString(follow.getFromUser().getProfileImg()))
+                .build())
+            .collect(Collectors.toList());
+    }
+
+    public List<FollowListRes> followToList(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        List<Follow> followList = followRepository.findAllByFromUser(user);
+
+        return followList.stream().map(follow -> FollowListRes.builder()
+                        .id(follow.getToUser().getId())
+                        .nickname(follow.getToUser().getNickname())
+                        .profileImg(convertUtil.convertByteArrayToString(follow.getFromUser().getProfileImg()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public Page<FullCourseListRes> getMoreUserFullCourse(Long userId, Pageable pageable) {
+        User user = userRepository.getById(userId);
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Page<FullCourse> page;
+        if (user == reqUser) {
+            page = fullCourseRepository.findAllByUserOrderByStartedOn(user, pageable);
+        } else {
+            page = fullCourseRepository.findAllByIsPublicAndUserOrderByStartedOn(true, user, pageable);
+        }
+        return page.map(fullCourse -> FullCourseListRes.builder()
+                .fullCourseId(fullCourse.getFullCourseId())
+                .likeCnt(fullCourse.getLikeCnt())
+                .title(fullCourse.getTitle())
+                .startedOn(fullCourse.getStartedOn())
+                .finishedOn(fullCourse.getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                fullCourse.getFullCourseId())))
+                .build());
+    }
+
+    public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
+        User user = userRepository.getById(userId);
+        String reqUsername = getCurrentUsername();
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Page<Like> page;
+        if (user == reqUser) {
+            page = likeRepository.findAllByUserId(userId, pageable);
+        } else {
+            page = likeRepository.findAllByUserIdAndFullCourseIsPublic(userId, pageable, true);
+        }
+        return page.map(like -> FullCourseListRes.builder()
+                .fullCourseId(like.getFullCourse().getFullCourseId())
+                .likeCnt(like.getFullCourse().getLikeCnt())
+                .title(like.getFullCourse().getTitle())
+                .startedOn(like.getFullCourse().getStartedOn())
+                .finishedOn(like.getFullCourse().getFinishedOn())
+                .thumbnailList(FullCourseListRes.ofThumbnailList(
+                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                like.getFullCourse().getFullCourseId())))
+                .build());
+    }
 }

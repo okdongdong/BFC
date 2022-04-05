@@ -48,7 +48,10 @@ function FullCourseCard({
             <FullCourseNameStyle>{title}</FullCourseNameStyle>
           </Box>
           <Box sx={{ flexGrow: 1 }} />
-          <DateCounter startOn={startOn} finishedOn={finishedOn}></DateCounter>
+          <DateCounter
+            startOn={new Date(startOn)}
+            finishedOn={new Date(finishedOn)}
+          ></DateCounter>
         </CardContentStyle>
       </CardActionArea>
     </CardStyle>

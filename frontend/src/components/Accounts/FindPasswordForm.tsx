@@ -5,6 +5,8 @@ import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import TextFieldWithButton from "./TextFieldWithButton";
 import { Button, Container, TextField, Theme, Typography } from "@mui/material";
+import { connect } from "react-redux";
+import { AccountReducer } from "../../redux/rootReducer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function FindPasswordForm() {
+function FindPasswordForm({ userId }: Props) {
   const classes = useStyles();
   // 이메일
   const [email, setEmail] = useState<string>("");
@@ -40,13 +42,16 @@ function FindPasswordForm() {
   const [emailMessage, setEmailMessage] = useState<string>("");
 
   // 임시비밀번호 발급받기
-  function requestTempPw(email: string): void {
+  function requestTempPw(): void {
     axios({
       method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
-      data: email,
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/verification/reset`,
+      data: { email: email },
     })
-      .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
+      .then((res) => {
+        console.log(res);
+        alert("임시비밀번호가 발급되었습니다.");
+      })
       .catch((err) => console.log(err));
   }
 
@@ -59,30 +64,31 @@ function FindPasswordForm() {
     } else {
       // 인증
       console.log("이메일 인증요청");
+      console.log(email);
       setSendEmailConfirmation(() => true);
       axios({
-        method: "get",
-        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup/email`,
+        method: "POST",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/verification`,
+        data: { email: email },
       })
         .then((res) => {
-          setResponseCertificationNumber(() => res.data.certificationNumber);
+          console.log(`인증번호 수신 : ${res.data.code}`);
+          setResponseCertificationNumber(() => res.data.code);
         })
         .catch((err) => {
-          console.log(err);
-          // setSendEmailConfirmation(() => false);
+          console.log("이메일 인증 실패", err);
+          setSendEmailConfirmation(() => false);
         });
     }
   }
 
   // 이메일 입력
   function changeEmail(event: React.ChangeEvent<HTMLInputElement>): void {
-    const newEmail = email;
-    setEmail(event.currentTarget.value);
-    setEmail(() => newEmail);
+    setEmail(event.target.value);
     // 유효성 검사
     const emailRegex =
       /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    if (!newEmail || emailRegex.test(newEmail)) {
+    if (!email || emailRegex.test(email)) {
       setEmailMessage("");
     } else {
       setEmailMessage("이메일 형식이 틀렸습니다.");
@@ -139,8 +145,8 @@ function FindPasswordForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => requestTempPw}
-            disabled={email === "" || emailConfirmation === false}
+            onClick={requestTempPw}
+            // disabled={email === "" || emailConfirmation === false}
           >
             임시비밀번호 발급받기
           </Button>
@@ -150,4 +156,11 @@ function FindPasswordForm() {
   );
 }
 
-export default FindPasswordForm;
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    userId: account.userId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(FindPasswordForm);

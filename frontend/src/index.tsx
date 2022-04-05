@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
@@ -19,6 +19,10 @@ ReactDOM.render(
         </PersistGate>
       </Provider>
     </BrowserRouter>
+    <script
+      type="text/javascript"
+      src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}&libraries=services,clusterer`}
+    ></script>
   </React.StrictMode>,
   document.getElementById("root")
 );
