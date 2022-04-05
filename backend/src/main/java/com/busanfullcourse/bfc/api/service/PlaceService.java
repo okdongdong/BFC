@@ -3,7 +3,7 @@ package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
 import com.busanfullcourse.bfc.api.response.PlaceListRes;
-import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
+import com.busanfullcourse.bfc.api.response.PlaceDetailRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -32,10 +32,10 @@ public class PlaceService {
     private final SurveyRecommendRepository surveyRecommendRepository;
 
 
-    public RestaurantDetailRes getRestaurantDetail(Long placeId){
+    public PlaceDetailRes getRestaurantDetail(Long placeId){
         Place restaurant = placeRepository.findRestaurantMenusById(placeId);
 //        Place restaurant = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("식당이 없습니다."));
-        return RestaurantDetailRes.builder()
+        return PlaceDetailRes.builder()
                 .placeId(restaurant.getPlaceId())
                 .name(restaurant.getName())
                 .info(restaurant.getInfo())
@@ -54,10 +54,10 @@ public class PlaceService {
 
     }
 
-    public AttractionDetailRes getAttractionDetail(Long placeId){
+    public PlaceDetailRes getAttractionDetail(Long placeId){
         Place attraction = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("여행지가 없습니다."));
 
-        return AttractionDetailRes.builder()
+        return PlaceDetailRes.builder()
                 .placeId(attraction.getPlaceId())
                 .name(attraction.getName())
                 .info(attraction.getInfo())

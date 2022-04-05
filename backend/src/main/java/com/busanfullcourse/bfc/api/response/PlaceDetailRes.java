@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RestaurantDetailRes {
+public class PlaceDetailRes {
     private Long placeId;
 
     private String name;
