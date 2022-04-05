@@ -31,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = getToken(request);
-        if (accessToken != null) {
+        String requestURI = request.getRequestURI();
+        if (accessToken != null && !requestURI.equals("/api/v1/auth/reissue")) {
             // 로그아웃에 사용된 토큰인지 확인
             checkLogout(accessToken);
 
