@@ -1,6 +1,6 @@
 package com.busanfullcourse.bfc.api.service;
 
-import com.busanfullcourse.bfc.api.response.SearchPlaceListRes;
+import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Schedule;
@@ -26,9 +26,9 @@ public class ElasticSearchService {
     private final PlaceRepository placeRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public Page<SearchPlaceListRes> searchPlaceByName(String name, Pageable pageable) {
+    public Page<PlaceListRes> searchPlaceByName(String name, Pageable pageable) {
         Page<Place> list = placeSearchRepository.findByNameContains(name, pageable);
-        return SearchPlaceListRes.of(list);
+        return PlaceListRes.of(list);
     }
 
     public Page<Place> searchAll(Pageable pageable) {
@@ -45,7 +45,7 @@ public class ElasticSearchService {
         placeSearchRepository.deleteAll();
     }
 
-    public Page<SearchPlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
+    public Page<PlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(NoSuchElementException::new);
         Place place = schedule.getPlace();
         Page<Place> list;
@@ -67,6 +67,6 @@ public class ElasticSearchService {
                 }
             }
         }
-        return SearchPlaceListRes.of(list);
+        return PlaceListRes.of(list);
     }
 }
