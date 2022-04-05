@@ -323,7 +323,7 @@ public class UserService {
         return followList.stream().map(follow -> FollowListRes.builder()
                         .id(follow.getToUser().getId())
                         .nickname(follow.getToUser().getNickname())
-                        .profileImg(convertUtil.convertByteArrayToString(follow.getFromUser().getProfileImg()))
+                        .profileImg(convertUtil.convertByteArrayToString(follow.getToUser().getProfileImg()))
                         .build())
                 .collect(Collectors.toList());
     }
