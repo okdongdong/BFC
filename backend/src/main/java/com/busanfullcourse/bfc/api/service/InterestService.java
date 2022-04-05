@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -38,16 +39,16 @@ public class InterestService {
 
     public Map<String, Boolean> updatePlaceInterest(Long placeId, String username) {
         Optional<Interest> interest = interestRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
-        Optional<User> user = userRepository.findByUsername(username);
-        Optional<Place> place = placeRepository.findById(placeId);
+        User user = userRepository.findByUsername(username).orElseThrow(NoSuchElementException::new);
+        Place place = placeRepository.findById(placeId).orElseThrow(NoSuchElementException::new);
         HashMap<String, Boolean> map = new HashMap<>();
         if (interest.isPresent()) {
             interestRepository.delete(interest.get());
             map.put("interested", false);
         }else {
             interestRepository.save(Interest.builder()
-                            .place(place.get())
-                            .user(user.get())
+                            .place(place)
+                            .user(user)
                             .build());
             map.put("interested", true);
         }

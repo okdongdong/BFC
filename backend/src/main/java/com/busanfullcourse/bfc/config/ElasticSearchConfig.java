@@ -32,7 +32,7 @@ public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()
                 .connectedTo(host+":"+port)
                 .build();
-        return RestClients.create(clientConfiguration).rest();
+        return RestClients.create(clientConfiguration).rest(); //NOSONAR
     }
 
     @Bean
