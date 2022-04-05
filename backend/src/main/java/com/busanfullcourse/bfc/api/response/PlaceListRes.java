@@ -1,7 +1,9 @@
 package com.busanfullcourse.bfc.api.response;
 
 import com.busanfullcourse.bfc.db.entity.Place;
+import com.busanfullcourse.bfc.db.entity.Recommend;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,5 +38,16 @@ public class PlaceListRes implements Serializable {
                         .thumbnail(place.getThumbnail())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static Page<PlaceListRes> of (Page<Recommend> list) {
+        return list.map(recommend -> PlaceListRes.builder()
+                .placeId(recommend.getPlace().getPlaceId())
+                .name(recommend.getPlace().getName())
+                .address(recommend.getPlace().getAddress())
+                .label(recommend.getPlace().getLabel())
+                .averageScore(recommend.getPlace().getAverageScore())
+                .thumbnail(recommend.getPlace().getThumbnail())
+                .build());
     }
 }

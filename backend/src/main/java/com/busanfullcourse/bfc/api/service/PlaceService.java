@@ -9,10 +9,13 @@ import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
 import com.busanfullcourse.bfc.db.repository.MainRecommendRepository;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
+import com.busanfullcourse.bfc.db.repository.RecommendRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
     private final MainRecommendRepository mainRecommendRepository;
+    private final RecommendRepository recommendRepository;
 
 
     public RestaurantDetailRes getRestaurantDetail(Long placeId){
@@ -89,5 +93,10 @@ public class PlaceService {
     public List<PlaceListRes> getMainRecommendAttractionList(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user, false));
+    }
+
+    public Page<PlaceListRes> getRecommendPlaceList(String username, Pageable pageable) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        return PlaceListRes.of(recommendRepository.findAllByUser(user, pageable));
     }
 }
