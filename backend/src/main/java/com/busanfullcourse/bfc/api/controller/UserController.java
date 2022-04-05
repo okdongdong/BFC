@@ -76,19 +76,19 @@ public class UserController {
 
     @GetMapping("/{userId}/interest")
     public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
-                                                                       @PageableDefault(size = 4, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
+                                                                       @PageableDefault(size = 8, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
         return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
     }
 
     @GetMapping("/{userId}/user")
     public ResponseEntity<Page<FullCourseListRes>> getMoreUserFullCourse(@PathVariable Long userId,
-                                                                         @PageableDefault(size = 4, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
+                                                                         @PageableDefault(size = 8, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
         return ResponseEntity.ok(userService.getMoreUserFullCourse(userId, pageable));
     }
 
     @GetMapping("/{userId}/like")
     public ResponseEntity<Page<FullCourseListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
-                                                                          @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
+                                                                          @PageableDefault(size = 8, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
         return ResponseEntity.ok(userService.getMoreLikedFullCourse(userId, pageable));
     }
 
