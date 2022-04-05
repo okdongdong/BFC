@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.service;
 
 
 import com.busanfullcourse.bfc.api.response.SharingRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Sharing;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -24,10 +25,10 @@ public class ShareService {
     private final FullCourseRepository fullCourseRepository;
 
     public void shareFullCourse(Long fullCourseId, String email) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
         Optional<User> user = userRepository.findByUsername(email);
         if (user.isEmpty()) {
-            throw new NoSuchElementException("사용자가 없습니다.");
+            throw new NoSuchElementException(ExceptionUtil.NoUser);
         }
 
         Optional<Sharing> sharing = sharingRepository.findByFullCourseAndUser(fullCourse, user.get());
@@ -42,7 +43,7 @@ public class ShareService {
     }
 
     public List<SharingRes> getShareMember(Long fullCourseId, String username) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 조회할 수 있습니다.");
         }
@@ -51,7 +52,7 @@ public class ShareService {
     }
 
     public void deleteShareMember(Long fullCourseId, String username, Map<String, Long> map) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 수정할 수 있습니다.");
         }

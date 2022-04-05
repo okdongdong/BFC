@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.ScoreRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Score;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -24,8 +25,8 @@ public class ScoreService {
 
     public void setPlaceScore(Long placeId, String username, Float score) {
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
 
 
         Float newAverageScore = (place.getAverageScore()*place.getScoreCount()+score)/(place.getScoreCount()+1);
@@ -57,7 +58,7 @@ public class ScoreService {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
         Float oldScore = score.getScore();
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
         Float newAverageScore = (place.getAverageScore()*place.getScoreCount()-oldScore+newScore)/(place.getScoreCount());
 
         place.setAverageScore(newAverageScore);
@@ -73,7 +74,7 @@ public class ScoreService {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
         Float newAverageScore = (place.getAverageScore() * place.getScoreCount() - score.getScore()) / (place.getScoreCount() - 1);
         place.setAverageScore(newAverageScore);
         place.setScoreCount(place.getScoreCount()-1);
