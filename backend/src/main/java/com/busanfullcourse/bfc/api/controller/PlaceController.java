@@ -125,4 +125,12 @@ public class PlaceController {
             ) {
         return ResponseEntity.ok(searchService.searchByDistance(scheduleId, distance, pageable));
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<Page<PlaceListRes>> getRecommendPlaceList(
+            @PageableDefault(size = 8, sort = "place.averageScore", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getRecommendPlaceList(username, pageable));
+    }
 }
