@@ -44,6 +44,8 @@ const CollapseBox = styled("div")(() => ({
 }));
 
 type CollapseContainerProps = {
+  expanded: boolean;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   buttonPositionY?: number;
   children?: React.ReactNode;
   backgroundColor?: string;
@@ -52,14 +54,14 @@ type CollapseContainerProps = {
 };
 
 function CollapseContainer({
+  expanded,
+  setExpanded,
   buttonPositionY = 0,
   children,
   backgroundColor = "#efffff",
   dayChange = false,
   setNowScrollPosition,
 }: CollapseContainerProps) {
-  const [expanded, setExpanded] = useState(true);
-
   useEffect(() => {
     setExpanded(false);
   }, []);

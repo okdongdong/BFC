@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { styled } from "@mui/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 import { createCustomPlace } from "../../../redux/createFullCourse/actions";
 import { CustomPlaceInfoProps } from "../../../redux/createFullCourse/types";
 import ScrollableBox from "../ScrollableBox";
-import KakaoMap from "./KakaoMap";
+import ModalKakaoMap from "./ModalKakaoMap";
 
 interface AddCustomPlaceModalProps {
   openModal: boolean;
@@ -40,10 +40,14 @@ function AddCustomPlaceModal({
   fullCourseDate,
   createCustomPlace,
 }: Props & AddCustomPlaceModalProps) {
-  const [placeName, setPlaceName] = useState<string>("");
+  const [customPlaceName, setCustomPlaceName] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [day, setDay] = useState<number>(1);
   const [memo, setMemo] = useState<string>("");
+  const [location, setLocation] = useState({
+    lat: 35.1797913,
+    lng: 129.074987,
+  });
 
   const handleClose = () => {
     setOpenModal(false);
@@ -52,14 +56,14 @@ function AddCustomPlaceModal({
   const placeNameChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPlaceName(event.target.value);
+    setCustomPlaceName(event.target.value);
   };
   const placeAddressChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setAddress(event.target.value);
   };
-  const dayoChangeHandler = (event: SelectChangeEvent) => {
+  const dayChangeHandler = (event: SelectChangeEvent) => {
     setDay(parseInt(event.target.value));
   };
   const memoChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,11 +72,11 @@ function AddCustomPlaceModal({
 
   const onclickHandler = () => {
     const customPlaceInfo: CustomPlaceInfoProps = {
-      name: placeName,
+      name: customPlaceName,
       memo: memo,
       address: address,
-      lat: 0,
-      lng: 0,
+      lat: location.lat,
+      lng: location.lng,
       day: day,
       sequence: fullCourseList[day].length,
       fullCourseId: fullCourseId,
@@ -137,7 +141,10 @@ function AddCustomPlaceModal({
             ></TextField>
 
             <MapContainer>
-              <KakaoMap mapId={"modal-map"}></KakaoMap>
+              <ModalKakaoMap
+                setLocation={setLocation}
+                mapId={"modal-map"}
+              ></ModalKakaoMap>
             </MapContainer>
             <FormControl fullWidth>
               <InputLabel id="select-day-label">추가할 날짜</InputLabel>
@@ -145,7 +152,7 @@ function AddCustomPlaceModal({
                 labelId="select-day-label"
                 label="추가할 날짜"
                 value={`${day}`}
-                onChange={dayoChangeHandler}
+                onChange={dayChangeHandler}
               >
                 {fullCourseList.map((fullCourse: any, idx: number) => (
                   <MenuItem value={idx + 1}>{`Day${

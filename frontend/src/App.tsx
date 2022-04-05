@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-function App() {
+function App(): JSX.Element {
   return (
     <ThemeProvider theme={theme}>
       <div className="App">

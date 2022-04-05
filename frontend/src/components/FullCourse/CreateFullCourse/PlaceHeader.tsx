@@ -4,13 +4,12 @@ import {
   InputAdornment,
   Stack,
   TextField,
+  styled,
 } from "@mui/material";
-import { styled } from "@mui/styles";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { getSearchPlaceList } from "../../../redux/placeList/actions";
 import { PlaceSearchInfo } from "../../../redux/placeList/types";
-import PlaceName from "../../Detail/PlaceName";
 
 interface PlaceHeaderProps {
   nowPage: number;
@@ -27,6 +26,26 @@ function PlaceHeader({
   const filterType = ["평점순", "거리순", "사전설문순"];
   const [placeName, setPlaceName] = useState<string>("");
   const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
+
+  const SearchInput = styled(TextField)({
+    "& label.Mui-focused": {
+      color: "rgba(0,0,0,0)",
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "rgba(0,0,0,0)",
+    },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "rgba(0,0,0,0)",
+      },
+      "&:hover fieldset": {
+        borderColor: "rgba(0,0,0,0)",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "rgba(0,0,0,0)",
+      },
+    },
+  });
 
   const FilterTextStyle = styled("div")((attr: { idx: number }) => ({
     backgroundColor: `${attr.idx === nowFilterTypeIdx ? "#57A3EC" : "white"}`,
@@ -61,12 +80,11 @@ function PlaceHeader({
   };
 
   const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    console.log(event);
     if (event.key === "Enter") {
       getSearchPlaceList({
         placeName: placeName,
         page: nowPage,
-        size: 8,
+        size: SIZE,
       });
     }
   };
@@ -79,9 +97,10 @@ function PlaceHeader({
     });
   };
 
-  const onChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  const onSearchChangeHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    console.log(event);
     setPlaceName(event.target.value);
   };
 
@@ -101,16 +120,17 @@ function PlaceHeader({
           width: "85%",
         }}
       >
-        <TextField
+        <SearchInput
           placeholder="검색어를 입력하세요"
           fullWidth
+          type="text"
           sx={{
             zIndex: 400,
             backgroundColor: "white",
             borderRadius: 25,
             marginBottom: 2,
           }}
-          onChange={(event) => onChangeHandler(event)}
+          onChange={onSearchChangeHandler}
           onKeyUp={(event) => onKeyUpHandler(event)}
           InputProps={{
             endAdornment: (
