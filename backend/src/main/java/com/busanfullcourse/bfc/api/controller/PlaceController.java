@@ -44,16 +44,16 @@ public class PlaceController {
         return ResponseEntity.ok(placeService.getPopularAttractionList());
     }
 
-    @GetMapping("/restaurant/recommend")
-    public ResponseEntity<List<PlaceListRes>> getRecommendRestaurantList() {
+    @GetMapping("/restaurant/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendRestaurantList() {
         String username = userService.getCurrentUsername();
-        return ResponseEntity.ok(placeService.getRecommendRestaurantList(username));
+        return ResponseEntity.ok(placeService.getMainRecommendRestaurantList(username));
     }
 
-    @GetMapping("/attraction/recommend")
-    public ResponseEntity<List<PlaceListRes>> getRecommendAttractionList() {
+    @GetMapping("/attraction/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendAttractionList() {
         String username = userService.getCurrentUsername();
-        return ResponseEntity.ok(placeService.getRecommendAttractionList(username));
+        return ResponseEntity.ok(placeService.getMainRecommendAttractionList(username));
     }
 
     @PostMapping("/{placeId}/score")
@@ -124,5 +124,13 @@ public class PlaceController {
             @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable
             ) {
         return ResponseEntity.ok(searchService.searchByDistance(scheduleId, distance, pageable));
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<Page<PlaceListRes>> getRecommendPlaceList(
+            @PageableDefault(size = 8, sort = "place.averageScore", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getRecommendPlaceList(username, pageable));
     }
 }
