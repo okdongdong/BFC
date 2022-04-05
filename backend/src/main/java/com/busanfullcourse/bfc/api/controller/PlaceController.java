@@ -25,12 +25,12 @@ public class PlaceController {
     private final ElasticSearchService searchService;
 
     @GetMapping("/restaurant/{placeId}")
-    public ResponseEntity<RestaurantDetailRes> getRestaurantDetail(@PathVariable Long placeId) {
+    public ResponseEntity<PlaceDetailRes> getRestaurantDetail(@PathVariable Long placeId) {
         return ResponseEntity.ok(placeService.getRestaurantDetail(placeId));
     }
 
     @GetMapping("/attraction/{placeId}")
-    public ResponseEntity<AttractionDetailRes> getAttractionDetail(@PathVariable Long placeId) {
+    public ResponseEntity<PlaceDetailRes> getAttractionDetail(@PathVariable Long placeId) {
         return ResponseEntity.ok(placeService.getAttractionDetail(placeId));
     }
 
