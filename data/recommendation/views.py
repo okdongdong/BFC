@@ -1,13 +1,17 @@
-from unicodedata import category
+# from unicodedata import category
 from django.shortcuts import render
-from numpy import full
+# from numpy import full
 import pandas as pd
+import numpy as np
 import random
 from django.db import connection
 from django.db.models import Q
-from recommendation.models import Place,SurveyRecommend, Interest, WishFood, WishPlace
+from recommendation.models import Place,SurveyRecommend, Interest, WishFood, WishPlace, Recommend, Score, User, MainRecommend
 
 from recommendation.recomm import fullCourseSurveyRecomm,fullcourse_survey_place_recommendations
+
+from sklearn.decomposition import TruncatedSVD
+from sklearn.metrics import mean_squared_error 
 
 # Create your views here.
 
@@ -80,3 +84,292 @@ def get_wish_list(request, full_course_id, user_id):
 
   # 음식점
   # wish_food_list = list(WishFood.objects.filter(full_course=full_course_id))
+
+
+def rmse_function(R, P, Q, zero_matrix):
+	full_matrix = np.dot(P, Q.T)
+	
+	a = [matrix[0] for matrix in zero_matrix]
+	b = [matrix[1] for matrix in zero_matrix]
+	R_zero = R[a, b]
+
+	full_matrix_zero = full_matrix[a, b]
+	mse = mean_squared_error(R_zero, full_matrix_zero)
+	rmse = np.sqrt(mse)
+	return rmse
+
+def food_user_matrix(our_list):
+	our_user = pd.DataFrame(list(Score.objects.all().values()))
+	our_user = our_user[['user_id', 'place_id', 'score']]
+
+	rating_data = pd.read_csv('./file/subfood_review.csv', encoding='utf-8', index_col=0)
+	user_count = rating_data['user_id'].value_counts().reset_index(name='score')
+	user_count.columns = ['user_id', 'count']
+	user_counts = user_count[user_count['count'] > 50]
+	user_list = user_counts['user_id'].values.tolist()
+	sample_list = random.sample(user_list, 500)
+
+	check_list = sample_list + our_list
+	rating = pd.concat([our_user, rating_data])
+	user = rating.loc[rating['user_id'].isin(check_list)]
+	user.dropna(subset=['score'], axis=0, inplace=True)
+
+	MeanUser = user.groupby(['user_id']).mean().reset_index()
+	MeanUser['mean_rating'] = MeanUser['score']
+	MeanUser.drop(['place_id', 'score'], axis=1, inplace=True)
+	# user테이블, 보정값 포함
+	user = pd.merge(user, MeanUser, on=['user_id', 'user_id'])
+	# 값 보정
+	user['dev'] = user.apply(lambda x: x['score']-x['mean_rating'], axis=1)
+	user_place = user.pivot_table('dev', index='user_id', columns='place_id').fillna(0)
+	# 고객간의 유사도
+	UserUser = user_place.dot(user_place.transpose())
+	# 대각선값들 0으로 전부 만들어주기
+	np.fill_diagonal(UserUser.to_numpy(), 0)
+	return UserUser, user
+
+def tour_user_matrix(our_list):
+	our_user = pd.DataFrame(list(Score.objects.all().values()))
+	our_user = our_user[['user_id', 'place_id', 'score']]
+
+	rating_data = pd.read_csv('./file/subtour_review.csv', encoding='utf-8', index_col=0)
+	user_count = rating_data['user_id'].value_counts().reset_index(name='score')
+	user_count.columns = ['user_id', 'count']
+	user_counts = user_count[user_count['count'] > 3]
+	user_list = user_counts['user_id'].values.tolist()
+	sample_list = random.sample(user_list, 500)
+
+	check_list = sample_list + our_list
+	rating = pd.concat([our_user, rating_data])
+	user = rating.loc[rating['user_id'].isin(check_list)]
+	user.dropna(subset=['score'], axis=0, inplace=True)
+
+	MeanUser = user.groupby(['user_id']).mean().reset_index()
+	MeanUser['mean_rating'] = MeanUser['score']
+	MeanUser.drop(['place_id', 'score'], axis=1, inplace=True)
+	# user테이블, 보정값 포함
+	user = pd.merge(user, MeanUser, on=['user_id', 'user_id'])
+	# 값 보정
+	user['dev'] = user.apply(lambda x: x['score']-x['mean_rating'], axis=1)
+	user_place = user.pivot_table('dev', index='user_id', columns='place_id').fillna(0)
+	# 고객간의 유사도
+	UserUser = user_place.dot(user_place.transpose())
+	# 대각선값들 0으로 전부 만들어주기
+	np.fill_diagonal(UserUser.to_numpy(), 0)
+	return UserUser, user
+
+
+
+
+# 메인페이지 회원 추천	
+def food_main_save(request):
+	# 추천 초기화
+	MainRecommend.objects.all().delete()
+	
+  # 유저 정보 가져오기
+	users = list(User.objects.all().values('user_id'))
+	place_df = pd.DataFrame(list(Place.objects.all().values('place_id')))
+	our_score_df = pd.DataFrame(list(Score.objects.all().values('user_id','place_id', 'score')))
+	our_score_df.columns = ['user_id', 'place_id', 'score']
+
+	# 리뷰데이터 가져오기
+	review_rating = pd.read_csv('./file/subfood_review.csv',encoding='utf-8',index_col=0)
+	top2000 = review_rating[review_rating['user_id'].isin(review_rating['user_id'].value_counts()[:2000].index)]
+	# 데이터 합치기
+	rating = pd.concat([top2000, our_score_df], ignore_index=True)
+	rating.dropna(subset=['score'], axis=0, inplace=True)
+	user_place_rating = pd.pivot_table(rating, index='user_id', columns='place_id', values='score').fillna(0)
+	place_user_rating = user_place_rating.T
+
+	SVD = TruncatedSVD(n_components=12)
+	matrix = SVD.fit_transform(place_user_rating)
+	corr = np.corrcoef(matrix)
+	place_column = user_place_rating.columns
+	place_list = list(place_column)
+
+	df = pd.DataFrame(columns=['place_id', 'similar_place_id'])
+	for place_id in place_list:
+		corr_hand = place_list.index(place_id)
+		corr_food_hands = corr[corr_hand]
+		# 10개만 추출
+		simliar_place = list(place_column[(corr_food_hands >= 0.9)])[:11]
+		for simliar_id in simliar_place:
+			if simliar_id != place_id:
+				df = df.append({
+					'place_id': place_id,
+					'similar_place_id': simliar_id,
+				}, ignore_index=True)
+
+	df = pd.merge(df, place_df, how='left', on='place_id')
+	bulk = []
+	for user in users:
+		# 해당 유저가 좋아하는 장소 모음 리스트
+		interest = list(Interest.objects.filter(user=user['user_id']).values('place'))
+		lst = []
+		for i in range(len(interest)):
+			lst.append(interest[i]['place'])
+		# 해당 유저가 좋아하는 장소들만 추출
+		interest_df = df.loc[df['place_id'].isin(lst)]
+		
+		# 해당 장소들을 돌면서 
+		for i in range(len(interest_df)):
+			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+
+	MainRecommend.objects.bulk_create(bulk)
+
+def tour_main_save(request):
+	MainRecommend.objects.all().delete()
+
+	# 유저 정보 가져오기
+	users = list(User.objects.all().values('user_id'))
+	place_df = pd.DataFrame(list(Place.objects.all().values('place_id')))
+	our_score_df = pd.DataFrame(list(Score.objects.all().values('user_id','place_id', 'score')))
+	our_score_df.columns = ['user_id', 'place_id', 'score']
+
+	# 리뷰데이터 가져오기
+	review_rating = pd.read_csv('./file/subtour_review.csv',encoding='utf-8',index_col=0)
+	top2000 = review_rating[review_rating['user_id'].isin(review_rating['user_id'].value_counts()[:1000].index)]
+	# 데이터 합치기
+	rating = pd.concat([top2000, our_score_df], ignore_index=True)
+	rating.dropna(subset=['score'], axis=0, inplace=True)
+	user_place_rating = pd.pivot_table(rating, index='user_id', columns='place_id', values='score').fillna(0)
+	place_user_rating = user_place_rating.T
+
+	SVD = TruncatedSVD(n_components=12)
+	matrix = SVD.fit_transform(place_user_rating)
+	corr = np.corrcoef(matrix)
+	place_column = user_place_rating.columns
+	place_list = list(place_column)
+
+	df = pd.DataFrame(columns=['place_id', 'similar_place_id'])
+	for place_id in place_list:
+		corr_hand = place_list.index(place_id)
+		corr_food_hands = corr[corr_hand]
+		# 10개만 추출
+		simliar_place = list(place_column[(corr_food_hands >= 0.9)])[:11]
+		for simliar_id in simliar_place:
+			if simliar_id != place_id:
+				df = df.append({
+					'place_id': place_id,
+					'similar_place_id': simliar_id,
+				}, ignore_index=True)
+
+	df = pd.merge(df, place_df, how='left', on='place_id')
+	bulk = []
+	for user in users:
+		# 해당 유저가 좋아하는 장소 모음 리스트
+		interest = list(Interest.objects.filter(user=user['user_id']).values('place'))
+		lst = []
+		for i in range(len(interest)):
+			lst.append(interest[i]['place'])
+		# 해당 유저가 좋아하는 장소들만 추출
+		interest_df = df.loc[df['place_id'].isin(lst)]
+		
+		# 해당 장소들을 돌면서 
+		for i in range(len(interest_df)):
+			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+
+	MainRecommend.objects.bulk_create(bulk)
+
+
+def food_predict_score(request):
+	Recommend.objects.all().delete()
+	our_user = pd.DataFrame(list(Score.objects.all().values()))
+	our_user = our_user[['user_id', 'place_id', 'score']]
+	our_counts = our_user['user_id'].value_counts().reset_index(name='counts')
+	our_list = our_counts['index'].values.tolist()
+	
+	# 테이블 만들기
+	UserUser, user = food_user_matrix(our_list)
+	
+	for people in our_list:
+		simliar_userlist = UserUser.sort_values(by=people, ascending=False)[people].to_frame().index
+		simliar_user = np.append(simliar_userlist[0:200].values, [people])
+		simliar_matrix = user.loc[user['user_id'].isin(simliar_user)].pivot_table('score', index='user_id', columns='place_id').fillna(0)
+
+		# 정규화 만들기
+		user_row, place_col = simliar_matrix.shape
+		P = np.random.normal(scale=1./100, size=(user_row, 200))
+		Q = np.random.normal(scale=1./100, size=(place_col, 200))
+
+		# u_zero = np.zeros(user_row)
+		# d_zero = np.zeros(place_col)
+		# b_zero = np.mean(simliar_matrix.values[simliar_matrix.values.nonzero()])
+
+		rows, cols = simliar_matrix.values.nonzero()
+		sample_matrix = [(i, j, simliar_matrix.values[i,j]) for i, j in zip(rows, cols)]
+
+		for step in range(200):
+			for i, j, k in sample_matrix:
+				diff = k - np.dot(P[i, :], Q[j, :].T)
+				P[i, :] += 0.01 * (diff * Q[j, :] - 0.01 * P[i, :])
+				Q[j, :] += 0.01 * (diff * P[i, :] - 0.01 * Q[j, :])
+			rmse = rmse_function(simliar_matrix.values, P, Q, sample_matrix)
+			if step % 10 == 0:
+				print("Iteration: %d ; Train RMSE = %.4f " % (step, rmse))
+	
+		pred_matrix = np.dot(P, Q.T)
+		pred_df = pd.DataFrame(np.round(pred_matrix, 3), columns= simliar_matrix.columns)
+		pred_df = pred_df.set_index(keys=simliar_matrix.index)
+		user_predict = pred_df[pred_df.index==people].T
+		user_predict = user_predict.reset_index()
+		user_predict['user_id'] = people
+		user_predict.columns=['place_id', 'pred_score', 'user_id']
+		user_predict = user_predict.sort_values(by=['pred_score'], ascending=False)[:10]
+
+		bulk = []
+		for i in range(len(user_predict)):
+			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=1))))
+			
+		Recommend.objects.bulk_create(bulk)
+
+def tour_predict_score(request):
+	Recommend.objects.all().delete()
+	our_user = pd.DataFrame(list(Score.objects.all().values()))
+	our_user = our_user[['user_id', 'place_id', 'score']]
+	our_counts = our_user['user_id'].value_counts().reset_index(name='counts')
+	our_list = our_counts['index'].values.tolist()
+	
+	# 테이블 만들기
+	UserUser, user = food_user_matrix(our_list)
+	
+	for people in our_list:
+		simliar_userlist = UserUser.sort_values(by=people, ascending=False)[people].to_frame().index
+		simliar_user = np.append(simliar_userlist[0:200].values, [people])
+		simliar_matrix = user.loc[user['user_id'].isin(simliar_user)].pivot_table('score', index='user_id', columns='place_id').fillna(0)
+
+		# 정규화 만들기
+		user_row, place_col = simliar_matrix.shape
+		P = np.random.normal(scale=1./100, size=(user_row, 200))
+		Q = np.random.normal(scale=1./100, size=(place_col, 200))
+
+		# u_zero = np.zeros(user_row)
+		# d_zero = np.zeros(place_col)
+		# b_zero = np.mean(simliar_matrix.values[simliar_matrix.values.nonzero()])
+
+		rows, cols = simliar_matrix.values.nonzero()
+		sample_matrix = [(i, j, simliar_matrix.values[i,j]) for i, j in zip(rows, cols)]
+
+		for step in range(200):
+			for i, j, k in sample_matrix:
+				diff = k - np.dot(P[i, :], Q[j, :].T)
+				P[i, :] += 0.01 * (diff * Q[j, :] - 0.01 * P[i, :])
+				Q[j, :] += 0.01 * (diff * P[i, :] - 0.01 * Q[j, :])
+			rmse = rmse_function(simliar_matrix.values, P, Q, sample_matrix)
+			if step % 10 == 0:
+				print("Iteration: %d ; Train RMSE = %.4f " % (step, rmse))
+	
+		pred_matrix = np.dot(P, Q.T)
+		pred_df = pd.DataFrame(np.round(pred_matrix, 3), columns= simliar_matrix.columns)
+		pred_df = pred_df.set_index(keys=simliar_matrix.index)
+		user_predict = pred_df[pred_df.index==people].T
+		user_predict = user_predict.reset_index()
+		user_predict['user_id'] = people
+		user_predict.columns=['place_id', 'pred_score', 'user_id']
+		user_predict = user_predict.sort_values(by=['pred_score'], ascending=False)[:10]
+
+		bulk = []
+		for i in range(len(user_predict)):
+			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=0))))
+			
+		Recommend.objects.bulk_create(bulk)
