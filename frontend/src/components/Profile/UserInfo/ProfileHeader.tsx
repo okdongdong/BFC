@@ -5,7 +5,6 @@ import FollowFollower from "./FollowFollower";
 import { orange } from "@mui/material/colors";
 import { makeStyles } from "@mui/styles";
 import { Theme } from "@mui/material";
-
 const useStyles = makeStyles((theme: Theme) => ({
   bg: {
     height: theme.spacing(15),
