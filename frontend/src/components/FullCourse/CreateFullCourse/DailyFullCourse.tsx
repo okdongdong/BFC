@@ -23,7 +23,6 @@ function DailyFullCourse({
   const dayText = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log("-------", nowScrollPosition);
     if (pickedDay === idx) {
       const scrollTarget = dayText.current?.offsetTop;
       if (!!scrollTarget) {
@@ -32,7 +31,6 @@ function DailyFullCourse({
         );
       }
     }
-    console.log(dayText.current?.offsetTop);
   }, []);
 
   return (

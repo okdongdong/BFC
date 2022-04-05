@@ -1,7 +1,7 @@
-import { Theme } from "@mui/material";
+import { dividerClasses, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useRef } from "react";
-import { AccountReducer } from "../../../redux/rootReducer";
+import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
 import { setProfileImg } from "../../../redux/account/actions";
 import { customAxios } from "../../../lib/customAxios";
@@ -15,7 +15,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ProfileImg({ profileImg, isLogin, userId, setProfileImg }: Props) {
+function ProfileImg({
+  profileImg,
+  isLogin,
+  currentUserId,
+  setProfileImg,
+  userId,
+}: Props) {
   console.log(profileImg);
   const classes = useStyles();
   const imgRef = useRef(
@@ -81,23 +87,28 @@ function ProfileImg({ profileImg, isLogin, userId, setProfileImg }: Props) {
           onChange={onChangeImage}
           id="inputFile"
         />
-        <button
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            onClickFileBtn();
-          }}
-        >
-          프사수정
-        </button>
+        {currentUserId === userId ? (
+          <button
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              onClickFileBtn();
+            }}
+          >
+            프사수정
+          </button>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   );
 }
-const mapStateToProps = ({ account }: AccountReducer) => {
+const mapStateToProps = ({ account, profile }: any) => {
   return {
     isLogin: account.isLogin,
-    profileImg: account.profileImg,
-    userId: account.userId,
+    profileImg: profile.profileImg,
+    currentUserId: account.userId,
+    userId: profile.userId,
   };
 };
 const mapDispatchToProps = (dispatch: any) => {

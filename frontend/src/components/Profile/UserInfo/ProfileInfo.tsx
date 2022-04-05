@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { AccountReducer } from "../../../redux/rootReducer";
+import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
@@ -13,21 +13,26 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ProfileInfo({ nickname, isLogin }: Props) {
+function ProfileInfo({ currentNickname, nickname }: Props) {
   const classes = useStyles();
   return (
     <div>
       <span style={{ fontWeight: "bold", fontSize: 20 }}>{nickname}</span>
-      <Link to="/changeUser">
-        <button className={classes.btn}>회원정보관리</button>
-      </Link>
+      {currentNickname === nickname ? (
+        <Link to="/changeUser">
+          <button className={classes.btn}>회원정보관리</button>
+        </Link>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
-const mapStateToProps = ({ account }: AccountReducer) => {
+const mapStateToProps = ({ account, profile }: any) => {
   return {
     isLogin: account.isLogin,
-    nickname: account.nickname,
+    currentNickname: account.nickname,
+    nickname: profile.nickname,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

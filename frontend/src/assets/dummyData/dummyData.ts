@@ -9,8 +9,8 @@ export const fullCourseDetailList = [
     thumbnailList: [
       "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
       "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
-      "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
-      "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
+      "http://www.womennews.co.kr/news/photo/202105/211854_344513_3059.jpg",
+      "http://www.citizenpark.or.kr/img/common/child_img01.jpg",
     ],
     dayPlaceList: [
       {
@@ -46,9 +46,9 @@ export const fullCourseDetailList = [
     startOn: "2022-04-17",
     finishedOn: "2022-04-19",
     thumbnailList: [
-      "https://blog.kakaocdn.net/dn/20621/btqT0tVl5DD/k69nk3mj7lVyu4kRxntsk1/img.jpg",
-      "https://blog.kakaocdn.net/dn/moS9T/btqT18b9inN/WYF8WSvhtyIWdtiLOltL4K/img.jpg",
-      "https://t1.daumcdn.net/cfile/tistory/99A5BB3B5E2A1B0513",
+      "https://www.visitbusan.net/uploadImgs/files/cntnts/20191230180640571_oen",
+      "http://www.citizenpark.or.kr/img/common/child_img01.jpg",
+      "https://images.chosun.com/resizer/uCJPmjrT6i-abAvibh8CSw1EPBA=/464x0/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/IQPXDWM5YWCD7AKOFIS5WIU6D4.jpg",
     ],
     dayPlaceList: [
       {
@@ -188,8 +188,8 @@ export const placeCardList: any = [
     id: "182371928739",
     content: {
       placeId: 123,
-      lat: 35.199160225802785,
-      lng: 128.05748018601798,
+      lat: 35.179160225802785,
+      lng: 129.15748018601798,
       name: "관광지",
       thumbnail:
         "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
@@ -204,8 +204,8 @@ export const placeCardList: any = [
     id: "1823123928739",
     content: {
       placeId: 124,
-      lat: 35.199160225802785,
-      lng: 127.05748018601798,
+      lat: 35.1899160225802785,
+      lng: 129.06748018601798,
       name: "다른 관광지",
       thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
       address: "부산광역시 금정구 장전동",
@@ -218,8 +218,8 @@ export const placeCardList: any = [
     id: "182332328739",
     content: {
       placeId: 153,
-      lat: 35.199160225802785,
-      lng: 126.05748018601798,
+      lat: 35.169160225802785,
+      lng: 129.05748018601798,
       name: "관광지",
       thumbnail:
         "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
@@ -233,8 +233,8 @@ export const placeCardList: any = [
     id: "18237192526539",
     content: {
       placeId: 1264,
-      lat: 35.199160225802785,
-      lng: 125.05748018601798,
+      lat: 35.189160225802785,
+      lng: 129.0555748018601798,
       name: "다른 관광지",
       thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
 
