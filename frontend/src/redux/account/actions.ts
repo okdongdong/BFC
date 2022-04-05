@@ -1,10 +1,14 @@
 import axios from "axios";
 import { Dispatch } from "redux";
-import { LoginUserInfo, NavUserInfo } from "../../types/account";
+import { customAxios } from "../../lib/customAxios";
+import { LoginUserInfo, NavUserInfo, SetUserInfo } from "../../types/account";
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAILURE,
+  SET_PROFILE_IMG,
+  SET_USER_INFO,
+  USER_LOGOUT,
 } from "./types";
 
 const userLoginRequest = () => {
@@ -25,7 +29,39 @@ const userLoginFailure = (err: any) => {
     payload: err,
   };
 };
+export const userLogout = () => {
+  return {
+    type: USER_LOGOUT,
+  };
+};
+export const setProfileImg = (imgUrl: string) => {
+  return {
+    type: SET_PROFILE_IMG,
+    payload: imgUrl,
+  };
+};
 
+export const setUserInfo = (userInfo: SetUserInfo) => {
+  return {
+    type: SET_USER_INFO,
+    payload: userInfo,
+  };
+};
+export const getUserInfo = (userId: number) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(userLoginRequest()); //로딩 중
+
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `users/${userId}`,
+      });
+      dispatch(setUserInfo(res.data));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
 
 export const userLogin = (userInfo: LoginUserInfo) => {
   return async (dispatch: Dispatch) => {

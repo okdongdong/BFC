@@ -6,7 +6,11 @@ import FindPassword from "./pages/Accounts/FindPassword";
 import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
-import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
+import Detail from "./pages/Main/Detail";
+import CreateFullCourse from "./pages/FullCourse/CreateFullCourse";
+import Test from "./pages/Test";
+import CreateFullCourseLayout from "./layouts/CreateFullCourse";
+import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
 function Router() {
   return useRoutes([
     {
@@ -55,7 +59,7 @@ function Router() {
           element: <FindPassword />,
         },
         {
-          path: "profile",
+          path: "profile/:nickname",
           element: <Profile />,
         },
         {
@@ -63,10 +67,23 @@ function Router() {
           element: <ChangeUser />,
         },
         {
-          path: "deleteAccount",
-          element: <DeleteAccount />,
+          path: "detail",
+          element: <Detail />,
+        },
+        {
+          path: "fullcourseDetail",
+          element: <FullCourseDetail />,
         },
       ],
+    },
+    {
+      path: "test",
+      element: <Test />,
+    },
+    {
+      path: "createFullCourse",
+      element: <CreateFullCourseLayout />,
+      children: [{ path: "", element: <CreateFullCourse /> }],
     },
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);

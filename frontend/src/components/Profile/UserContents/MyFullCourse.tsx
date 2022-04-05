@@ -1,7 +1,8 @@
 import * as React from "react";
 import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
-
+import FullCourseModal from "./Modal/FullCourseModal";
+import { connect } from "react-redux";
 interface place {
   fullcourse_id: number;
   name: string;
@@ -11,19 +12,53 @@ interface place {
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
-    width: "150px",
-    height: "150px",
-    margin: theme.spacing(3),
+    width: "200px",
+    height: "200px",
+    margin: "10px",
+    paddingRight: "0",
+    paddingBottom: "0",
+    paddingTop: "0",
+    paddingLeft: "0",
   },
   text: {
     position: "absolute",
     textAlign: "center",
   },
 }));
-export default function MyFullCourse() {
+function MyFullCourse({ myList }: Props) {
+  const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const nickname = "나는 윈터야"; // props 받아 가져와야함
+  const title = `${nickname}님의 풀코스`;
   const placesList: Array<place> = [
+    {
+      fullcourse_id: 2,
+      name: "광안리",
+      thumbnail:
+        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+      label: "나혼자여행",
+    },
+    {
+      fullcourse_id: 3,
+      name: "목구멍",
+      thumbnail:
+        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+      label: "가족여행",
+    },
+    {
+      fullcourse_id: 2,
+      name: "광안리",
+      thumbnail:
+        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+      label: "나혼자여행",
+    },
+    {
+      fullcourse_id: 3,
+      name: "목구멍",
+      thumbnail:
+        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+      label: "가족여행",
+    },
     {
       fullcourse_id: 2,
       name: "광안리",
@@ -41,9 +76,9 @@ export default function MyFullCourse() {
   ];
   let baseCard = [];
   for (let i = 0; i < 6; i++) {
-    if (i < placesList.length) {
+    if (i < myList.length) {
       baseCard.push(
-        <div style={{ position: "relative" }}>
+        <div key={i} style={{ position: "relative" }}>
           <img
             style={{
               width: "200px",
@@ -52,7 +87,8 @@ export default function MyFullCourse() {
               marginLeft: "10px",
               borderRadius: "10px",
             }}
-            src={placesList[i].thumbnail}
+            src={myList[i].thumbnail}
+            alt="fullCourseImg"
           ></img>
           <div
             style={{
@@ -69,7 +105,7 @@ export default function MyFullCourse() {
               left: 0,
             }}
           >
-            <p style={{ color: "white" }}>#{placesList[i].label}</p>
+            <p style={{ color: "white" }}>#{myList[i].label}</p>
           </div>
         </div>
       );
@@ -85,10 +121,16 @@ export default function MyFullCourse() {
           fontWeight: "bold",
           fontSize: 20,
           textAlign: "left",
-          marginLeft: "23rem",
+          marginLeft: "300px",
         }}
       >
-        {nickname}님의 풀코스
+        {title}
+        <button
+          style={{ float: "right", marginRight: "300px" }}
+          onClick={() => setOpen(true)}
+        >
+          더보기
+        </button>
       </p>
       <div
         style={{
@@ -99,6 +141,23 @@ export default function MyFullCourse() {
       >
         {baseCard}
       </div>
+      {open && (
+        <FullCourseModal
+          open={open}
+          setOpen={() => setOpen(false)}
+          contentList={myList}
+          title={title}
+        ></FullCourseModal>
+      )}
     </div>
   );
 }
+const mapStateToProps = ({ account, profile }: any) => {
+  return {
+    isLogin: account.isLogin,
+    myList: profile.myList,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(MyFullCourse);

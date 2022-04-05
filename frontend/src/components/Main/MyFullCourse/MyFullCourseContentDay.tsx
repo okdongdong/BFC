@@ -45,8 +45,8 @@ function MyFullCourseContentDay({
         <p>{day}</p>
       </CircleStlye>
       <PlaceNameStlye>
-        {placeList.map((place) => (
-          <div>{place.name}</div>
+        {placeList.map((place, index) => (
+          <div key={index}>{place.name}</div>
         ))}
       </PlaceNameStlye>
     </Box>
