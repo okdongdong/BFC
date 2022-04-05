@@ -1,7 +1,6 @@
 package com.busanfullcourse.bfc.api.service;
 
 
-import com.busanfullcourse.bfc.api.response.AttractionDetailRes;
 import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.api.response.PlaceDetailRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
