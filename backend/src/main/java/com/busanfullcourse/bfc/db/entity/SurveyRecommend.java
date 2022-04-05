@@ -17,7 +17,7 @@ public class SurveyRecommend {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "survey_recommend_id")
-    private Long mainRecommendId;
+    private Long surveyRecommendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
@@ -29,5 +29,5 @@ public class SurveyRecommend {
     @JoinColumn(name = "full_course_id", nullable = false)
     @JsonIgnore
     @ToString.Exclude
-    private User user;
+    private FullCourse fullCourse;
 }
