@@ -7,10 +7,7 @@ import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
-import com.busanfullcourse.bfc.db.repository.MainRecommendRepository;
-import com.busanfullcourse.bfc.db.repository.PlaceRepository;
-import com.busanfullcourse.bfc.db.repository.RecommendRepository;
-import com.busanfullcourse.bfc.db.repository.UserRepository;
+import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import com.busanfullcourse.bfc.common.cache.CacheKey;
@@ -32,6 +29,7 @@ public class PlaceService {
     private final UserRepository userRepository;
     private final MainRecommendRepository mainRecommendRepository;
     private final RecommendRepository recommendRepository;
+    private final SurveyRecommendRepository surveyRecommendRepository;
 
 
     public RestaurantDetailRes getRestaurantDetail(Long placeId){
@@ -97,6 +95,11 @@ public class PlaceService {
 
     public Page<PlaceListRes> getRecommendPlaceList(String username, Pageable pageable) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        return PlaceListRes.of(recommendRepository.findAllByUser(user, pageable));
+        return PlaceListRes.ofRecommend(recommendRepository.findAllByUser(user, pageable));
     }
+
+    public Page<PlaceListRes> getSurveyRecommendPlaceList(Long fullCourseId, Pageable pageable) {
+        return PlaceListRes.ofSurveyRecommend(surveyRecommendRepository.findAllByFullCourseFullCourseId(fullCourseId, pageable));
+    }
+
 }
