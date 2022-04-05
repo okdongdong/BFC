@@ -1,14 +1,11 @@
 package com.busanfullcourse.bfc.api.service;
 
-import com.busanfullcourse.bfc.api.request.CustomPlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.PlaceScheduleReq;
 import com.busanfullcourse.bfc.api.request.ScheduleUpdateReq;
 import com.busanfullcourse.bfc.common.util.ExceptionUtil;
-import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Schedule;
-import com.busanfullcourse.bfc.db.repository.CustomPlaceRepository;
 import com.busanfullcourse.bfc.db.repository.FullCourseRepository;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
 import com.busanfullcourse.bfc.db.repository.ScheduleRepository;
