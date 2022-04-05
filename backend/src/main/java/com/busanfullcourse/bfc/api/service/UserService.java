@@ -91,7 +91,7 @@ public class UserService {
         User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
         String reqUsername = getCurrentUsername();
         User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        List<Interest> interestList = interestRepository.findTop4ByUserIdOrderByInterestIdDesc(user.getId());
+        List<Interest> interestList = interestRepository.findTop6ByUserIdOrderByInterestIdDesc(user.getId());
 
         List<FullCourse> fullCourseList;
         List<Like> likeList;
