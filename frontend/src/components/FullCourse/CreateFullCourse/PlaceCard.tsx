@@ -14,6 +14,7 @@ const CardStyle = styled(Card)(() => ({
   textAlign: "left",
   display: "flex",
   justifyContent: "start",
+  height: 132,
   zIndex: 100,
   width: 350,
   position: "relative",
@@ -41,13 +42,11 @@ const PlaceAddressNameStyle = styled("p")(() => ({
 }));
 
 function PlaceCard({
-  placeId,
-  category,
   name,
   thumbnail,
   address,
   averageScore,
-  keywords,
+  keywords = [],
 }: PlaceCardProps) {
   const newKeywords: Array<string> = keywords.slice(0, 3);
 
@@ -56,13 +55,13 @@ function PlaceCard({
     <CardStyle onClick={() => {}}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Paper
-          sx={{ margin: 1, minHeight: 100, minWidth: 100, padding: 0.5 }}
+          sx={{ margin: 1, minHeight: 100, width: "100%", padding: 0.5 }}
           square
         >
           <CardMediaStyle image={thumbnail} title={name} />
         </Paper>
       </div>
-      <CardContent>
+      <CardContent sx={{ width: "100%" }}>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <PlaceNameStyle>{name}</PlaceNameStyle>

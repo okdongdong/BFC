@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 function PreSuveyContainer({
   fullCourseDate,
   fullCourseId,
+  userId,
   creatNewFullCourse,
 }: Props) {
   const [title, setTitle] = useState<string>("나의 풀코스");
@@ -79,6 +80,7 @@ function PreSuveyContainer({
       finishedOn: finishedOn,
       wishFoodKeywords: meogEoBoJaList,
       wishPlaceKeywords: gaBoJaList,
+      userId: userId,
     };
 
     creatNewFullCourse(data);
@@ -126,10 +128,11 @@ function PreSuveyContainer({
   );
 }
 
-const mapStateToProps = ({ createFullCourse }: any) => {
+const mapStateToProps = ({ createFullCourse, account }: any) => {
   return {
     fullCourseDate: createFullCourse.fullCourseDate,
     fullCourseId: createFullCourse.fullCourseId,
+    userId: account.userId,
   };
 };
 

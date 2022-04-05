@@ -1,6 +1,5 @@
 import fullCourseCircle from "../../../assets/img/full_course_circle.png";
 import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
-import { connect } from "react-redux";
 import { PlaceCard } from "../../../redux/placeList/types";
 
 interface FullCourseKakaoMapMarkersProps {

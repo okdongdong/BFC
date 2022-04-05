@@ -11,7 +11,7 @@ import store from "./redux/store";
 
 const persistor = persistStore(store);
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
@@ -23,7 +23,7 @@ ReactDOM.render(
       type="text/javascript"
       src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}&libraries=services,clusterer`}
     ></script>
-  </React.StrictMode>,
+  </>,
   document.getElementById("root")
 );
 

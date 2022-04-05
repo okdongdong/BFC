@@ -1,9 +1,8 @@
-import { Backdrop, Button, CircularProgress, Stack } from "@mui/material";
+import { Backdrop, CircularProgress, Stack } from "@mui/material";
 import { styled } from "@mui/styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
-import { placeCardList as dummy } from "../../assets/dummyData/dummyData";
 import AddCustomPlaceModal from "../../components/FullCourse/CreateFullCourse/AddCustomPlaceModal";
 import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
@@ -19,16 +18,16 @@ import PlaceHeader from "../../components/FullCourse/CreateFullCourse/PlaceHeade
 import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
 import {
   createNewSchedule,
-  deleteSchedule,
   moveCard,
   updateSchedule,
 } from "../../redux/createFullCourse/actions";
 import {
   CreateNewScheduleProps,
-  DeleteScheduleProps,
   FullCourseListProps,
   UpdateScheduleProps,
 } from "../../redux/createFullCourse/types";
+import { resetPlaceListWithDistance } from "../../redux/placeList/actions";
+import { setFinished, setPage } from "../../redux/schedule/actions";
 
 const MapContainer = styled("div")({
   width: "100%",
@@ -68,16 +67,25 @@ function CreateFullCourse({
   fullCourseList,
   fullCourseId,
   placeList,
+  placeListWithDistance,
   nowLoading,
-  moveCard,
+  finished,
+  selectedScheduleId,
+  setFinished,
+  resetPlaceListWithDistance,
   createNewSchedule,
   updateSchedule,
-  deleteSchedule,
+  setPage,
 }: Props) {
   const [pickedDay, setPickedDay] = useState<number>(1);
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
+  const [recommendDistance, setRecommendDistance] = useState<number>(500);
+
+  // 인피니티 스크롤 관련 변수
   const [nowPage, setNowPage] = useState<number>(0);
   const SIZE = 8;
 
@@ -94,9 +102,20 @@ function CreateFullCourse({
     }
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
+    const nowSelectedPlaceList =
+      nowFilterTypeIdx === 0
+        ? placeList
+        : nowFilterTypeIdx === 1
+        ? placeListWithDistance
+        : placeList;
 
     if (source.droppableId === "placeList") {
-      const result = move(placeList, fullCourseList[dInd], source, destination);
+      const result = move(
+        nowSelectedPlaceList,
+        fullCourseList[dInd],
+        source,
+        destination
+      );
       const newState: FullCourseListProps = [...fullCourseList];
       newState[dInd] = result[dInd];
       createNewSchedule({
@@ -159,6 +178,12 @@ function CreateFullCourse({
       });
     }
   };
+  useEffect(() => {
+    console.log("선택지 변경");
+    setPage(0);
+    setFinished(false);
+    resetPlaceListWithDistance();
+  }, [nowFilterTypeIdx, recommendDistance, selectedScheduleId]);
 
   return (
     <>
@@ -181,6 +206,7 @@ function CreateFullCourse({
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
               <FullCourseKakaoMap
+                nowFilterTypeIdx={nowFilterTypeIdx}
                 expandedFullCourse={expandedFullCourse}
                 expandedPlace={expandedPlace}
                 expandedPlaceDetail={expandedPlaceDetail}
@@ -205,20 +231,21 @@ function CreateFullCourse({
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
               >
-                {fullCourseList.map((placeList: any, idx: number) => (
+                {fullCourseList.map((dailyCourse: any, idx: number) => (
                   <div key={idx}>
                     <DailyFullCourse
                       setDayChange={setDayChange}
                       nowScrollPosition={nowScrollPosition}
                       idx={idx}
                       pickedDay={pickedDay}
-                      placeList={placeList}
+                      placeList={dailyCourse}
                       droppableId={`${idx}`}
                     ></DailyFullCourse>
                   </div>
                 ))}
               </Stack>
             </CollapseContainer>
+
             <CollapseContainer
               expanded={expandedPlace}
               setExpanded={setExpandedPlace}
@@ -229,13 +256,48 @@ function CreateFullCourse({
                 nowPage={nowPage}
                 setNowPage={setNowPage}
                 SIZE={SIZE}
+                nowFilterTypeIdx={nowFilterTypeIdx}
+                recommendDistance={recommendDistance}
+                setNowFilterTypeIdx={setNowFilterTypeIdx}
+                setRecommendDistance={setRecommendDistance}
               ></PlaceHeader>
               <Stack
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
               >
-                <PlaceCardList placeList={dummy}></PlaceCardList>
-                <PlaceCardListDnd placeList={dummy}></PlaceCardListDnd>
+                {nowFilterTypeIdx === 0 ? (
+                  <>
+                    <PlaceCardList
+                      finished={finished}
+                      selectedScheduleId={selectedScheduleId}
+                      recommendDistance={recommendDistance}
+                      placeList={placeList}
+                    ></PlaceCardList>
+                    <PlaceCardListDnd placeList={placeList}></PlaceCardListDnd>
+                  </>
+                ) : nowFilterTypeIdx === 1 ? (
+                  <>
+                    <PlaceCardList
+                      finished={finished}
+                      selectedScheduleId={selectedScheduleId}
+                      recommendDistance={recommendDistance}
+                      placeList={placeListWithDistance}
+                    ></PlaceCardList>
+                    <PlaceCardListDnd
+                      placeList={placeListWithDistance}
+                    ></PlaceCardListDnd>
+                  </>
+                ) : (
+                  <>
+                    <PlaceCardList
+                      finished={finished}
+                      selectedScheduleId={selectedScheduleId}
+                      recommendDistance={recommendDistance}
+                      placeList={placeList}
+                    ></PlaceCardList>
+                    <PlaceCardListDnd placeList={placeList}></PlaceCardListDnd>{" "}
+                  </>
+                )}
               </Stack>
             </CollapseContainer>
             <CollapseContainer
@@ -255,12 +317,16 @@ function CreateFullCourse({
 const mapStateToProps = ({
   createFullCourse,
   placeListReducer,
+  schedule,
   baseInfo,
 }: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
+  placeListWithDistance: placeListReducer.placeListWithDistance,
   fullCourseId: createFullCourse.fullCourseId,
   nowLoading: baseInfo.nowLoading,
+  selectedScheduleId: schedule.selectedScheduleId,
+  finished: schedule.finished,
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -269,8 +335,9 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(createNewSchedule(newState)),
     updateSchedule: (newState: UpdateScheduleProps) =>
       dispatch(updateSchedule(newState)),
-    deleteSchedule: (newState: DeleteScheduleProps) =>
-      dispatch(deleteSchedule(newState)),
+    resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
+    setPage: (page: number) => dispatch(setPage(page)),
+    setFinished: (finished: boolean) => dispatch(setFinished(finished)),
   };
 };
 

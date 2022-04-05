@@ -1,4 +1,5 @@
 export interface PlaceCardProps {
+  scheduleId?: number;
   placeId: number;
   lat?: number;
   lng?: number;
