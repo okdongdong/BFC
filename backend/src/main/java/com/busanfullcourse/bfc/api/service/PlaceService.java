@@ -7,8 +7,8 @@ import com.busanfullcourse.bfc.api.response.RestaurantDetailRes;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
+import com.busanfullcourse.bfc.db.repository.MainRecommendRepository;
 import com.busanfullcourse.bfc.db.repository.PlaceRepository;
-import com.busanfullcourse.bfc.db.repository.RecommendRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,7 +27,7 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
-    private final RecommendRepository recommendRepository;
+    private final MainRecommendRepository mainRecommendRepository;
 
 
     public RestaurantDetailRes getRestaurantDetail(Long placeId){
@@ -81,13 +81,13 @@ public class PlaceService {
         return PlaceListRes.of(placeRepository.findTop8ByScoreCountAfterAndCategoryEqualsAndThumbnailIsNotNullOrderByAverageScoreDesc(40,false));
     }
 
-    public List<PlaceListRes> getRecommendRestaurantList(String username) {
+    public List<PlaceListRes> getMainRecommendRestaurantList(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        return PlaceListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user,true));
+        return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user,true));
     }
 
-    public List<PlaceListRes> getRecommendAttractionList(String username) {
+    public List<PlaceListRes> getMainRecommendAttractionList(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        return PlaceListRes.of(recommendRepository.findTop8ByRecommendPlaceAndCategoryIs(user, false));
+        return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user, false));
     }
 }
