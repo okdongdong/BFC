@@ -159,8 +159,6 @@ def tour_user_matrix(our_list):
 	return UserUser, user
 
 
-
-
 # 메인페이지 회원 추천	
 def food_main_save(request):
 	# 추천 초기화
@@ -212,8 +210,13 @@ def food_main_save(request):
 		interest_df = df.loc[df['place_id'].isin(lst)]
 		
 		# 해당 장소들을 돌면서 
-		for i in range(len(interest_df)):
-			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+		if len(interest_df) <= 10:
+			place_id_list = random.sample(list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:30].values('place_id')),10)
+			for i in place_id_list:
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=i['place_id'], category=1))
+		else:
+			for i in range(len(interest_df)):
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
 
 	MainRecommend.objects.bulk_create(bulk)
 
@@ -265,9 +268,14 @@ def tour_main_save(request):
 		# 해당 유저가 좋아하는 장소들만 추출
 		interest_df = df.loc[df['place_id'].isin(lst)]
 		
-		# 해당 장소들을 돌면서 
-		for i in range(len(interest_df)):
-			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+		# 해당 장소들을 돌면서
+		if len(interest_df) <= 10:
+			place_id_list = random.sample(list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=30)).order_by('-average_score')[:20].values('place_id')),10)
+			for i in place_id_list:
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=i['place_id'], category=0))
+		else:
+			for i in range(len(interest_df)):
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
 
 	MainRecommend.objects.bulk_create(bulk)
 
@@ -320,8 +328,17 @@ def food_predict_score(request):
 		bulk = []
 		for i in range(len(user_predict)):
 			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=1))))
-			
-		Recommend.objects.bulk_create(bulk)
+
+	our_id = set(pd.DataFrame(list(Score.objects.all().values()))['user_id'].tolist())
+	all_id = set(pd.DataFrame(list(User.objects.all().values()))['user_id'].tolist())
+	sub_list = list(all_id - our_id)
+	for user_number in sub_list:
+		place_id_list = random.sample(list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:50].values('place_id')),10)
+		for place_number in place_id_list:
+			bulk.append(Recommend(user_id=user_number,place_id=place_number ,category=1))
+
+
+	Recommend.objects.bulk_create(bulk)
 
 def tour_predict_score(request):
 	Recommend.objects.all().delete()
@@ -369,7 +386,16 @@ def tour_predict_score(request):
 		user_predict = user_predict.sort_values(by=['pred_score'], ascending=False)[:10]
 
 		bulk = []
+		
 		for i in range(len(user_predict)):
 			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=0))))
-			
-		Recommend.objects.bulk_create(bulk)
+	
+	our_id = set(pd.DataFrame(list(Score.objects.all().values()))['user_id'].tolist())
+	all_id = set(pd.DataFrame(list(User.objects.all().values()))['user_id'].tolist())
+	sub_list = list(all_id - our_id)
+	for user_number in sub_list:
+		place_id_list = random.sample(list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=10)).order_by('-average_score')[:30].values('place_id')),10)
+		for place_number in place_id_list:
+			bulk.append(Recommend(user_id=user_number,place_id=place_number ,category=0))	
+
+	Recommend.objects.bulk_create(bulk)
