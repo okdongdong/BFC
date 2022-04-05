@@ -96,7 +96,7 @@ public class PlaceController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<SearchPlaceListRes>> searchPlace(@RequestParam String name,
+    public ResponseEntity<Page<PlaceListRes>> searchPlace(@RequestParam String name,
                                          @PageableDefault(size = 4, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
     }
@@ -118,7 +118,7 @@ public class PlaceController {
     }
 
     @GetMapping("/search/near")
-    public ResponseEntity<Page<SearchPlaceListRes>> searchByDistance(
+    public ResponseEntity<Page<PlaceListRes>> searchByDistance(
             @RequestParam Long scheduleId,
             @RequestParam Integer distance,
             @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable
