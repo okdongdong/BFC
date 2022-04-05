@@ -10,15 +10,6 @@ export const SET_PLACE_LIST_WITH_DISTANCE = "SET_PLACE_LIST_WITH_DISTANCE";
 export const GET_SEARCH_PLACE_LIST = "GET_SEARCH_PLACE_LIST";
 export const SET_SEARCH_PLACE_LIST = "SET_SEARCH_PLACE_LIST";
 
-// 요청 관련
-export const PLACE_LIST_REQUEST = "PLACE_LIST_REQUEST";
-export const PLACE_LIST_SUCCESS = "PLACE_LIST_SUCCESS";
-export const PLACE_LIST_FAILURE = "PLACE_LIST_FAILURE";
-
-// 로딩 & 에러처리
-export const PLACE_LIST_LOADING_CONTROL = "PLACE_LIST_LOADING_CONTROL";
-export const PLACE_LIST_ERROR_CONTROL = "PLACE_LIST_ERROR_CONTROL";
-
 // 장소리스트 요청시 필요한 데이터
 export interface PlaceListInfoForGet {
   distance: number; // 미터 단위

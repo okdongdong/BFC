@@ -4,9 +4,6 @@ import { customAxios } from "../../lib/customAxios";
 import {
   GET_PLACE_LIST,
   GET_PLACE_LIST_WITH_DISTANCE,
-  PLACE_LIST_REQUEST,
-  PLACE_LIST_SUCCESS,
-  PLACE_LIST_FAILURE,
   PlaceListInfoForGet,
   PlaceCardList,
   PlaceInfo,
@@ -17,25 +14,6 @@ import {
   PlaceSearchInfo,
 } from "./types";
 import { loadingControl, errorControl } from "../baseInfo/actions";
-
-const placeListRequest = () => {
-  return {
-    type: PLACE_LIST_REQUEST,
-  };
-};
-
-const placeListSuccess = (placeList: PlaceCardList) => {
-  return {
-    type: PLACE_LIST_SUCCESS,
-    payload: placeList,
-  };
-};
-
-const placeListFailure = () => {
-  return {
-    type: PLACE_LIST_FAILURE,
-  };
-};
 
 const setPlaceList = (placeList: PlaceCardList) => {
   return {

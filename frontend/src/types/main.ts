@@ -4,9 +4,9 @@ export interface PlaceCardProps {
   lng?: number;
   name: string;
   thumbnail: string;
-  address: string;
+  address?: string;
   averageScore: number;
-  category: number; // 음식점인지 관광지인지 구별 => 1: 음식점, 0: 관광지라 가정
+  category?: number; // 음식점인지 관광지인지 구별 => 1: 음식점, 0: 관광지라 가정
   keywords: string[];
 }
 

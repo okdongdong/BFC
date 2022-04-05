@@ -111,6 +111,16 @@ class Recommend(models.Model):
         managed = False
         db_table = 'recommend'
 
+class MainRecommend(models.Model):
+    main_recommend_id = models.BigAutoField(primary_key=True)
+    category = models.IntegerField()
+    user = models.ForeignKey(User, models.DO_NOTHING)
+    place = models.ForeignKey(Place, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'main_recommend'
+
 class SurveyRecommend(models.Model):
     survey_recommend_id = models.BigAutoField(db_column='survey__recommend_id', primary_key=True)
     full_course = models.ForeignKey(FullCourse, models.DO_NOTHING,related_name='SurveyRecommend')

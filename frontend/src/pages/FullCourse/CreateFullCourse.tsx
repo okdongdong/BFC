@@ -49,10 +49,6 @@ export const move = (
   const destClone = Array.from(destination);
   const [removed]: any = sourceClone.splice(droppableSource.index, 1);
   const removedClone = { ...removed };
-  console.log(sourceClone);
-  console.log(destClone);
-  console.log(removed);
-  console.log(removedClone);
   if (droppableSource.dropableId !== "placeList") {
     removedClone.id = `${removed.id}-${new Date().getTime()}`;
   }
@@ -66,18 +62,6 @@ export const move = (
 
   return result;
 };
-
-// // DND를 위한 id가 부착된 객체 생성
-// const createNewItem = () => {
-//   const plt: any = [];
-//   dummyPlaceList.map((place: any) =>
-//     plt.push({
-//       id: `place-${place.placeId}-${new Date().getTime()}`,
-//       content: place,
-//     })
-//   );
-//   return plt;
-// };
 
 // 풀코스 생성페이지
 function CreateFullCourse({
@@ -96,6 +80,11 @@ function CreateFullCourse({
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [nowPage, setNowPage] = useState<number>(0);
   const SIZE = 8;
+
+  // 탭을 여닫는 변수
+  const [expandedFullCourse, setExpandedFullCourse] = useState(true);
+  const [expandedPlace, setExpandedPlace] = useState(true);
+  const [expandedPlaceDetail, setExpandedPlaceDetail] = useState(true);
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -191,7 +180,12 @@ function CreateFullCourse({
           <PlaceSearch></PlaceSearch>
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
-              <FullCourseKakaoMap></FullCourseKakaoMap>
+              <FullCourseKakaoMap
+                expandedFullCourse={expandedFullCourse}
+                expandedPlace={expandedPlace}
+                expandedPlaceDetail={expandedPlaceDetail}
+                pickedDay={pickedDay}
+              ></FullCourseKakaoMap>
             </MapContainer>
             <DayBar
               pickedDay={pickedDay}
@@ -199,6 +193,8 @@ function CreateFullCourse({
               setDayChange={setDayChange}
             ></DayBar>
             <CollapseContainer
+              expanded={expandedFullCourse}
+              setExpanded={setExpandedFullCourse}
               dayChange={dayChange}
               buttonPositionY={0}
               setNowScrollPosition={setNowScrollPosition}
@@ -223,7 +219,12 @@ function CreateFullCourse({
                 ))}
               </Stack>
             </CollapseContainer>
-            <CollapseContainer buttonPositionY={150} backgroundColor="#dee">
+            <CollapseContainer
+              expanded={expandedPlace}
+              setExpanded={setExpandedPlace}
+              buttonPositionY={150}
+              backgroundColor="#dee"
+            >
               <PlaceHeader
                 nowPage={nowPage}
                 setNowPage={setNowPage}
@@ -237,7 +238,12 @@ function CreateFullCourse({
                 <PlaceCardListDnd placeList={dummy}></PlaceCardListDnd>
               </Stack>
             </CollapseContainer>
-            <CollapseContainer buttonPositionY={300} backgroundColor="#cdd">
+            <CollapseContainer
+              expanded={expandedPlaceDetail}
+              setExpanded={setExpandedPlaceDetail}
+              buttonPositionY={300}
+              backgroundColor="#cdd"
+            >
               디테일
             </CollapseContainer>
           </div>
