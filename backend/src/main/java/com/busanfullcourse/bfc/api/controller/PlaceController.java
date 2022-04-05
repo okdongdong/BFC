@@ -44,16 +44,16 @@ public class PlaceController {
         return ResponseEntity.ok(placeService.getPopularAttractionList());
     }
 
-    @GetMapping("/restaurant/recommend")
-    public ResponseEntity<List<PlaceListRes>> getRecommendRestaurantList() {
+    @GetMapping("/restaurant/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendRestaurantList() {
         String username = userService.getCurrentUsername();
-        return ResponseEntity.ok(placeService.getRecommendRestaurantList(username));
+        return ResponseEntity.ok(placeService.getMainRecommendRestaurantList(username));
     }
 
-    @GetMapping("/attraction/recommend")
-    public ResponseEntity<List<PlaceListRes>> getRecommendAttractionList() {
+    @GetMapping("/attraction/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendAttractionList() {
         String username = userService.getCurrentUsername();
-        return ResponseEntity.ok(placeService.getRecommendAttractionList(username));
+        return ResponseEntity.ok(placeService.getMainRecommendAttractionList(username));
     }
 
     @PostMapping("/{placeId}/score")
