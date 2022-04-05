@@ -25,55 +25,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: "center",
   },
 }));
-function MyFullCourse({ myList }: Props) {
+function MyFullCourse({ myList, nickname }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  const nickname = "나는 윈터야"; // props 받아 가져와야함
   const title = `${nickname}님의 풀코스`;
-  const placesList: Array<place> = [
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-  ];
+  const type = 1;
   let baseCard = [];
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
@@ -145,8 +101,8 @@ function MyFullCourse({ myList }: Props) {
         <FullCourseModal
           open={open}
           setOpen={() => setOpen(false)}
-          contentList={myList}
           title={title}
+          type={type}
         ></FullCourseModal>
       )}
     </div>
@@ -156,6 +112,7 @@ const mapStateToProps = ({ account, profile }: any) => {
   return {
     isLogin: account.isLogin,
     myList: profile.myList,
+    nickname: profile.nickname,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

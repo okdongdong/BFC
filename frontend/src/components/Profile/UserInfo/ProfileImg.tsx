@@ -21,6 +21,7 @@ function ProfileImg({
   currentUserId,
   setProfileImg,
   userId,
+  myProfileImg,
 }: Props) {
   console.log(profileImg);
   const classes = useStyles();
@@ -76,7 +77,21 @@ function ProfileImg({
 
   return (
     <div>
-      <img src={profileImg} className={classes.myImg}></img>
+      {profileImg ? (
+        <div>
+          {currentUserId === userId ? (
+            <img src={myProfileImg} className={classes.myImg}></img>
+          ) : (
+            <img src={profileImg} className={classes.myImg}></img>
+          )}
+        </div>
+      ) : (
+        <img
+          src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+          className={classes.myImg}
+        ></img>
+      )}
+
       <div>
         <input
           type="file"
@@ -109,6 +124,7 @@ const mapStateToProps = ({ account, profile }: any) => {
     profileImg: profile.profileImg,
     currentUserId: account.userId,
     userId: profile.userId,
+    myProfileImg: account.profileImg,
   };
 };
 const mapDispatchToProps = (dispatch: any) => {
