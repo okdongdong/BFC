@@ -4,7 +4,6 @@ import com.busanfullcourse.bfc.api.request.ChangePasswordReq;
 import com.busanfullcourse.bfc.api.request.UserDeleteReq;
 import com.busanfullcourse.bfc.api.request.UserUpdateReq;
 import com.busanfullcourse.bfc.api.response.*;
-import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.InterestService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ public class UserController {
 
     private final UserService userService;
     private final InterestService interestService;
-    private final FullCourseService fullCourseService;
 
     @GetMapping("/{nickname}/profile")
     public ResponseEntity<UserProfileRes> getUserProfile(@PathVariable String nickname) {
