@@ -7,7 +7,7 @@ class Place(models.Model):
     info = models.TextField(blank=True, null=True)
     open_time = models.CharField(max_length=255, blank=True, null=True)
     lat = models.FloatField()
-    lng = models.FloatField()
+    lon = models.FloatField()
     address = models.CharField(max_length=100, blank=True, null=True)
     category = models.SmallIntegerField()
     phone = models.CharField(max_length=14, blank=True, null=True)
