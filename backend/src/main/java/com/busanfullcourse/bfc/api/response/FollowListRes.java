@@ -13,6 +13,6 @@ public class FollowListRes {
 
     private String nickname;
 
-    private Byte[] profileImg;
+    private String profileImg;
 
 }

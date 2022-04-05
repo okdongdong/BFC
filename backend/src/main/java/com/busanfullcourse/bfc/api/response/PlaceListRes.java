@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.response;
 import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttractionListRes {
+public class PlaceListRes implements Serializable {
 
     private Long placeId;
 
@@ -25,8 +26,8 @@ public class AttractionListRes {
 
     private String thumbnail;
 
-    public static List<AttractionListRes> of (List<Place> list) {
-        return list.stream().map(place -> AttractionListRes.builder()
+    public static List<PlaceListRes> of (List<Place> list) {
+        return list.stream().map(place -> PlaceListRes.builder()
                         .placeId(place.getPlaceId())
                         .name(place.getName())
                         .address(place.getAddress())

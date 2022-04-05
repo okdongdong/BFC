@@ -6,18 +6,19 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "main_recommend")
 @Getter
 @Setter
 @ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Recommend {
+public class MainRecommend {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "recommend_id")
-    private Long recommendId;
+    @Column(name = "main_recommend_id")
+    private Long mainRecommendId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
