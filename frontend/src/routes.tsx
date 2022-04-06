@@ -70,7 +70,7 @@ function Router() {
           element: <ChangeUser />,
         },
         {
-          path: "detail",
+          path: "place/:placeId",
           element: <Detail />,
         },
         {

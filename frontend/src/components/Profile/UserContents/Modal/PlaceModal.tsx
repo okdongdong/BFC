@@ -2,7 +2,9 @@ import { Card, CardContent, CardMedia, Modal, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { customAxios } from "../../../../lib/customAxios";
+import StarScore from "../../../Main/StarScore";
 
 //모달 스타일
 const style = {
@@ -38,6 +40,7 @@ interface content {
   name: string;
   averageScore: number;
   thumbnail: string;
+  placeId: number;
 }
 interface ModalProps {
   open: boolean;
@@ -142,68 +145,108 @@ function PlaceModal({
               if (contentList.length - 4 === index) {
                 // 관찰되는 요소가 있는 html, 아래에서 5번째에 해당하는 박스를 관찰
                 return (
-                  <div style={Box2} ref={boxRef} key={index}>
-                    <Card
-                      key={index}
-                      sx={{
-                        width: "200px",
-                        height: "200px",
-                        margin: "10px",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={item.thumbnail}
-                        alt="green iguana"
-                      />
-                      <CardContent>
-                        <Typography
-                          gutterBottom
-                          variant="h5"
-                          component="div"
-                          style={{ fontSize: "15px" }}
+                  <Link
+                    to={`/place/${item.placeId}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div style={Box2} ref={boxRef} key={index}>
+                      <Card
+                        key={index}
+                        sx={{
+                          width: "200px",
+                          height: "200px",
+                          margin: "10px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={item.thumbnail}
+                          alt="green iguana"
+                        />
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          {item.name}
-                          {item.averageScore}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </div>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px", fontWeight: "bold" }}
+                          >
+                            {item.name}
+                          </Typography>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <StarScore
+                              starScore={item.averageScore}
+                            ></StarScore>
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </Link>
                 );
               } else {
                 // 관찰되는 요소가 없는 html
                 return (
-                  <div style={Box2} key={index}>
-                    <Card
-                      key={index}
-                      sx={{
-                        width: "200px",
-                        height: "200px",
-                        margin: "10px",
-                        borderRadius: "10px",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={item.thumbnail}
-                        alt="green iguana"
-                      />
-                      <CardContent>
-                        <Typography
-                          gutterBottom
-                          variant="h5"
-                          component="div"
-                          style={{ fontSize: "15px" }}
+                  <Link
+                    to={`/place/${item.placeId}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div style={Box2} key={index}>
+                      <Card
+                        key={index}
+                        sx={{
+                          width: "200px",
+                          height: "200px",
+                          margin: "10px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={item.thumbnail}
+                          alt="green iguana"
+                        />
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
                         >
-                          {item.name}
-                          {item.averageScore}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </div>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px", fontWeight: "bold" }}
+                          >
+                            {item.name}
+                          </Typography>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <StarScore
+                              starScore={item.averageScore}
+                            ></StarScore>
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </Link>
                 );
               }
             })}

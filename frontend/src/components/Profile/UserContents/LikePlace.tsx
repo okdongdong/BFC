@@ -7,7 +7,9 @@ import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
 import PlaceModal from "./Modal/PlaceModal";
 import { connect } from "react-redux";
-import { customAxios } from "../../../lib/customAxios";
+import { Link } from "react-router-dom";
+import StarScore from "../../Main/StarScore";
+import PlaceCard from "../../Main/PlaceCard";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -37,33 +39,53 @@ function LikePlace({ interestList, profileUserId }: Props) {
             alignItems: "flex-end",
           }}
         >
-          <Card
-            sx={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-            }}
+          <Link
+            to={`/place/${interestList[i].placeId}`}
+            style={{ textDecoration: "none" }}
           >
-            <CardMedia
-              component="img"
-              height="140"
-              image={interestList[i].thumbnail}
-              alt="green iguana"
-            />
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                style={{ fontSize: "15px" }}
+            <Card
+              sx={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="140"
+                image={interestList[i].thumbnail}
+                alt="green iguana"
+              />
+              <CardContent
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                {interestList[i].name}
-                {interestList[i].averageScore}
-              </Typography>
-            </CardContent>
-          </Card>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{ fontSize: "15px", fontWeight: "bold" }}
+                >
+                  {interestList[i].name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{ fontSize: "15px" }}
+                >
+                  <StarScore
+                    starScore={interestList[i].averageScore}
+                  ></StarScore>
+                </Typography>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       );
     } else {

@@ -3,12 +3,8 @@ import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
 import FullCourseModal from "./Modal/FullCourseModal";
 import { connect } from "react-redux";
-interface place {
-  fullcourse_id: number;
-  name: string;
-  thumbnail: string;
-  label: string;
-}
+import { Link } from "react-router-dom";
+
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
@@ -30,36 +26,41 @@ function Like({ likeList, nickname }: Props) {
   for (let i = 0; i < 6; i++) {
     if (i < likeList.length) {
       baseCard.push(
-        <div style={{ position: "relative" }}>
-          <img
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-            }}
-            src={likeList[i].thumbnail}
-            alt="fullCourseImg"
-          ></img>
-          <div
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-              position: "absolute",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              top: 0,
-              left: 0,
-            }}
-          >
-            <p style={{ color: "white" }}>#{likeList[i].label}</p>
+        <Link
+          to={`/place/${likeList[i].placeId}`}
+          style={{ textDecoration: "none" }}
+        >
+          <div style={{ position: "relative" }}>
+            <img
+              style={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+              }}
+              src={likeList[i].thumbnail}
+              alt="fullCourseImg"
+            ></img>
+            <div
+              style={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+                position: "absolute",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                top: 0,
+                left: 0,
+              }}
+            >
+              <p style={{ color: "white" }}>#{likeList[i].label}</p>
+            </div>
           </div>
-        </div>
+        </Link>
       );
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);

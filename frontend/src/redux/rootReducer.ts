@@ -5,6 +5,7 @@ import accountReducer from "./account/reducer";
 import baseInfoReducer from "./baseInfo/baseInfoReducer";
 import createFullCourseReducer from "./createFullCourse/createFullCourseReducer";
 import placeDetailReducer from "./placeDetail/placeDetailReducer";
+import { placeReducer, reviewListReducer } from "./detail/reducer";
 import placeListReducer from "./placeList/placeListReducer";
 import profileReducer from "./profile/reducer";
 import scheduleReducer from "./schedule/scheduleReducer";
@@ -24,6 +25,8 @@ const rootReducer = combineReducers({
   // createPlaceList: placeListReducer,
   profile: profileReducer,
   schedule: scheduleReducer,
+  place: placeReducer,
+  reviewList: reviewListReducer,
 });
 
 export type RootReducer = ReturnType<typeof rootReducer>;
@@ -36,5 +39,7 @@ export type PlaceListReducer = ReturnType<typeof placeListReducer>;
 export type PlaceDetailReducer = ReturnType<typeof placeDetailReducer>;
 export type ProfileReducer = ReturnType<typeof profileReducer>;
 export type ScheduleReducer = ReturnType<typeof scheduleReducer>;
+export type PlaceReducer = ReturnType<typeof placeReducer>;
+export type ReviewListReducer = ReturnType<typeof reviewListReducer>;
 
 export default persistReducer(persistConfig, rootReducer);

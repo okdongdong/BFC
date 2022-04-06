@@ -1,6 +1,6 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { customAxios } from "../../../lib/customAxios";
@@ -21,6 +21,7 @@ function ProfileInfo({
   profileUserId,
 }: Props) {
   const classes = useStyles();
+  const [btnNane, setBtnName] = useState(isFollowing);
   function follow() {
     customAxios({
       method: "post",
@@ -28,6 +29,7 @@ function ProfileInfo({
     })
       .then((res) => {
         console.log("팔로우성공");
+        setBtnName(true);
       })
       .catch((err) => {
         console.log(err);
@@ -40,6 +42,7 @@ function ProfileInfo({
     })
       .then((res) => {
         console.log("팔로우 취소 성공");
+        setBtnName(false);
       })
       .catch((err) => {
         console.log(err);
@@ -54,7 +57,7 @@ function ProfileInfo({
         </Link>
       ) : (
         <>
-          {isFollowing ? (
+          {btnNane ? (
             <button className={classes.btn} onClick={unFollow}>
               팔로우 취소
             </button>

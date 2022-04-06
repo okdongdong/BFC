@@ -1,0 +1,2 @@
+export const SET_PLACE_DATA = "SET_PLACE_DATA";
+export const SET_REVIEW_LIST = "SET_REVIEW_LIST";

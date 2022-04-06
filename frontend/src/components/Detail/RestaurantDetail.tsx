@@ -10,29 +10,17 @@ import PlaceLike from "./PlaceLike";
 import Menu from "./Menu";
 import { useEffect, useState } from "react";
 import { customAxios } from "../../lib/customAxios";
+import { connect } from "react-redux";
+import KakaoMap from "../FullCourse/CreateFullCourse/KakaoMap";
 const PlaceNameStyle = styled("h2")(() => ({
   display: "flex",
   alignItems: "center",
   margin: 0,
+  justifyContent: "space-between",
+  fontSize: "18px",
+  width: "220px",
 }));
-function RestaurantDetail() {
-  const name: string = "부산 목구멍";
-  const place_id = 1; //데이터 가져옴
-  const [averageScore, setAverageScore] = useState(1);
-  //평점가져오기
-  function getScore() {
-    customAxios({
-      method: "get",
-      url: `/place/${place_id}/score`,
-    }).then((res) => {
-      console.log(res);
-      setAverageScore(res.data);
-    });
-  }
-  useEffect(() => {
-    getScore();
-  }, [averageScore]);
-
+function RestaurantDetail({ name, averageScore }: Props) {
   return (
     <div
       style={{
@@ -46,7 +34,7 @@ function RestaurantDetail() {
         <Grid xs={3}>
           <PlaceNameStyle>
             {name}
-            <StarScore starScore={averageScore}></StarScore>
+            <StarScore starScore={averageScore.toFixed(2)}></StarScore>
           </PlaceNameStyle>
           <PlaceImg></PlaceImg>
           <PlaceLike></PlaceLike>
@@ -60,9 +48,34 @@ function RestaurantDetail() {
           <AnotherPlatform></AnotherPlatform>
         </Grid>
       </Grid>
-
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            width: "1000px",
+            height: "300px",
+          }}
+        >
+          <KakaoMap></KakaoMap>
+        </div>
+      </div>
       <PlaceReview></PlaceReview>
     </div>
   );
 }
-export default RestaurantDetail;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    name: place.name,
+    averageScore: place.averageScore,
+    // placeId: place.placeId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(RestaurantDetail);

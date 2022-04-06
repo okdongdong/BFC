@@ -2,6 +2,7 @@ import { Modal } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { customAxios } from "../../../../lib/customAxios";
 
 //모달 스타일
@@ -36,6 +37,7 @@ const style = {
 interface content {
   label: string;
   thumbnail: string;
+  placeId: number; //풀코스 id 변수명 확인 후 바꿔야함
 }
 interface ModalProps {
   open: boolean;
@@ -67,9 +69,9 @@ function FullCourseModal({
   }, [contentList]);
   function getUrl() {
     if (type) {
-      setUrl(`/users/${profileUserId}/like`);
+      setUrl(`/users/${profileUserId}/userFullCourse`);
     } else {
-      setUrl(`/users/${profileUserId}/like`);
+      setUrl(`/users/${profileUserId}/likeFullCourse`);
     }
   }
   const getInfo = async (page: number) => {
@@ -82,6 +84,7 @@ function FullCourseModal({
       },
     });
     // 서버에서 데이터 가져오기
+    console.log("더보기가져옴", res);
     setTotalPage(res.data.totalPages);
     setPage(page + 1);
     setContentList((curContentList) => [
@@ -149,86 +152,96 @@ function FullCourseModal({
               if (contentList.length - 4 === index) {
                 // 관찰되는 요소가 있는 html, 아래에서 5번째에 해당하는 박스를 관찰
                 return (
-                  <div style={Box2} ref={boxRef} key={index}>
-                    <div
-                      key={index}
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      <img
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                          margin: "10px",
-                          // marginRight: "10px",
-                          // marginLeft: "10px",
-                          borderRadius: "10px",
-                        }}
-                        src={item.thumbnail}
-                        alt="fullCourseImg"
-                      ></img>
+                  <Link
+                    to={`/place/${item.placeId}`} //풀코스 디테일로 바꿔야함!
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div style={Box2} ref={boxRef} key={index}>
                       <div
+                        key={index}
                         style={{
-                          width: "200px",
-                          height: "200px",
-                          marginRight: "10px",
-                          marginLeft: "10px",
-                          borderRadius: "10px",
-                          position: "absolute",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          top: 0,
-                          left: 0,
+                          position: "relative",
                         }}
                       >
-                        <p style={{ color: "white" }}>#{item.label}</p>
+                        <img
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            margin: "10px",
+                            // marginRight: "10px",
+                            // marginLeft: "10px",
+                            borderRadius: "10px",
+                          }}
+                          src={item.thumbnail}
+                          alt="fullCourseImg"
+                        ></img>
+                        <div
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            marginRight: "10px",
+                            marginLeft: "10px",
+                            borderRadius: "10px",
+                            position: "absolute",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            top: 0,
+                            left: 0,
+                          }}
+                        >
+                          <p style={{ color: "white" }}>#{item.label}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               } else {
                 // 관찰되는 요소가 없는 html
                 return (
-                  <div style={Box2} key={index}>
-                    <div
-                      key={index}
-                      style={{
-                        position: "relative",
-                      }}
-                    >
-                      <img
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                          margin: "10px",
-                          // marginRight: "10px",
-                          // marginLeft: "10px",
-                          borderRadius: "10px",
-                        }}
-                        src={item.thumbnail}
-                        alt="fullCourseImg"
-                      ></img>
+                  <Link
+                    to={`/place/${item.placeId}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <div style={Box2} key={index}>
                       <div
+                        key={index}
                         style={{
-                          width: "200px",
-                          height: "200px",
-                          marginRight: "10px",
-                          marginLeft: "10px",
-                          borderRadius: "10px",
-                          position: "absolute",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          top: 0,
-                          left: 0,
+                          position: "relative",
                         }}
                       >
-                        <p style={{ color: "white" }}>#{item.label}</p>
+                        <img
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            margin: "10px",
+                            // marginRight: "10px",
+                            // marginLeft: "10px",
+                            borderRadius: "10px",
+                          }}
+                          src={item.thumbnail}
+                          alt="fullCourseImg"
+                        ></img>
+                        <div
+                          style={{
+                            width: "200px",
+                            height: "200px",
+                            marginRight: "10px",
+                            marginLeft: "10px",
+                            borderRadius: "10px",
+                            position: "absolute",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            top: 0,
+                            left: 0,
+                          }}
+                        >
+                          <p style={{ color: "white" }}>#{item.label}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               }
             })}
