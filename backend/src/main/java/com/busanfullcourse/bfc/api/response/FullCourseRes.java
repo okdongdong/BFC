@@ -32,13 +32,13 @@ public class FullCourseRes {
 
     private LocalDate finishedOn;
 
-    private List<String> WishFoodList;
+    private List<String> wishFoodList;
 
-    private List<String> WishPlaceList;
+    private List<String> wishPlaceList;
 
     private List<ScheduleDetail> scheduleDetailList;
 
-    private Integer LikeCnt;
+    private Integer likeCnt;
 
 
     public static List<String> ofWishFoodList(List<WishFood> list) {

@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.api.service;
 
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Interest;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -24,32 +26,31 @@ public class InterestService {
     private final InterestRepository interestRepository;
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
+    private static final String INTEREST_KEY = "interested";
 
     public Map<String, Boolean> getPlaceInterest(Long placeId, String username) {
         Optional<Interest> interest = interestRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
         HashMap<String, Boolean> map = new HashMap<>();
-        if (interest.isPresent()) {
-            map.put("interested", true);
-        }else {
-            map.put("interested", false);
-        }
+        map.put(INTEREST_KEY, interest.isPresent());
         return map;
     }
 
     public Map<String, Boolean> updatePlaceInterest(Long placeId, String username) {
         Optional<Interest> interest = interestRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
-        Optional<User> user = userRepository.findByUsername(username);
-        Optional<Place> place = placeRepository.findById(placeId);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
         HashMap<String, Boolean> map = new HashMap<>();
         if (interest.isPresent()) {
             interestRepository.delete(interest.get());
-            map.put("interested", false);
+            map.put(INTEREST_KEY, false);
         }else {
             interestRepository.save(Interest.builder()
-                            .place(place.get())
-                            .user(user.get())
+                            .place(place)
+                            .user(user)
                             .build());
-            map.put("interested", true);
+            map.put(INTEREST_KEY, true);
         }
         return map;
     }

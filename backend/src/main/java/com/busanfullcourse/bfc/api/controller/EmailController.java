@@ -3,7 +3,6 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.response.EmailAuthRes;
 import com.busanfullcourse.bfc.api.service.EmailService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

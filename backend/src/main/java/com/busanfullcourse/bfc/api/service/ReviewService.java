@@ -1,6 +1,9 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.ReviewUpdateReq;
+import com.busanfullcourse.bfc.api.response.ReviewListRes;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Review;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -24,11 +27,14 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
+    private final ConvertUtil convertUtil;
 
 
     public void createReview(ReviewUpdateReq req, String username, Long placeId) {
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         reviewRepository.save(
                 Review.builder()
                         .content(req.getContent())
@@ -38,24 +44,34 @@ public class ReviewService {
         );
     }
 
-    public Page<Review> getReviewListByPlaceId(Long placeId, Pageable pageable) {
-        return reviewRepository.findAllByPlacePlaceId(placeId, pageable);
+    public Page<ReviewListRes> getReviewListByPlaceId(Long placeId, Pageable pageable) {
+        Page<Review> list = reviewRepository.findAllByPlacePlaceId(placeId, pageable);
+        return list.map(review -> ReviewListRes.builder()
+                .reviewId(review.getReviewId())
+                .content(review.getContent())
+                .userId(review.getUser().getId())
+                .nickname(review.getUser().getNickname())
+                .profileImg(convertUtil.convertByteArrayToString(review.getUser().getProfileImg()))
+                .postedAt(review.getPostedAt())
+                .updatedAt(review.getUpdatedAt())
+                .build());
     }
 
     public void updateReview(ReviewUpdateReq req, String username, Long reviewId) throws IllegalAccessException {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.REVIEW_NOT_FOUND));
         if (!username.equals(review.getUser().getUsername())) {
-            throw new IllegalAccessException("자신이 작성한 리뷰만 수정할 수 있습니다");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
         review.setContent(req.getContent());
         reviewRepository.save(review);
-
     }
 
     public void deleteReview(Long reviewId, String username) throws IllegalAccessException {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new NoSuchElementException("찾으시는 리뷰가 없습니다."));
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.REVIEW_NOT_FOUND));
         if (!username.equals(review.getUser().getUsername())) {
-            throw new IllegalAccessException("자신이 작성한 리뷰만 삭제할 수 있습니다");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
         reviewRepository.deleteById(reviewId);
     }
