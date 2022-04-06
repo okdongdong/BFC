@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.common.jwt;
 
 import com.busanfullcourse.bfc.api.service.CustomUserDetailService;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void validateAccessToken(String accessToken, UserDetails userDetails) {
         if (Boolean.FALSE.equals(jwtTokenUtil.validateToken(accessToken, userDetails))) {
-            throw new IllegalArgumentException("토큰 검증 실패");
+            throw new IllegalArgumentException(ExceptionUtil.INVALID_AUTH_TOKEN);
         }
     }
 

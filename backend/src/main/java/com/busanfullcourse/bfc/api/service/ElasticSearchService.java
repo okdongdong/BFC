@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.PlaceListRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Schedule;
@@ -46,7 +47,7 @@ public class ElasticSearchService {
     }
 
     public Page<PlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(NoSuchElementException::new);
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.SCHEDULE_NOT_FOUND));
         Place place = schedule.getPlace();
         Page<Place> list;
 
