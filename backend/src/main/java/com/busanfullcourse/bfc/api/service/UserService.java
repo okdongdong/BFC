@@ -99,11 +99,11 @@ public class UserService {
         Boolean isFollowing;
 
         if (user == reqUser) {
-            fullCourseList = fullCourseRepository.findTop6ByUserOrderByStartedOn(user);
+            fullCourseList = fullCourseRepository.findTop6ByUserOrderByStartedOnDesc(user);
             likeList = likeRepository.findTop6ByUser(user);
             isFollowing = null;
         } else {
-            fullCourseList = fullCourseRepository.findTop6ByIsPublicAndUserOrderByStartedOn(true, user);
+            fullCourseList = fullCourseRepository.findTop6ByIsPublicAndUserOrderByStartedOnDesc(true, user);
             likeList = likeRepository.findTop6ByUserAndFullCourseIsPublic(user, true);
             isFollowing = followRepository.findByFromUserAndToUser(reqUser, user).isPresent();
         }
@@ -335,20 +335,31 @@ public class UserService {
         User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
         Page<FullCourse> page;
         if (user == reqUser) {
-            page = fullCourseRepository.findAllByUserOrderByStartedOn(user, pageable);
+            page = fullCourseRepository.findAllByUserOrderByStartedOnDesc(user, pageable);
+            return page.map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .scheduleList(scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourse.getFullCourseId()))
+                    .build());
         } else {
-            page = fullCourseRepository.findAllByIsPublicAndUserOrderByStartedOn(true, user, pageable);
+            page = fullCourseRepository.findAllByIsPublicAndUserOrderByStartedOnDesc(true, user, pageable);
+            return page.map(fullCourse -> FullCourseListRes.builder()
+                    .fullCourseId(fullCourse.getFullCourseId())
+                    .likeCnt(fullCourse.getLikeCnt())
+                    .title(fullCourse.getTitle())
+                    .startedOn(fullCourse.getStartedOn())
+                    .finishedOn(fullCourse.getFinishedOn())
+                    .thumbnailList(FullCourseListRes.ofThumbnailList(
+                            scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
+                                    fullCourse.getFullCourseId())))
+                    .build());
         }
-        return page.map(fullCourse -> FullCourseListRes.builder()
-                .fullCourseId(fullCourse.getFullCourseId())
-                .likeCnt(fullCourse.getLikeCnt())
-                .title(fullCourse.getTitle())
-                .startedOn(fullCourse.getStartedOn())
-                .finishedOn(fullCourse.getFinishedOn())
-                .thumbnailList(FullCourseListRes.ofThumbnailList(
-                        scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
-                                fullCourse.getFullCourseId())))
-                .build());
     }
 
     public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
