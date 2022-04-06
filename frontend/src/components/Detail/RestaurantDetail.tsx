@@ -20,7 +20,7 @@ const PlaceNameStyle = styled("h2")(() => ({
   fontSize: "18px",
   width: "220px",
 }));
-function RestaurantDetail({ name, averageScore }: Props) {
+function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
   return (
     <div
       style={{
@@ -62,7 +62,7 @@ function RestaurantDetail({ name, averageScore }: Props) {
             height: "300px",
           }}
         >
-          <KakaoMap></KakaoMap>
+          <KakaoMap lat={lat} lng={lng}></KakaoMap>
         </div>
       </div>
       <PlaceReview></PlaceReview>
@@ -74,6 +74,8 @@ const mapStateToProps = ({ place }: any) => {
     name: place.name,
     averageScore: place.averageScore,
     // placeId: place.placeId,
+    lat: place.lat,
+    lng: place.lon,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

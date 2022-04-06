@@ -1,6 +1,11 @@
 import { AnyAction } from "redux";
-import { SetPlaceData, SetReview, SetReviewList } from "../../types/detail";
-import { SET_PLACE_DATA, SET_REVIEW_LIST } from "./type";
+import {
+  SetFullCourseData,
+  SetPlaceData,
+  SetReview,
+  SetReviewList,
+} from "../../types/detail";
+import { SET_FULLCOURSE_DATA, SET_PLACE_DATA, SET_REVIEW_LIST } from "./type";
 
 const initPlaceData: SetPlaceData = {
   placeId: 0,
@@ -31,6 +36,16 @@ const initReviewData: SetReview = {
 const initReviewList: SetReviewList = {
   reviewList: [],
 };
+const initFullCourseData: SetFullCourseData = {
+  fullCourseId: 0,
+  title: "",
+  isPublic: false,
+  view: 0,
+  startedOn: "",
+  finishedOn: "",
+  scheduleDetailList: [],
+  likeCnt: 0,
+};
 const initContent: string = "";
 
 export const placeReducer = (
@@ -58,6 +73,21 @@ export const reviewListReducer = (
       return {
         ...state,
         reviewList: [...action.payload],
+      };
+
+    default:
+      return state;
+  }
+};
+export const fullCourseReducer = (
+  state: SetFullCourseData = initFullCourseData,
+  action: AnyAction
+) => {
+  switch (action.type) {
+    case SET_FULLCOURSE_DATA:
+      return {
+        ...state,
+        ...action.payload,
       };
 
     default:

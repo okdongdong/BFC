@@ -14,7 +14,7 @@ function Detail({ setPlaceData }: Props) {
   const fetchData = async () => {
     const result = await customAxios({
       method: "get",
-      url: `/place/restaurant/${placeId}`,
+      url: `/place/${placeId}`,
     });
     setPlaceData(result.data);
     setIsLoading(true);

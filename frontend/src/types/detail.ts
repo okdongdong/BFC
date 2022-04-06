@@ -28,3 +28,25 @@ export interface SetReviewList {
   reviewList: SetReview[];
   [key: string]: any;
 }
+export interface ScheduleData {
+  scheduleId: number;
+  day: number;
+  sequence: number;
+  memo: string | null;
+  customPlaceId: number | null;
+  placeId: number;
+  name: string;
+  address: string;
+  lat: number;
+  lon: number;
+}
+export interface SetFullCourseData {
+  fullCourseId: number;
+  title: string;
+  isPublic: boolean;
+  view: number;
+  startedOn: string;
+  finishedOn: string;
+  scheduleDetailList: ScheduleData[];
+  likeCnt: null | number;
+}

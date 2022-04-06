@@ -5,6 +5,9 @@ import { customAxios } from "../../../lib/customAxios";
 import { connect } from "react-redux";
 import { SetReview } from "../../../types/detail";
 import { setReviewList } from "../../../redux/detail/action";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CheckIcon from "@mui/icons-material/Check";
 const ReviewContent = ({
   reviewId,
   content,
@@ -70,9 +73,11 @@ const ReviewContent = ({
               ></TextField>
               <div>
                 <button onClick={onClick} style={{ marginRight: "10px" }}>
-                  {btnName}
+                  <CheckIcon></CheckIcon>
                 </button>
-                <button onClick={deleteReview}>삭제</button>
+                <button onClick={deleteReview}>
+                  <DeleteIcon></DeleteIcon>
+                </button>
               </div>
             </div>
           ) : (
@@ -86,9 +91,11 @@ const ReviewContent = ({
               {content}
               <div>
                 <button onClick={updateReview} style={{ marginRight: "10px" }}>
-                  {btnName}
+                  <EditIcon></EditIcon>
                 </button>
-                <button onClick={deleteReview}>삭제</button>
+                <button onClick={deleteReview}>
+                  <DeleteIcon></DeleteIcon>
+                </button>
               </div>
             </div>
           )}

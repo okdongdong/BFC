@@ -74,7 +74,7 @@ function Router() {
           element: <Detail />,
         },
         {
-          path: "fullcourseDetail",
+          path: "fullcourseDetail/:fullCourseId",
           element: <FullCourseDetail />,
         },
         { path: "/404", element: <PageNotFound /> },

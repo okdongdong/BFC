@@ -5,6 +5,7 @@ import StarIcon from "@mui/icons-material/Star";
 import { customAxios } from "../../lib/customAxios";
 import { connect } from "react-redux";
 import Detail from "../../pages/Main/Detail";
+import { Button } from "@mui/material";
 const labels: { [index: string]: string } = {
   0.5: "0.5",
   1: "1.0",
@@ -106,13 +107,18 @@ function PlaceRating({ placeId }: Props) {
         </div>
       </Box>
       <div style={{ display: "flex" }}>
-        <button onClick={onChange} style={{ width: "60px" }}>
+        <Button variant="outlined" onClick={onChange} style={{ width: "60px" }}>
           {btnName}
-        </button>
+        </Button>
         {method === "put" ? (
-          <button onClick={deleteScore} style={{ width: "60px" }}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={deleteScore}
+            style={{ width: "60px" }}
+          >
             삭제
-          </button>
+          </Button>
         ) : (
           <></>
         )}
