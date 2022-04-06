@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<MyInfoRes> getMyInfo(@PathVariable Long userId) {
+    public ResponseEntity<MyInfoRes> getMyInfo(@PathVariable Long userId) throws IllegalAccessException {
         return ResponseEntity.ok(userService.getMyInfo(userId));
     }
 
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/follow")
-    public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
+    public ResponseEntity<FollowRes> follow(@PathVariable Long userId) throws IllegalAccessException {
         return ResponseEntity.ok(userService.follow(userId));
     }
 

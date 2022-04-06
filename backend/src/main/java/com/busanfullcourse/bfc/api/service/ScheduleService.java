@@ -29,7 +29,8 @@ public class ScheduleService {
 
     public Map<String, Long> addPlaceSchedule(PlaceScheduleReq req, Long fullCourseId) {
         FullCourse fullCourse = fullCourseRepository.getById(fullCourseId);
-        Place place = placeRepository.findById(req.getPlaceId()).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
+        Place place = placeRepository.findById(req.getPlaceId())
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
 
         List<Schedule> schedules = scheduleRepository
                 .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThanEqual(
@@ -55,7 +56,7 @@ public class ScheduleService {
 
     public void changeSchedule(Long fullCourseId, ScheduleUpdateReq scheduleUpdateReq) {
         if (!fullCourseRepository.existsById(fullCourseId)) {
-            throw new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE);
+            throw new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND);
         }
 
         if (scheduleUpdateReq.getDayBefore().equals(scheduleUpdateReq.getDayAfter())) {
@@ -117,7 +118,7 @@ public class ScheduleService {
 
     public void deleteSchedule(Long scheduleId) {
         Schedule scheduleDel = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_SCHEDULE));
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.SCHEDULE_NOT_FOUND));
 
         List<Schedule> schedules = scheduleRepository
                 .findSchedulesByFullCourseFullCourseIdAndDayAndSequenceGreaterThan(
