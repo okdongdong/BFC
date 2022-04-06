@@ -114,7 +114,7 @@ const CreateFullCourseNavbar = ({
             <NavbarText
               color="white"
               to="/profile"
-              text={`${nickname} 님 외 0명`}
+              text={`${nickname} 님`}
             ></NavbarText>
           </Box>
         ) : (

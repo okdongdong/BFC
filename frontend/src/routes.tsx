@@ -7,10 +7,12 @@ import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
 import Detail from "./pages/Main/Detail";
+import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
 import CreateFullCourse from "./pages/FullCourse/CreateFullCourse";
 import Test from "./pages/Test";
 import CreateFullCourseLayout from "./layouts/CreateFullCourse";
 import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
+import PreSurvey from "./pages/FullCourse/PreSurvey";
 function Router() {
   return useRoutes([
     {
@@ -27,7 +29,7 @@ function Router() {
           element: <Signup />,
         },
         {
-          path: "fullcourse/:fullCourseId",
+          path: "fullcourse/detail/:fullCourseId",
           element: <Signup />,
         },
         {
@@ -81,9 +83,12 @@ function Router() {
       element: <Test />,
     },
     {
-      path: "createFullCourse",
+      path: "fullcourse",
       element: <CreateFullCourseLayout />,
-      children: [{ path: "", element: <CreateFullCourse /> }],
+      children: [
+        { path: "presurvey", element: <PreSurvey /> },
+        { path: "create", element: <CreateFullCourse /> },
+      ],
     },
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);

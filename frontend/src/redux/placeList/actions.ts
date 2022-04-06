@@ -142,7 +142,7 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
         params: placeSearchInfo,
       });
 
-      const placeListData = res.data;
+      const placeListData = res.data.content;
       dispatch(setSearchPlaceList(placeListData));
 
       console.log(res);

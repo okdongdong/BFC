@@ -26,6 +26,8 @@ import {
   FullCourseListProps,
   UpdateScheduleProps,
 } from "../../redux/createFullCourse/types";
+import { getPlaceDetail } from "../../redux/placeDetail/actions";
+
 import { resetPlaceListWithDistance } from "../../redux/placeList/actions";
 import { setFinished, setPage } from "../../redux/schedule/actions";
 
@@ -71,6 +73,8 @@ function CreateFullCourse({
   nowLoading,
   finished,
   selectedScheduleId,
+  selectedPlaceId,
+  getPlaceDetail,
   setFinished,
   resetPlaceListWithDistance,
   createNewSchedule,
@@ -94,6 +98,13 @@ function CreateFullCourse({
   const [expandedPlace, setExpandedPlace] = useState(true);
   const [expandedPlaceDetail, setExpandedPlaceDetail] = useState(true);
 
+  const nowSelectedPlaceList = () =>
+    nowFilterTypeIdx === 0
+      ? placeList
+      : nowFilterTypeIdx === 1
+      ? placeListWithDistance
+      : placeList;
+
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
     // 리스트 바깥이나 place영역에 카드를 놓았을 때
@@ -102,16 +113,9 @@ function CreateFullCourse({
     }
     const sInd = +source.droppableId;
     const dInd = +destination.droppableId;
-    const nowSelectedPlaceList =
-      nowFilterTypeIdx === 0
-        ? placeList
-        : nowFilterTypeIdx === 1
-        ? placeListWithDistance
-        : placeList;
-
     if (source.droppableId === "placeList") {
       const result = move(
-        nowSelectedPlaceList,
+        nowSelectedPlaceList(),
         fullCourseList[dInd],
         source,
         destination
@@ -185,6 +189,14 @@ function CreateFullCourse({
     resetPlaceListWithDistance();
   }, [nowFilterTypeIdx, recommendDistance, selectedScheduleId]);
 
+  useEffect(() => {
+    if (selectedPlaceId !== 0) {
+      console.log("장소 상세 조회");
+      setExpandedPlaceDetail(true);
+      getPlaceDetail(selectedPlaceId);
+    }
+  }, [selectedPlaceId]);
+
   return (
     <>
       <Notice></Notice>
@@ -201,7 +213,6 @@ function CreateFullCourse({
           setOpenModal={setOpenModal}
         ></AddCustomPlaceModal>
         <DragDropContext onDragEnd={onDragEnd}>
-          <PlaceDetail></PlaceDetail>
           <PlaceSearch></PlaceSearch>
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
@@ -265,39 +276,16 @@ function CreateFullCourse({
                 spacing={2}
                 sx={{ alignItems: "center", position: "relative" }}
               >
-                {nowFilterTypeIdx === 0 ? (
-                  <>
-                    <PlaceCardList
-                      finished={finished}
-                      selectedScheduleId={selectedScheduleId}
-                      recommendDistance={recommendDistance}
-                      placeList={placeList}
-                    ></PlaceCardList>
-                    <PlaceCardListDnd placeList={placeList}></PlaceCardListDnd>
-                  </>
-                ) : nowFilterTypeIdx === 1 ? (
-                  <>
-                    <PlaceCardList
-                      finished={finished}
-                      selectedScheduleId={selectedScheduleId}
-                      recommendDistance={recommendDistance}
-                      placeList={placeListWithDistance}
-                    ></PlaceCardList>
-                    <PlaceCardListDnd
-                      placeList={placeListWithDistance}
-                    ></PlaceCardListDnd>
-                  </>
-                ) : (
-                  <>
-                    <PlaceCardList
-                      finished={finished}
-                      selectedScheduleId={selectedScheduleId}
-                      recommendDistance={recommendDistance}
-                      placeList={placeList}
-                    ></PlaceCardList>
-                    <PlaceCardListDnd placeList={placeList}></PlaceCardListDnd>{" "}
-                  </>
-                )}
+                <PlaceCardList
+                  nowFilterTypeIdx={nowFilterTypeIdx}
+                  finished={finished}
+                  selectedScheduleId={selectedScheduleId}
+                  recommendDistance={recommendDistance}
+                  placeList={nowSelectedPlaceList()}
+                ></PlaceCardList>
+                <PlaceCardListDnd
+                  placeList={nowSelectedPlaceList()}
+                ></PlaceCardListDnd>
               </Stack>
             </CollapseContainer>
             <CollapseContainer
@@ -306,7 +294,7 @@ function CreateFullCourse({
               buttonPositionY={300}
               backgroundColor="#cdd"
             >
-              디테일
+              <PlaceDetail></PlaceDetail>
             </CollapseContainer>
           </div>
         </DragDropContext>
@@ -317,8 +305,9 @@ function CreateFullCourse({
 const mapStateToProps = ({
   createFullCourse,
   placeListReducer,
-  schedule,
   baseInfo,
+  schedule,
+  placeDetailReducer,
 }: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
@@ -326,6 +315,7 @@ const mapStateToProps = ({
   fullCourseId: createFullCourse.fullCourseId,
   nowLoading: baseInfo.nowLoading,
   selectedScheduleId: schedule.selectedScheduleId,
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
   finished: schedule.finished,
 });
 const mapDispatchToProps = (dispatch: any) => {
@@ -338,6 +328,7 @@ const mapDispatchToProps = (dispatch: any) => {
     resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
     setPage: (page: number) => dispatch(setPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
+    getPlaceDetail: (placeId: number) => dispatch(getPlaceDetail(placeId)),
   };
 };
 
