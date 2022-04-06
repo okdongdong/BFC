@@ -32,47 +32,26 @@ public class PlaceService {
     private final SurveyRecommendRepository surveyRecommendRepository;
 
 
-    public PlaceDetailRes getRestaurantDetail(Long placeId){
-        Place restaurant = placeRepository.findRestaurantMenusById(placeId);
-//        Place restaurant = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+    public PlaceDetailRes getPlaceDetail(Long placeId){
+        Place place = placeRepository.findRestaurantMenusById(placeId);
         return PlaceDetailRes.builder()
-                .placeId(restaurant.getPlaceId())
-                .name(restaurant.getName())
-                .info(restaurant.getInfo())
-                .openTime(ProcessUtil.processOpenTime(restaurant.getOpenTime()))
-                .lat(restaurant.getLat())
-                .lon(restaurant.getLon())
-                .address(restaurant.getAddress())
-                .category(restaurant.getCategory())
-                .phone(restaurant.getPhone())
-                .label(restaurant.getLabel())
-                .station(restaurant.getStation())
-                .averageScore(restaurant.getAverageScore())
-                .thumbnail(restaurant.getThumbnail())
-                .menus(restaurant.getMenus())
-                .build();
-
-    }
-
-    public PlaceDetailRes getAttractionDetail(Long placeId){
-        Place attraction = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
-
-        return PlaceDetailRes.builder()
-                .placeId(attraction.getPlaceId())
-                .name(attraction.getName())
-                .info(attraction.getInfo())
-                .openTime(ProcessUtil.processOpenTime(attraction.getOpenTime()))
-                .lat(attraction.getLat())
-                .lon(attraction.getLon())
-                .address(attraction.getAddress())
-                .category(attraction.getCategory())
-                .phone(attraction.getPhone())
-                .label(attraction.getLabel())
-                .station(attraction.getStation())
-                .averageScore(attraction.getAverageScore())
-                .thumbnail(attraction.getThumbnail())
+                .placeId(place.getPlaceId())
+                .name(place.getName())
+                .info(place.getInfo())
+                .openTime(ProcessUtil.processOpenTime(place.getOpenTime()))
+                .lat(place.getLat())
+                .lon(place.getLon())
+                .address(place.getAddress())
+                .category(place.getCategory())
+                .phone(place.getPhone())
+                .label(place.getLabel())
+                .station(place.getStation())
+                .averageScore(place.getAverageScore())
+                .thumbnail(place.getThumbnail())
+                .menus(place.getMenus())
                 .build();
     }
+
 
     @Cacheable(value = CacheKey.POPULAR_RESTAURANT)
     public List<PlaceListRes> getPopularRestaurantList() {
