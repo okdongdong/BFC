@@ -19,7 +19,7 @@ public class ReviewListRes {
 
     private Long userId;
 
-    private String username;
+    private String nickname;
 
     private LocalDateTime postedAt;
 
@@ -30,7 +30,7 @@ public class ReviewListRes {
                 .reviewId(review.getReviewId())
                 .content(review.getContent())
                 .userId(review.getUser().getId())
-                .username(review.getUser().getUsername())
+                .nickname(review.getUser().getNickname())
                 .postedAt(review.getPostedAt())
                 .updatedAt(review.getUpdatedAt())
                 .build());
