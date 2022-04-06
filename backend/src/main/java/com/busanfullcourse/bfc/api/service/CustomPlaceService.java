@@ -32,7 +32,7 @@ public class CustomPlaceService {
     private final ScheduleRepository scheduleRepository;
 
     public Map<String, Long> createCustomPlace(CustomPlaceScheduleReq req, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         CustomPlace customPlace = customPlaceRepository.save(
                 CustomPlace.builder()
                         .name(req.getName())
@@ -74,7 +74,7 @@ public class CustomPlaceService {
     }
 
     public void updateCustomPlace(CustomPlaceUpdateReq req, Long customPlaceId, String username) throws IllegalAccessException {
-        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
         if (!customPlace.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
@@ -87,7 +87,7 @@ public class CustomPlaceService {
     }
 
     public void deleteCustomPlace(Long customPlaceId, String username) throws IllegalAccessException {
-        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        CustomPlace customPlace = customPlaceRepository.findById(customPlaceId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
         if (!customPlace.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("본인이 아닙니다.");
         }

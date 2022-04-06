@@ -159,7 +159,7 @@ public class EmailService {
     }
 
     public void sendResetCode(String email) throws Exception{
-        User user = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+        User user = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         String newPassword = createPassword();
         MimeMessage message = createNewPasswordMessage(email, newPassword);
         try {
@@ -174,12 +174,12 @@ public class EmailService {
 
     public void shareFullCourse(Long fullCourseId, Map<String, String> invitedUser) throws Exception {
         String username = userService.getCurrentUsername();
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 공유할 수 있습니다.");
         }
         String email = invitedUser.get("invitedUser");
-        User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         if (sharingRepository.findByFullCourseAndUser(fullCourse, reqUser).isPresent()) {
             throw new IllegalAccessException("이미 공유된 사용자입니다.");
         } else {

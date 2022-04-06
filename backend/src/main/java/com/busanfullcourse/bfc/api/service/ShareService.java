@@ -25,10 +25,10 @@ public class ShareService {
     private final FullCourseRepository fullCourseRepository;
 
     public void shareFullCourse(Long fullCourseId, String email) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
         Optional<User> user = userRepository.findByUsername(email);
         if (user.isEmpty()) {
-            throw new NoSuchElementException(ExceptionUtil.NoUser);
+            throw new NoSuchElementException(ExceptionUtil.NO_USER);
         }
 
         Optional<Sharing> sharing = sharingRepository.findByFullCourseAndUser(fullCourse, user.get());
@@ -43,7 +43,7 @@ public class ShareService {
     }
 
     public List<SharingRes> getShareMember(Long fullCourseId, String username) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 조회할 수 있습니다.");
         }
@@ -52,7 +52,7 @@ public class ShareService {
     }
 
     public void deleteShareMember(Long fullCourseId, String username, Map<String, Long> map) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoFullCourse));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
         if (!fullCourse.getUser().getUsername().equals(username)) {
             throw new IllegalAccessException("풀코스의 주인만 수정할 수 있습니다.");
         }

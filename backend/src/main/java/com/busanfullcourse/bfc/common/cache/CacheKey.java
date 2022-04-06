@@ -7,7 +7,7 @@ import lombok.Getter;
 public class CacheKey {
 
     private CacheKey() {
-        throw new IllegalStateException(ExceptionUtil.UtilityClass);
+        throw new IllegalStateException(ExceptionUtil.UTILITY_CLASS);
     }
 
     public static final String USER = "user";
