@@ -1,4 +1,6 @@
 # from unicodedata import category
+from telnetlib import STATUS
+from unicodedata import category
 from django.http import HttpResponse
 from django.shortcuts import render
 # from numpy import full
@@ -195,6 +197,39 @@ def get_wish_list(request, full_course_id, user_id):
   
   return HttpResponse(status = 200)
 
+
+
+def new_user(request, user_id) :
+	# 관광지 인기순
+	place_popular_list = list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=20)).order_by('-average_score')[:20].values('place_id'))
+	food_popular_list = list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:20].values('place_id'))
+
+
+	place_popular_list = random.sample(place_popular_list, 10)
+	food_popular_list = random.sample(food_popular_list, 10)
+	print(place_popular_list)
+	print(food_popular_list)
+
+	bulk_list = []
+
+	for i in range(len(place_popular_list)) :
+		bulk_list.append(Recommend(
+			user_id = user_id,
+			place_id = place_popular_list[i]['place_id'],
+			category = 0
+		))
+
+	for i in range(len(food_popular_list)) :
+		bulk_list.append(Recommend(
+			user_id = user_id,
+			place_id = food_popular_list[i]['place_id'],
+			category = 1
+		))
+
+	Recommend.objects.bulk_create(bulk_list)
+	MainRecommend.objects.bulk_create(bulk_list)
+
+	return HttpResponse(STATUS = 200)
 
 def rmse_function(R, P, Q, zero_matrix):
 	full_matrix = np.dot(P, Q.T)
