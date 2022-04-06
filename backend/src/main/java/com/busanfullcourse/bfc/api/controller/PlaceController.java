@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,7 +95,12 @@ public class PlaceController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<PlaceListRes>> searchPlace(@RequestParam String name,
-                                         @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable) {
+                                         @PageableDefault(size = 8)
+                                                 @SortDefault.SortDefaults({
+                                                         @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                                                         @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                                                 })
+                                                 Pageable pageable) {
         return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
     }
     @GetMapping("/search/test")
@@ -118,14 +124,22 @@ public class PlaceController {
     public ResponseEntity<Page<PlaceListRes>> searchByDistance(
             @RequestParam Long scheduleId,
             @RequestParam Integer distance,
-            @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+            }) Pageable pageable
             ) {
         return ResponseEntity.ok(searchService.searchByDistance(scheduleId, distance, pageable));
     }
 
     @GetMapping("/recommend")
     public ResponseEntity<Page<PlaceListRes>> getRecommendPlaceList(
-            @PageableDefault(size = 8, sort = "place.averageScore", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+            }) Pageable pageable
     ) {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(placeService.getRecommendPlaceList(username, pageable));

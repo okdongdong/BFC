@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,7 +111,11 @@ public class FullCourseController {
     @GetMapping("/{fullCourseId}/surveyRecommend")
     public ResponseEntity<Page<PlaceListRes>> getSurveyRecommendPlaceList(
             @PathVariable Long fullCourseId,
-            @PageableDefault(size = 8, sort = "place.averageScore", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+            })Pageable pageable
     ) {
         return ResponseEntity.ok(placeService.getSurveyRecommendPlaceList(fullCourseId, pageable));
     }
