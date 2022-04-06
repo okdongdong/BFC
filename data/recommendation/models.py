@@ -122,7 +122,7 @@ class MainRecommend(models.Model):
         db_table = 'main_recommend'
 
 class SurveyRecommend(models.Model):
-    survey_recommend_id = models.BigAutoField(db_column='survey__recommend_id', primary_key=True)
+    survey_recommend_id = models.BigAutoField(primary_key=True)
     full_course = models.ForeignKey(FullCourse, models.DO_NOTHING,related_name='SurveyRecommend')
     place = models.ForeignKey(Place, models.DO_NOTHING,related_name='SurveyRecommend')
 
