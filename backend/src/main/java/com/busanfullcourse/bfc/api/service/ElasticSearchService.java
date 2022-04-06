@@ -27,7 +27,7 @@ public class ElasticSearchService {
     private final ScheduleRepository scheduleRepository;
 
     public Page<PlaceListRes> searchPlaceByName(String name, Pageable pageable) {
-        Page<Place> list = placeSearchRepository.findByNameContains(name, pageable);
+        Page<Place> list = placeSearchRepository.findByNameContains(name.strip(), pageable);
         return PlaceListRes.of(list);
     }
 

@@ -94,7 +94,7 @@ public class PlaceController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<PlaceListRes>> searchPlace(@RequestParam String name,
-                                         @PageableDefault(size = 4, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable) {
+                                         @PageableDefault(size = 8, sort = "averageScore", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
     }
     @GetMapping("/search/test")
