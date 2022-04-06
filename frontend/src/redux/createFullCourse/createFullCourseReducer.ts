@@ -11,6 +11,7 @@ import {
   CREATE_FULL_COURSE_SUCCESS,
   ADD_CUSTOM_PLACE,
   DELETE_CARD,
+  RESET_FULL_COURSE,
 } from "./types";
 
 export interface CreateFullCourseDnd {
@@ -64,6 +65,9 @@ const createFullCourseReducer = (
       );
 
       return { ...newState };
+
+    case RESET_FULL_COURSE:
+      return { ...initialState };
 
     // 풀코스 날짜 설정
     case SET_FULL_COURSE_DATE:

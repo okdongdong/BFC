@@ -14,6 +14,7 @@ import {
   DELETE_CARD,
   FullCourseListProps,
   MOVE_CARD,
+  RESET_FULL_COURSE,
   SET_FULL_COURSE_DATE,
   UpdateScheduleProps,
   UpdateScheduleRequestDataProps,
@@ -69,6 +70,12 @@ export const createFullCourseSuccess = (fullCourseId: number) => {
     payload: fullCourseId,
   };
 };
+
+export const resetFullCourse = ()=>{
+  return{
+    type:RESET_FULL_COURSE
+  }
+}
 
 // 새로운 풀코스 생성
 export const creatNewFullCourse = (

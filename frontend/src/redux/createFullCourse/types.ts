@@ -7,6 +7,9 @@ export const MOVE_CARD = "MOVE_CARD";
 export const CREATE_CARD = "CREATE_CARD";
 export const DELETE_CARD = "DELETE_CARD";
 
+// 풀코스 초기화
+export const RESET_FULL_COURSE = "RESET_FULL_COURSE";
+
 // 요청보낼때 로딩화면 띄워주기 위한 요청
 export const FULL_COURSE_REQUEST = "FULL_COURSE_REQUEST";
 
@@ -31,7 +34,7 @@ export interface CreateFullCourseRequestData {
   finishedOn: string | null;
   wishFoodKeywords: Array<string>;
   wishPlaceKeywords: Array<string>;
-  userId:number
+  userId: number;
 }
 
 // 스케줄 생성시 보내줄 데이터
