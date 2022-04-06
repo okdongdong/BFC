@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.db.repository;
 
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.User;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ public class MainRecommendQueryRepositoryImpl implements MainRecommendQueryRepos
                 .from(mainRecommend)
                 .leftJoin(place)
                 .fetchJoin()
+                .on(mainRecommend.place.eq(place))
                 .where(mainRecommend.user.eq(user).and(mainRecommend.category.eq(category)))
-                .orderBy(NumberExpression.random().desc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").desc())
                 .limit(8)
                 .fetch();
     }
