@@ -13,6 +13,7 @@ import Test from "./pages/Test";
 import CreateFullCourseLayout from "./layouts/CreateFullCourse";
 import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
 import PreSurvey from "./pages/FullCourse/PreSurvey";
+import PageNotFound from "./pages/PageNotFound";
 function Router() {
   return useRoutes([
     {
@@ -76,6 +77,7 @@ function Router() {
           path: "fullcourseDetail",
           element: <FullCourseDetail />,
         },
+        { path: "/404", element: <PageNotFound /> },
       ],
     },
     {
@@ -90,6 +92,7 @@ function Router() {
         { path: "create", element: <CreateFullCourse /> },
       ],
     },
+
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);
 }
