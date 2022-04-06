@@ -22,7 +22,7 @@ import { AccountReducer } from "../../redux/rootReducer";
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="#fff" href="https://mui.com/">
         Busan Full Course
       </Link>{" "}
       {new Date().getFullYear()}
@@ -34,10 +34,16 @@ function Copyright() {
 //스타일
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: "white",
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(6),
+    paddingBottom: theme.spacing(6),
+    borderRadius: 15,
+    zIndex: 1,
+    position: "relative",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -89,79 +95,89 @@ function LoginForm({ userLogin, isLogin }: Props) {
   }, [isLogin]);
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          로그인
-        </Typography>
-        <div className={classes.form}>
-          <TextField
-            value={email}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            id="email"
-            label="이메일"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={onEmailHandler}
-          />
-          <TextField
-            value={password}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="password"
-            label="비밀번호"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={onPasswordHandler}
-          />
-          <Grid container>
-            <Grid item xs>
-              <RouterLink to="/signup">회원가입</RouterLink>
-            </Grid>
-            <Grid item xs>
-              |
-            </Grid>
-            <Grid item xs>
-              <RouterLink to="/findPw">비밀번호찾기</RouterLink>
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={login}
-          >
+    <div
+      style={{
+        display: "flex",
+        position: "absolute",
+        alignItems: "center",
+        height: "calc(100% - 80px)",
+        width: "100%",
+      }}
+    >
+      <Container component="main" maxWidth="xs">
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
             로그인
-          </Button>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            className={(classes.submit, classes.btn)}
-            onClick={login}
-          >
-            <img
-              src={kakaoLogo}
-              alt="kakao-logo"
-              width="20px"
-              height="20px"
-              className={classes.logo}
+          </Typography>
+          <div className={classes.form}>
+            <TextField
+              value={email}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="email"
+              label="이메일"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={onEmailHandler}
             />
-            카카오로그인
-          </Button>
+            <TextField
+              value={password}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="password"
+              label="비밀번호"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={onPasswordHandler}
+            />
+            <Grid container>
+              <Grid item xs>
+                <RouterLink to="/signup">회원가입</RouterLink>
+              </Grid>
+              <Grid item xs>
+                |
+              </Grid>
+              <Grid item xs>
+                <RouterLink to="/findPw">비밀번호찾기</RouterLink>
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={login}
+            >
+              로그인
+            </Button>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              className={(classes.submit, classes.btn)}
+              onClick={login}
+            >
+              <img
+                src={kakaoLogo}
+                alt="kakao-logo"
+                width="20px"
+                height="20px"
+                className={classes.logo}
+              />
+              카카오로그인
+            </Button>
+          </div>
         </div>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+        <Box mt={8}>
+          <Copyright />
+        </Box>
+      </Container>
+    </div>
   );
 }
 

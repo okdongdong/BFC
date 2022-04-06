@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
-import { getPlaceListWithDistance } from "../../../redux/placeList/actions";
-import { PlaceListInfoForGet } from "../../../redux/placeList/types";
+import {
+  getPlaceListWithDistance,
+  getSearchPlaceList,
+} from "../../../redux/placeList/actions";
+import {
+  PlaceListInfoForGet,
+  PlaceSearchInfo,
+} from "../../../redux/placeList/types";
 import PlaceCard from "./PlaceCard";
 import { PlaceCardProps } from "../../../types/main";
 import { setFinished, addPage } from "../../../redux/schedule/actions";
@@ -13,27 +19,44 @@ interface PlaceCardListProps {
   selectedScheduleId: number;
   finished: boolean;
   nowFilterTypeIdx: number;
+  placeName: string;
 }
 function PlaceCardList({
   selectedScheduleId,
   nowFilterTypeIdx,
   nowLoading,
   recommendDistance,
+  placeName,
   getPlaceListWithDistance,
+  getSearchPlaceList,
   placeList,
   page,
   finished,
   addPage,
 }: Props & PlaceCardListProps) {
   const infiniteHandler = () => {
-    const data = {
-      distance: recommendDistance,
-      scheduleId: selectedScheduleId,
-      page: page,
-      size: 8,
-    };
+    // 추천창 인피니티
+    if (nowFilterTypeIdx === 1) {
+      console.log("[fetch recommend]");
+      const data: PlaceListInfoForGet = {
+        distance: recommendDistance,
+        scheduleId: selectedScheduleId,
+        page: page,
+        size: 8,
+      };
+      getPlaceListWithDistance(data);
 
-    getPlaceListWithDistance(data);
+      // 검색창 인피니티
+    } else if (nowFilterTypeIdx === 3) {
+      console.log("[fetch search] :", page);
+
+      const data: PlaceSearchInfo = {
+        name: placeName,
+        page: page,
+        size: 8,
+      };
+      getSearchPlaceList(data);
+    }
     addPage(1);
   };
 
@@ -50,7 +73,7 @@ function PlaceCardList({
       return;
     }
 
-    if (selectedScheduleId === 0) {
+    if (selectedScheduleId === 0 && nowFilterTypeIdx === 1) {
       console.log(selectedScheduleId);
       console.log("장소를 선택해주세요");
       return;
@@ -77,7 +100,7 @@ function PlaceCardList({
 
   return (
     <div style={{ margin: 16 }}>
-      {!placeList ||
+      {!!placeList && placeList.length > 0 ? (
         placeList.map((item: any, index: any) => (
           <div key={item.id} style={{ margin: 8 }}>
             <PlaceCard
@@ -90,9 +113,16 @@ function PlaceCardList({
               keywords={item.content.keywords}
             ></PlaceCard>
           </div>
-        ))}
-      {!finished || <div>끗</div>}
-      {nowFilterTypeIdx !== 1 || (
+        ))
+      ) : (
+        <div style={{ fontSize: 14, color: "grey" }}>검색결과가 없습니다.</div>
+      )}
+      {!finished || (
+        <div style={{ fontSize: 14, color: "grey" }}>
+          모든 결과를 출력했습니다.
+        </div>
+      )}
+      {(nowFilterTypeIdx !== 1 && nowFilterTypeIdx !== 3) || (
         <div style={{ height: 100, width: 1 }} ref={interSectRef}></div>
       )}
     </div>
@@ -107,9 +137,10 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     getPlaceListWithDistance: (placeListInfoForGet: PlaceListInfoForGet) =>
       dispatch(getPlaceListWithDistance(placeListInfoForGet)),
+    getSearchPlaceList: (placeSearchInfo: PlaceSearchInfo) =>
+      dispatch(getSearchPlaceList(placeSearchInfo)),
     addPage: (page: number) => dispatch(addPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
-   
   };
 };
 

@@ -86,7 +86,7 @@ export interface CustomPlaceInfoProps extends ScheduleProps {
   memo: string;
   address: string;
   lat: number;
-  lng: number;
+  lon: number;
 }
 
 // 스케줄 생성

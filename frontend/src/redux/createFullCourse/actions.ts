@@ -71,11 +71,11 @@ export const createFullCourseSuccess = (fullCourseId: number) => {
   };
 };
 
-export const resetFullCourse = ()=>{
-  return{
-    type:RESET_FULL_COURSE
-  }
-}
+export const resetFullCourse = () => {
+  return {
+    type: RESET_FULL_COURSE,
+  };
+};
 
 // 새로운 풀코스 생성
 export const creatNewFullCourse = (
@@ -246,7 +246,11 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
     loadingControl(dispatch, true);
 
     try {
-      const res = await customAxios({ method: "post", data: customPlaceInfo });
+      const res = await customAxios({
+        method: "post",
+        url: "/customPlace",
+        data: customPlaceInfo,
+      });
 
       const newContent = {
         scheduleId: res.data.scheduleId,

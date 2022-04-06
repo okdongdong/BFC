@@ -1,6 +1,4 @@
 import { AnyAction } from "redux";
-import { placeList } from "../../assets/dummyData/dummyData";
-import { PlaceCardProps } from "../../types/main";
 import deepcopy from "deepcopy";
 
 import {
@@ -18,20 +16,8 @@ export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
   fullCourseDate: Array<string | null>;
   fullCourseId?: number;
+  fullCourseTitle?: number;
 }
-
-const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
-const plt2: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
-
-placeList.map((place: PlaceCardProps) =>
-  plt.push({ id: `place-${place.placeId}`, content: place })
-);
-placeList.map((place: PlaceCardProps) =>
-  plt2.push({
-    id: `place2-${place.placeId}+${new Date().getTime()}`,
-    content: place,
-  })
-);
 
 const initialState: CreateFullCourseDnd = {
   fullCourseList: [[]],

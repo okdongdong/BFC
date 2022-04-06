@@ -17,10 +17,16 @@ import { SignupUserInfo } from "../../types/account";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: "white",
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(6),
+    paddingBottom: theme.spacing(6),
+    borderRadius: 15,
+    zIndex: 1,
+    position: "relative",
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -253,131 +259,141 @@ function SignupForm() {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          회원가입
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextFieldWithButton
-            label="이메일"
-            id="username"
-            autoComplete="email"
-            onChange={changeUserInfo}
-            onClickButton={requsetEmailConfirmation}
-            buttonText="인증번호발송"
-            disabled={sendEmailConfirmation}
-            helperText={emailMessage}
-          ></TextFieldWithButton>
-          <TextField
-            inputProps={{ maxLength: 8 }}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            id="certificationNumber"
-            label="인증번호"
-            type="text"
-            name="certificationNumber"
-            onChange={changeUserCertificationNumber}
-            helperText={emailConfirmMessage}
-            error={!!emailConfirmMessage}
-          />
-          <TextField
-            error={!!passwordMessage}
-            helperText={passwordMessage}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="password"
-            label="비밀번호"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={changeUserInfo}
-          />
-          <TextField
-            error={!!passwordConfirmMessage}
-            helperText={passwordConfirmMessage}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="passwordConfirmation"
-            label="비밀번호 확인"
-            type="password"
-            id="passwordConfirmation"
-            onChange={changeUserInfo}
-          />
-          <TextFieldWithButton
-            label="닉네임"
-            id="nickname"
-            onChange={changeUserInfo}
-            onClickButton={requsetCheckNickname}
-            buttonText="닉네임중복확인"
-            disabled={sendCheckNickname}
-            helperText={nickNameMessage}
-          ></TextFieldWithButton>
-          <ButtonGroup
-            color="primary"
-            aria-label="primary button group"
-            className={classes.form}
-          >
-            <Button
-              variant={userInfo.gender === 1 ? "contained" : "outlined"}
-              onClick={() => selectGender(1)}
-            >
-              남
-            </Button>
-            <Button
-              variant={userInfo.gender === 0 ? "contained" : "outlined"}
-              onClick={() => selectGender(0)}
-            >
-              여
-            </Button>
-          </ButtonGroup>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="birthday"
-            label="생년월일"
-            type="date"
-            id="birthday"
-            value={userInfo.birthday || "2022-02-02"} // 생년월일 입력하지 않았을 때 기본값
-            onChange={changeUserInfo}
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                id="agreement"
-                onChange={checkAgreement}
-                color="primary"
-              />
-            }
-            label="약관동의"
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={requestSignup}
-            disabled={
-              userInfo.password !== userInfo.passwordConfirmation ||
-              userInfo.username === "" ||
-              userInfo.password === "" ||
-              userInfo.passwordConfirmation === "" ||
-              userInfo.nickname === "" ||
-              userInfo.agreement === false ||
-              emailConfirmation === false ||
-              nicknameConfirmation === false
-            }
-          >
+    <div
+      style={{
+        display: "flex",
+        position: "absolute",
+        alignItems: "center",
+        height: "calc(100% - 80px)",
+        width: "100%",
+      }}
+    >
+      <Container component="main" maxWidth="sm">
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
             회원가입
-          </Button>
-        </form>
-      </div>
-    </Container>
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextFieldWithButton
+              label="이메일"
+              id="username"
+              autoComplete="email"
+              onChange={changeUserInfo}
+              onClickButton={requsetEmailConfirmation}
+              buttonText="인증번호발송"
+              disabled={sendEmailConfirmation}
+              helperText={emailMessage}
+            ></TextFieldWithButton>
+            <TextField
+              inputProps={{ maxLength: 8 }}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="certificationNumber"
+              label="인증번호"
+              type="text"
+              name="certificationNumber"
+              onChange={changeUserCertificationNumber}
+              helperText={emailConfirmMessage}
+              error={!!emailConfirmMessage}
+            />
+            <TextField
+              error={!!passwordMessage}
+              helperText={passwordMessage}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="password"
+              label="비밀번호"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={changeUserInfo}
+            />
+            <TextField
+              error={!!passwordConfirmMessage}
+              helperText={passwordConfirmMessage}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="passwordConfirmation"
+              label="비밀번호 확인"
+              type="password"
+              id="passwordConfirmation"
+              onChange={changeUserInfo}
+            />
+            <TextFieldWithButton
+              label="닉네임"
+              id="nickname"
+              onChange={changeUserInfo}
+              onClickButton={requsetCheckNickname}
+              buttonText="닉네임중복확인"
+              disabled={sendCheckNickname}
+              helperText={nickNameMessage}
+            ></TextFieldWithButton>
+            <ButtonGroup
+              color="primary"
+              aria-label="primary button group"
+              className={classes.form}
+            >
+              <Button
+                variant={userInfo.gender === 1 ? "contained" : "outlined"}
+                onClick={() => selectGender(1)}
+              >
+                남
+              </Button>
+              <Button
+                variant={userInfo.gender === 0 ? "contained" : "outlined"}
+                onClick={() => selectGender(0)}
+              >
+                여
+              </Button>
+            </ButtonGroup>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="birthday"
+              label="생년월일"
+              type="date"
+              id="birthday"
+              value={userInfo.birthday || "2022-02-02"} // 생년월일 입력하지 않았을 때 기본값
+              onChange={changeUserInfo}
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id="agreement"
+                  onChange={checkAgreement}
+                  color="primary"
+                />
+              }
+              label="약관동의"
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={requestSignup}
+              disabled={
+                userInfo.password !== userInfo.passwordConfirmation ||
+                userInfo.username === "" ||
+                userInfo.password === "" ||
+                userInfo.passwordConfirmation === "" ||
+                userInfo.nickname === "" ||
+                userInfo.agreement === false ||
+                emailConfirmation === false ||
+                nicknameConfirmation === false
+              }
+            >
+              회원가입
+            </Button>
+          </form>
+        </div>
+      </Container>
+    </div>
   );
 }
 

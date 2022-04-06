@@ -28,7 +28,10 @@ import {
 } from "../../redux/createFullCourse/types";
 import { getPlaceDetail } from "../../redux/placeDetail/actions";
 
-import { resetPlaceListWithDistance } from "../../redux/placeList/actions";
+import {
+  resetPlaceListWithDistance,
+  resetSearchPlaceList,
+} from "../../redux/placeList/actions";
 import { setFinished, setPage } from "../../redux/schedule/actions";
 
 const MapContainer = styled("div")({
@@ -70,13 +73,17 @@ function CreateFullCourse({
   fullCourseId,
   placeList,
   placeListWithDistance,
+  searchPlaceList,
   nowLoading,
   finished,
   selectedScheduleId,
   selectedPlaceId,
+  lat,
+  lng,
   getPlaceDetail,
   setFinished,
   resetPlaceListWithDistance,
+  resetSearchPlaceList,
   createNewSchedule,
   updateSchedule,
   setPage,
@@ -91,6 +98,7 @@ function CreateFullCourse({
 
   // 인피니티 스크롤 관련 변수
   const [nowPage, setNowPage] = useState<number>(0);
+  const [placeName, setPlaceName] = useState<string>("");
   const SIZE = 8;
 
   // 탭을 여닫는 변수
@@ -98,12 +106,20 @@ function CreateFullCourse({
   const [expandedPlace, setExpandedPlace] = useState(true);
   const [expandedPlaceDetail, setExpandedPlaceDetail] = useState(true);
 
+  // 지도 중심좌표관련
+  const [nowCenter, setNowCenter] = useState<{ lat: number; lng: number }>({
+    lat: 35.1797913,
+    lng: 129.074987,
+  });
+
   const nowSelectedPlaceList = () =>
     nowFilterTypeIdx === 0
       ? placeList
       : nowFilterTypeIdx === 1
       ? placeListWithDistance
-      : placeList;
+      : nowFilterTypeIdx === 2
+      ? placeList
+      : searchPlaceList;
 
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -187,6 +203,7 @@ function CreateFullCourse({
     setPage(0);
     setFinished(false);
     resetPlaceListWithDistance();
+    resetSearchPlaceList();
   }, [nowFilterTypeIdx, recommendDistance, selectedScheduleId]);
 
   useEffect(() => {
@@ -217,6 +234,8 @@ function CreateFullCourse({
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
               <FullCourseKakaoMap
+                nowCenter={nowCenter}
+                setNowCenter={setNowCenter}
                 nowFilterTypeIdx={nowFilterTypeIdx}
                 expandedFullCourse={expandedFullCourse}
                 expandedPlace={expandedPlace}
@@ -264,9 +283,8 @@ function CreateFullCourse({
               backgroundColor="#dee"
             >
               <PlaceHeader
-                nowPage={nowPage}
-                setNowPage={setNowPage}
-                SIZE={SIZE}
+                placeName={placeName}
+                setPlaceName={setPlaceName}
                 nowFilterTypeIdx={nowFilterTypeIdx}
                 recommendDistance={recommendDistance}
                 setNowFilterTypeIdx={setNowFilterTypeIdx}
@@ -277,6 +295,7 @@ function CreateFullCourse({
                 sx={{ alignItems: "center", position: "relative" }}
               >
                 <PlaceCardList
+                  placeName={placeName}
                   nowFilterTypeIdx={nowFilterTypeIdx}
                   finished={finished}
                   selectedScheduleId={selectedScheduleId}
@@ -312,10 +331,13 @@ const mapStateToProps = ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
+  searchPlaceList: placeListReducer.searchPlaceList,
   fullCourseId: createFullCourse.fullCourseId,
   nowLoading: baseInfo.nowLoading,
   selectedScheduleId: schedule.selectedScheduleId,
   selectedPlaceId: placeDetailReducer.selectedPlaceId,
+  lat: placeDetailReducer.lat,
+  lng: placeDetailReducer.lng,
   finished: schedule.finished,
 });
 const mapDispatchToProps = (dispatch: any) => {
@@ -326,6 +348,9 @@ const mapDispatchToProps = (dispatch: any) => {
     updateSchedule: (newState: UpdateScheduleProps) =>
       dispatch(updateSchedule(newState)),
     resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
+    resetSearchPlaceList: () => {
+      dispatch(resetSearchPlaceList());
+    },
     setPage: (page: number) => dispatch(setPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
     getPlaceDetail: (placeId: number) => dispatch(getPlaceDetail(placeId)),
