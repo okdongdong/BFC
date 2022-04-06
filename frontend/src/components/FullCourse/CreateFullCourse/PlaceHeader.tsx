@@ -6,20 +6,21 @@ import {
   TextField,
   styled,
 } from "@mui/material";
-import React, { useState } from "react";
 import { connect } from "react-redux";
-import { getSearchPlaceList } from "../../../redux/placeList/actions";
+import {
+  getSearchPlaceList,
+  resetSearchPlaceList,
+} from "../../../redux/placeList/actions";
 import { PlaceSearchInfo } from "../../../redux/placeList/types";
+import { addPage } from "../../../redux/schedule/actions";
 
 interface PlaceHeaderProps {
-  nowPage: number;
+  placeName: string;
   nowFilterTypeIdx: number;
   recommendDistance: number;
-  setNowPage: React.Dispatch<React.SetStateAction<number>>;
   setNowFilterTypeIdx: React.Dispatch<React.SetStateAction<number>>;
   setRecommendDistance: React.Dispatch<React.SetStateAction<number>>;
-
-  SIZE: number;
+  setPlaceName: React.Dispatch<React.SetStateAction<string>>;
 }
 const SearchInput = styled(TextField)({
   "& label.Mui-focused": {
@@ -44,14 +45,16 @@ const SearchInput = styled(TextField)({
 function PlaceHeader({
   getSearchPlaceList,
   nowFilterTypeIdx,
-  nowPage,
+  page,
   recommendDistance,
   setNowFilterTypeIdx,
   setRecommendDistance,
-  SIZE,
+  resetSearchPlaceList,
+  addPage,
+  placeName,
+  setPlaceName,
 }: Props & PlaceHeaderProps) {
   const filterType = ["평점순", "거리순", "사전설문순"];
-  const [placeName, setPlaceName] = useState<string>("");
 
   const FilterTextStyle = styled("div")((attr: { idx: number }) => ({
     backgroundColor: `${attr.idx === nowFilterTypeIdx ? "#57A3EC" : "white"}`,
@@ -104,16 +107,13 @@ function PlaceHeader({
 
   const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
-      getSearchPlaceList({
-        name: placeName,
-      });
+      onSearchHandler();
     }
   };
 
   const onSearchHandler = () => {
-    getSearchPlaceList({
-      name: placeName,
-    });
+    resetSearchPlaceList();
+    setNowFilterTypeIdx(3);
   };
 
   const onSearchChangeHandler = (
@@ -200,14 +200,18 @@ function PlaceHeader({
   );
 }
 
-const mapStateToProps = ({ createFullCourse }: any) => {
-  return {};
+const mapStateToProps = ({ schedule }: any) => {
+  return { page: schedule.page };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getSearchPlaceList: (placeSearchInfo: PlaceSearchInfo) =>
       dispatch(getSearchPlaceList(placeSearchInfo)),
+    resetSearchPlaceList: () => {
+      dispatch(resetSearchPlaceList());
+    },
+    addPage: (page: number) => dispatch(addPage(page)),
   };
 };
 

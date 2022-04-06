@@ -14,6 +14,7 @@ import {
   PlaceSearchInfo,
   PlaceInfoData,
   RESET_PLACE_LIST_WITH_DISTANCE,
+  RESET_SEARCH_PLACE_LIST,
 } from "./types";
 import { loadingControl, errorControl } from "../baseInfo/actions";
 import { setFinished } from "../schedule/actions";
@@ -36,9 +37,15 @@ const setSearchPlaceList = (placeList: PlaceCardList) => {
     payload: placeList,
   };
 };
+
 export const resetPlaceListWithDistance = () => {
   return {
     type: RESET_PLACE_LIST_WITH_DISTANCE,
+  };
+};
+export const resetSearchPlaceList = () => {
+  return {
+    type: RESET_SEARCH_PLACE_LIST,
   };
 };
 
@@ -141,11 +148,29 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
         url: `/place/search`,
         params: placeSearchInfo,
       });
+      const placeListData: PlaceCard[] = [];
+      console.log("검색된 장소", res);
 
-      const placeListData = res.data.content;
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
+        const placeCard: PlaceCard =
+          {
+            id: `place-${idx}-${new Date()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
+          } || [];
+        placeListData.push(placeCard);
+      });
       dispatch(setSearchPlaceList(placeListData));
-
-      console.log(res);
     } catch (e) {
       errorControl(dispatch, "장소 검색 실패");
       console.log(e);

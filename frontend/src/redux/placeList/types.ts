@@ -10,6 +10,7 @@ export const RESET_PLACE_LIST_WITH_DISTANCE = "RESET_PLACE_LIST_WITH_DISTANCE";
 // 장소이름으로 장소검색
 export const GET_SEARCH_PLACE_LIST = "GET_SEARCH_PLACE_LIST";
 export const SET_SEARCH_PLACE_LIST = "SET_SEARCH_PLACE_LIST";
+export const RESET_SEARCH_PLACE_LIST = "RESET_SEARCH_PLACE_LIST";
 
 // 장소리스트 요청시 필요한 데이터
 export interface PlaceListInfoForGet {
@@ -28,7 +29,7 @@ export interface PlaceInfo {
   address: string;
   averageScore: number;
   scoreCount: number;
-  category: number;
+  category: boolean;
   keywords?: string[];
 }
 export interface PlaceInfoData {
@@ -40,7 +41,7 @@ export interface PlaceInfoData {
   address: string;
   averageScore: number;
   scoreCount: number;
-  category: number;
+  category: boolean;
   keywords?: string[];
 }
 
@@ -54,4 +55,6 @@ export type PlaceCardList = PlaceCard[] | null[];
 // 장소 검색시 사용할 데이터
 export interface PlaceSearchInfo {
   name: string; // placeName
+  page?: number;
+  size?: number;
 }

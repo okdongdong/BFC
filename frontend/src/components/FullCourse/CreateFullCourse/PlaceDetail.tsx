@@ -20,6 +20,7 @@ const CardTitle = styled("div")(() => ({
 const CardStyle = styled(Card)(() => ({
   width: "100%",
   paddingLeft: 20,
+  paddingRight: 20,
   textAlign: "left",
   backgroundColor: "rgba(0,0,0,0)",
 }));
@@ -51,13 +52,18 @@ const PlaceItemTextStyle = styled("p")(() => ({
   marginTop: 8,
   marginBottom: 8,
 }));
+const PlaceMenuItemTextStyle = styled("p")(() => ({
+  fontSize: 14,
+  color: "grey",
+  marginTop: 0,
+  marginBottom: 0,
+}));
 
 function PlaceDetail({
   placeId,
   name,
   info,
   openTime,
-
   address,
   category,
   phone,
@@ -128,9 +134,27 @@ function PlaceDetail({
             {menus.length === 0 || (
               <>
                 <PlaceTextStyle>메뉴</PlaceTextStyle>
-                {menus.map((menu: string, idx: number) => (
-                  <PlaceItemTextStyle key={idx}>{menu}</PlaceItemTextStyle>
-                ))}
+                {menus.map(
+                  (
+                    menu: { menuId: number; name: string; price: number },
+                    idx: number
+                  ) => (
+                    <div
+                      key={`menu-${idx}`}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <PlaceMenuItemTextStyle>
+                        {menu.name}
+                      </PlaceMenuItemTextStyle>
+                      <PlaceMenuItemTextStyle>
+                        {menu.price.toLocaleString()} 원
+                      </PlaceMenuItemTextStyle>
+                    </div>
+                  )
+                )}
               </>
             )}
           </Stack>

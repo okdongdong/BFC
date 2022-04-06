@@ -3,6 +3,7 @@ import { placeCardList } from "../../assets/dummyData/dummyData";
 import {
   PlaceCardList,
   RESET_PLACE_LIST_WITH_DISTANCE,
+  RESET_SEARCH_PLACE_LIST,
   SET_PLACE_LIST,
   SET_PLACE_LIST_WITH_DISTANCE,
   SET_SEARCH_PLACE_LIST,
@@ -15,7 +16,7 @@ export interface PlaceListState {
 }
 
 const initialState: PlaceListState = {
-  placeList: [...placeCardList],
+  placeList: [],
   placeListWithDistance: [],
   searchPlaceList: [],
 };
@@ -49,7 +50,13 @@ const placeListReducer = (
     case SET_SEARCH_PLACE_LIST:
       return {
         ...state,
-        searchPlaceList: [...action.payload],
+        searchPlaceList: [...state.searchPlaceList, ...action.payload],
+      };
+
+    case RESET_SEARCH_PLACE_LIST:
+      return {
+        ...state,
+        searchPlaceList: [],
       };
 
     default:

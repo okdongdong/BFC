@@ -1,6 +1,6 @@
 import { Backdrop, Stack, CircularProgress } from "@mui/material";
 import FullCourseCardList from "../../components/Main/FullCourseCardList";
-import MainBackground from "../../components/Main/MainBackground";
+import MainBackground from "../../components/Main/MainBackgroundCarousel";
 import MyFullCourse from "../../components/Main/MyFullCourse/MyFullCourse";
 import PlaceCardList from "../../components/Main/PlaceCardList";
 import { connect } from "react-redux";

@@ -2,6 +2,7 @@
 
 import { Box } from "@mui/material";
 import { useEffect } from "react";
+import placeMarkerGreen from "../../../assets/img/place_marker_green.png";
 
 const { kakao } = window;
 
@@ -24,9 +25,14 @@ function KakaoMap({
     };
     var map = new kakao.maps.Map(container, options);
 
+    var markerImage = new kakao.maps.MarkerImage(
+      placeMarkerGreen,
+      new kakao.maps.Size(60, 60)
+    );
     var marker = new kakao.maps.Marker({
       map: map,
       position: new kakao.maps.LatLng(lat, lng),
+      image: markerImage,
     });
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다

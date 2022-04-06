@@ -10,7 +10,7 @@ export interface PlaceDetailState {
   lat: number;
   lng: number;
   address: string;
-  category: number;
+  category: boolean;
   phone: string;
   label: string;
   station: string;
@@ -28,7 +28,7 @@ const initialState: PlaceDetailState = {
   lat: 0,
   lng: 0,
   address: "",
-  category: 0,
+  category: false,
   phone: "",
   label: "",
   station: "",

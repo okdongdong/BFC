@@ -8,6 +8,7 @@ import {
 import MyFullCourseBackground from "./MyFullCourseBackground";
 import MyFullCourseContent from "./MyFullCourseContent";
 import { useEffect, useState } from "react";
+import MainBackgroundCarousel from "../MainBackgroundCarousel";
 
 const CardStyle = styled(Card)(() => ({
   width: "100%",
@@ -46,42 +47,48 @@ function MyFullCourse({ fullCourseDetailList }: FullCourseDetailListProps) {
   }, []);
 
   return (
-    <Carousel>
-      {carouselList.map(
-        (fullCourseDetail: FullCourseContentProps, idx: number) => (
-          <CardStyle
-            key={idx}
-            onClick={() =>
-              navigate(`fullcourse/${fullCourseDetail.fullCourseId}`)
-            }
-          >
-            <CardActionArea>
-              <MyFullCourseBackground
-                thumbnailList={fullCourseDetail.thumbnailList}
-              ></MyFullCourseBackground>
-              <CardContent
-                sx={{
-                  justifyContent: "center",
-                  display: "flex",
-                  position: "relative",
-                  padding: 0,
-                }}
+    <>
+      {carouselList.length == 0 ? (
+        <MainBackgroundCarousel></MainBackgroundCarousel>
+      ) : (
+        <Carousel>
+          {carouselList.map(
+            (fullCourseDetail: FullCourseContentProps, idx: number) => (
+              <CardStyle
+                key={idx}
+                onClick={() =>
+                  navigate(`fullcourse/${fullCourseDetail.fullCourseId}`)
+                }
               >
-                <MyFullCourseContent
-                  startOn={fullCourseDetail.startOn}
-                  finishedOn={fullCourseDetail.finishedOn}
-                  fullCourseId={fullCourseDetail.fullCourseId}
-                  title={fullCourseDetail.title}
-                  scheduleDetailList={fullCourseDetail.scheduleDetailList}
-                  thumbnailList={fullCourseDetail.thumbnailList}
-                ></MyFullCourseContent>
-                <CardBackgroundStyle />
-              </CardContent>
-            </CardActionArea>
-          </CardStyle>
-        )
+                <CardActionArea>
+                  <MyFullCourseBackground
+                    thumbnailList={fullCourseDetail.thumbnailList}
+                  ></MyFullCourseBackground>
+                  <CardContent
+                    sx={{
+                      justifyContent: "center",
+                      display: "flex",
+                      position: "relative",
+                      padding: 0,
+                    }}
+                  >
+                    <MyFullCourseContent
+                      startOn={fullCourseDetail.startOn}
+                      finishedOn={fullCourseDetail.finishedOn}
+                      fullCourseId={fullCourseDetail.fullCourseId}
+                      title={fullCourseDetail.title}
+                      scheduleDetailList={fullCourseDetail.scheduleDetailList}
+                      thumbnailList={fullCourseDetail.thumbnailList}
+                    ></MyFullCourseContent>
+                    <CardBackgroundStyle />
+                  </CardContent>
+                </CardActionArea>
+              </CardStyle>
+            )
+          )}
+        </Carousel>
       )}
-    </Carousel>
+    </>
   );
 }
 
