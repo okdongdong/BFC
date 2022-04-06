@@ -84,13 +84,8 @@ function PreSuveyContainer({
     };
 
     creatNewFullCourse(data);
+    navigate("/fullcourse/create");
   };
-
-  useEffect(() => {
-    if (fullCourseId) {
-      navigate("/fullcourse/create");
-    }
-  }, [fullCourseId]);
 
   return (
     <div>
