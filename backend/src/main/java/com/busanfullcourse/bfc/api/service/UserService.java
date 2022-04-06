@@ -345,7 +345,7 @@ public class UserService {
                     .thumbnailList(FullCourseListRes.ofThumbnailList(
                             scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(
                                     fullCourse.getFullCourseId())))
-                    .scheduleList(scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourse.getFullCourseId()))
+                    .scheduleDetailList(FullCourseRes.ScheduleDetail.of(scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourse.getFullCourseId())))
                     .build());
         } else {
             page = fullCourseRepository.findAllByIsPublicAndUserOrderByStartedOnDesc(true, user, pageable);
