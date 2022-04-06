@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") // 어떤 헤더들을 허용할 것인지
                 .allowedMethods("*") // 어떤 메서드를 허용할 것인지 (GET, POST...)
                 .allowCredentials(false) // 쿠키 요청을 허용한다(다른 도메인 서버에 인증하는 경우에만 사용해야하며, true 설정시 보안상 이슈가 발생할 수 있다)
-                 .maxAge(3600); // preflight 요청에 대한 응답을 브라우저에서 캐싱하는 시간 ;
+                 .maxAge(3600); // preflight 요청에 대한 응답을 브라우저에서 캐싱하는 시간
 
     }
 }
