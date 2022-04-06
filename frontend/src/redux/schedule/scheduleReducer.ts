@@ -26,7 +26,9 @@ const scheduleReducer = (
     // 스케줄 DND에서 카드 옮길 때
     case SET_SELECTED_SCHEDULE_ID:
       return {
-        ...initialState,
+        ...state,
+        page: 0,
+        finished: false,
         selectedScheduleId: action.payload,
       };
 

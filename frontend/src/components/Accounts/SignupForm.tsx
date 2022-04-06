@@ -86,7 +86,7 @@ function SignupForm() {
     })
       .then((res) => {
         console.log(res);
-        navigate("main");
+        navigate("login");
       }) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
   }
