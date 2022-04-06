@@ -1,8 +1,6 @@
 package com.busanfullcourse.bfc.api.response;
 
-import com.busanfullcourse.bfc.db.entity.Review;
 import lombok.*;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 

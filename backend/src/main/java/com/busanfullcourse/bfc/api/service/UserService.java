@@ -53,7 +53,7 @@ public class UserService {
 
     public void signup(SignUpReq signUpReq) {
         if (!signUpReq.getPassword().equals(signUpReq.getPasswordCheck())){
-            throw new IllegalArgumentException(ExceptionUtil.NoMatchPassword);
+            throw new IllegalArgumentException(ExceptionUtil.NO_MATCH_PASSWORD);
         }
         signUpReq.setPassword(passwordEncoder.encode(signUpReq.getPassword()));
         userRepository.save(User.ofUser(signUpReq));
@@ -61,14 +61,14 @@ public class UserService {
 
     public void signupAdmin(SignUpReq signUpReq) {
         if (!signUpReq.getPassword().equals(signUpReq.getPasswordCheck())){
-            throw new IllegalArgumentException(ExceptionUtil.NoMatchPassword);
+            throw new IllegalArgumentException(ExceptionUtil.NO_MATCH_PASSWORD);
         }
         signUpReq.setPassword(passwordEncoder.encode(signUpReq.getPassword()));
         userRepository.save(User.ofAdmin(signUpReq));
     }
 
     public TokenRes login(LoginReq loginReq) {
-        User user = userRepository.findByUsername(loginReq.getUsername()).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findByUsername(loginReq.getUsername()).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         checkPassword(loginReq.getPassword(), user.getPassword());
 
         String username = user.getUsername();
@@ -79,7 +79,7 @@ public class UserService {
 
     private void checkPassword(String rawPassword, String findMemberPassword) {
         if (!passwordEncoder.matches(rawPassword, findMemberPassword)) {
-            throw new IllegalArgumentException(ExceptionUtil.NoMatchPassword);
+            throw new IllegalArgumentException(ExceptionUtil.NO_MATCH_PASSWORD);
         }
     }
 
@@ -89,9 +89,9 @@ public class UserService {
     }
 
     public UserProfileRes getUserProfile(String nickname) {
-        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findByNickname(nickname).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         String reqUsername = getCurrentUsername();
-        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         List<Interest> interestList = interestRepository.findTop6ByUserIdOrderByInterestIdDesc(user.getId());
 
         List<FullCourse> fullCourseList;
@@ -144,7 +144,7 @@ public class UserService {
     }
     // 로그인에 사용됨
     public MyInfoRes getMyInfo(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         return MyInfoRes.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
@@ -156,7 +156,7 @@ public class UserService {
     }
     // 회원 정보 조회에 사용됨
     public MyInfoRes getMyInfo(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         String reqUsername = getCurrentUsername();
         if (!user.getUsername().equals(reqUsername)) {
             throw new IllegalArgumentException("본인이 아닙니다.");
@@ -172,7 +172,7 @@ public class UserService {
     }
 
     public void updateMyInfo(UserUpdateReq userUpdateReq, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
 
         user.setBirthday(userUpdateReq.getBirthday());
         user.setGender(userUpdateReq.getGender());
@@ -181,10 +181,10 @@ public class UserService {
     }
 
     public void changePassword(ChangePasswordReq changePasswordReq, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         checkPassword(changePasswordReq.getOldPassword(), user.getPassword());
         if (!changePasswordReq.getNewPassword().equals(changePasswordReq.getPasswordCheck())) {
-            throw new IllegalArgumentException(ExceptionUtil.NoMatchPassword);
+            throw new IllegalArgumentException(ExceptionUtil.NO_MATCH_PASSWORD);
         }
 
         user.setPassword(passwordEncoder.encode(changePasswordReq.getNewPassword()));
@@ -192,7 +192,7 @@ public class UserService {
     }
 
     public void deleteUser(UserDeleteReq userDeleteReq, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         checkPassword(userDeleteReq.getPassword(), user.getPassword());
         userRepository.deleteById(userId);
     }
@@ -251,7 +251,7 @@ public class UserService {
     }
 
     public UserProfileRes updateProfileImg(Long userId, MultipartFile file) throws IOException, IllegalAccessException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         String username = getCurrentUsername();
         if (!username.equals(user.getUsername())) {
             throw new IllegalAccessException("본인이 아닙니다.");
@@ -276,11 +276,11 @@ public class UserService {
 
     public FollowRes follow(Long yourId) {
         String myName = getCurrentUsername();
-        User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User you = userRepository.findById(yourId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         if (you.getUsername().equals(myName)) {
             throw new IllegalArgumentException("자기자신은 팔로우 할 수 없습니다.");
         }
-        User me = userRepository.findByUsername(myName).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User me = userRepository.findByUsername(myName).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
 
         Optional<Follow> follow = followRepository.findByFromUserAndToUser(me, you);
         Boolean isFollowing;
@@ -306,7 +306,7 @@ public class UserService {
     }
 
     public List<FollowListRes> followFromList(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         List<Follow> followList = followRepository.findAllByToUser(user);
 
         return followList.stream().map(follow -> FollowListRes.builder()
@@ -318,7 +318,7 @@ public class UserService {
     }
 
     public List<FollowListRes> followToList(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         List<Follow> followList = followRepository.findAllByFromUser(user);
 
         return followList.stream().map(follow -> FollowListRes.builder()
@@ -332,7 +332,7 @@ public class UserService {
     public Page<FullCourseListRes> getMoreUserFullCourse(Long userId, Pageable pageable) {
         User user = userRepository.getById(userId);
         String reqUsername = getCurrentUsername();
-        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         Page<FullCourse> page;
         if (user == reqUser) {
             page = fullCourseRepository.findAllByUserOrderByStartedOnDesc(user, pageable);
@@ -365,7 +365,7 @@ public class UserService {
     public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
         User user = userRepository.getById(userId);
         String reqUsername = getCurrentUsername();
-        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        User reqUser = userRepository.findByUsername(reqUsername).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
         Page<Like> page;
         if (user == reqUser) {
             page = likeRepository.findAllByUserId(userId, pageable);

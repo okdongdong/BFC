@@ -3,6 +3,7 @@ package com.busanfullcourse.bfc.api.controller;
 import com.busanfullcourse.bfc.api.request.ScoreReq;
 import com.busanfullcourse.bfc.api.response.*;
 import com.busanfullcourse.bfc.api.service.*;
+import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -97,7 +98,7 @@ public class PlaceController {
         return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
     }
     @GetMapping("/search/test")
-    public ResponseEntity<?> searchAll(@PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<Place>> searchAll(@PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(searchService.searchAll(pageable));
     }
 

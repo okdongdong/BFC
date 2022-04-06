@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void validateAccessToken(String accessToken, UserDetails userDetails) {
-        if (!jwtTokenUtil.validateToken(accessToken, userDetails)) {
+        if (Boolean.FALSE.equals(jwtTokenUtil.validateToken(accessToken, userDetails))) {
             throw new IllegalArgumentException("토큰 검증 실패");
         }
     }

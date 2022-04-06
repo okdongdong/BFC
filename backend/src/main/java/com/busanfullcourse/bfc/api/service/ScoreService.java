@@ -25,8 +25,8 @@ public class ScoreService {
 
     public void setPlaceScore(Long placeId, String username, Float score) {
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoUser));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
 
 
         Float newAverageScore = (place.getAverageScore()*place.getScoreCount()+score)/(place.getScoreCount()+1);
@@ -58,7 +58,7 @@ public class ScoreService {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
         Float oldScore = score.getScore();
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
         Float newAverageScore = (place.getAverageScore()*place.getScoreCount()-oldScore+newScore)/(place.getScoreCount());
 
         place.setAverageScore(newAverageScore);
@@ -74,7 +74,7 @@ public class ScoreService {
             throw new IllegalAccessException("본인이 아닙니다.");
         }
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NoPlace));
+        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
         Float newAverageScore = (place.getAverageScore() * place.getScoreCount() - score.getScore()) / (place.getScoreCount() - 1);
         place.setAverageScore(newAverageScore);
         place.setScoreCount(place.getScoreCount()-1);
