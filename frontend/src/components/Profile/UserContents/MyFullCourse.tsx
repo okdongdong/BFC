@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 function MyFullCourse({ myList, nickname }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
+  console.log("내 풀코스", myList);
   const title = `${nickname}님의 풀코스`;
   const type = 1;
   let baseCard = [];
@@ -31,7 +32,7 @@ function MyFullCourse({ myList, nickname }: Props) {
     if (i < myList.length) {
       baseCard.push(
         <Link
-          to={`/place/${myList[i].placeId}`}
+          to={`/fullCourseDetail/${myList[i].fullCourseId}`}
           style={{ textDecoration: "none" }}
         >
           <div key={i} style={{ position: "relative" }}>

@@ -2,8 +2,9 @@ import { Button, FormGroup, Stack, Switch, Typography } from "@mui/material";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
+import { connect } from "react-redux";
 
-export default function FullCourseInfo() {
+function FullCourseInfo({ title, isPublic }: Props) {
   const isMine = true;
   //내가 쓴글 확인
   const AntSwitch = styled(Switch)(({ theme }) => ({
@@ -50,7 +51,6 @@ export default function FullCourseInfo() {
       boxSizing: "border-box",
     },
   }));
-  const title: string = "나혼자 부산여행!";
   return (
     <div
       style={{
@@ -77,28 +77,24 @@ export default function FullCourseInfo() {
         </Button>
       )}
       {isMine && (
-        <Box
-          sx={{
-            fontSize: "h8.fontSize",
-            marginRight: "10px",
-            marginBottom: "3px",
-          }}
-        >
-          공개
-        </Box>
-      )}
-      {isMine && (
         <FormGroup>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>Off</Typography>
-            <AntSwitch
-              defaultChecked
-              inputProps={{ "aria-label": "ant design" }}
-            />
-            <Typography>On</Typography>
+            <Typography>비공개</Typography>
+            <AntSwitch inputProps={{ "aria-label": "ant design" }} />
+            <Typography>공개</Typography>
           </Stack>
         </FormGroup>
       )}
     </div>
   );
 }
+const mapStateToProps = ({ fullCourse, account }: any) => {
+  return {
+    title: fullCourse.title,
+    currentUserId: account.userId,
+    isPublic: fullCourse.isPublic,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(FullCourseInfo);
