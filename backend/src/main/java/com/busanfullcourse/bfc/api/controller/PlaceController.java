@@ -24,15 +24,11 @@ public class PlaceController {
     private final InterestService interestService;
     private final ElasticSearchService searchService;
 
-    @GetMapping("/restaurant/{placeId}")
-    public ResponseEntity<PlaceDetailRes> getRestaurantDetail(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.getRestaurantDetail(placeId));
+    @GetMapping("/{placeId}")
+    public ResponseEntity<PlaceDetailRes> getPlaceDetail(@PathVariable Long placeId) {
+        return ResponseEntity.ok(placeService.getPlaceDetail(placeId));
     }
 
-    @GetMapping("/attraction/{placeId}")
-    public ResponseEntity<PlaceDetailRes> getAttractionDetail(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.getAttractionDetail(placeId));
-    }
 
     @GetMapping("/restaurant/popular")
     public ResponseEntity<List<PlaceListRes>> getPopularRestaurantList() {
