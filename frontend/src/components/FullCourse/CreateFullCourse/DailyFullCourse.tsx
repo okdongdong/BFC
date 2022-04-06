@@ -29,7 +29,6 @@ function DailyFullCourse({
         );
       }
     }
-    console.log(dayText.current?.offsetTop);
   }, []);
 
   return (

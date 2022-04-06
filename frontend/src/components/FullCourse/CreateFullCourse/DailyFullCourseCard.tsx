@@ -13,6 +13,7 @@ import { deleteSchedule } from "../../../redux/createFullCourse/actions";
 import { setSelectedScheduleId } from "../../../redux/schedule/actions";
 import { PlaceCardProps } from "../../../types/main";
 import StarScore from "../../Main/StarScore";
+import noImage from "../../../assets/img/place_img.png";
 
 const CardStyle = styled(Card)(() => ({
   textAlign: "left",
@@ -21,6 +22,9 @@ const CardStyle = styled(Card)(() => ({
   zIndex: 100,
   width: 350,
   position: "relative",
+  "&:hover": {
+    backgroundColor: "#FFEFB5",
+  },
 }));
 
 const CardMediaStyle = styled(CardMedia)(() => ({
@@ -71,7 +75,7 @@ function DailyFullCourseCard({
     // 카테고리 별로 이동경로가 달라야 함
     <CardStyle
       sx={{
-        backgroundColor: selectedScheduleId === scheduleId ? "#FFF3B6" : "",
+        backgroundColor: selectedScheduleId === scheduleId ? "#FFE793" : "",
         // color: selectedScheduleId === scheduleId ? "white" : "",
       }}
       onClick={onClickHandler}
@@ -81,7 +85,10 @@ function DailyFullCourseCard({
           sx={{ margin: 1, minHeight: 100, width: "100%", padding: 0.5 }}
           square
         >
-          <CardMediaStyle image={thumbnail} title={name} />
+          <CardMediaStyle
+            image={thumbnail === " " ? noImage : thumbnail}
+            title={name}
+          />
         </Paper>
       </div>
       <CardContent sx={{ width: "100%" }}>

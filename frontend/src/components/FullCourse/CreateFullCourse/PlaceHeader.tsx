@@ -21,6 +21,25 @@ interface PlaceHeaderProps {
 
   SIZE: number;
 }
+const SearchInput = styled(TextField)({
+  "& label.Mui-focused": {
+    color: "rgba(0,0,0,0)",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "rgba(0,0,0,0)",
+  },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+    "&:hover fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+  },
+});
 
 function PlaceHeader({
   getSearchPlaceList,
@@ -33,26 +52,6 @@ function PlaceHeader({
 }: Props & PlaceHeaderProps) {
   const filterType = ["평점순", "거리순", "사전설문순"];
   const [placeName, setPlaceName] = useState<string>("");
-
-  const SearchInput = styled(TextField)({
-    "& label.Mui-focused": {
-      color: "rgba(0,0,0,0)",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "rgba(0,0,0,0)",
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-      "&:hover fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-    },
-  });
 
   const FilterTextStyle = styled("div")((attr: { idx: number }) => ({
     backgroundColor: `${attr.idx === nowFilterTypeIdx ? "#57A3EC" : "white"}`,
@@ -106,25 +105,20 @@ function PlaceHeader({
   const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       getSearchPlaceList({
-        placeName: placeName,
-        page: nowPage,
-        size: SIZE,
+        name: placeName,
       });
     }
   };
 
   const onSearchHandler = () => {
     getSearchPlaceList({
-      placeName: placeName,
-      page: nowPage,
-      size: SIZE,
+      name: placeName,
     });
   };
 
   const onSearchChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(event);
     setPlaceName(event.target.value);
   };
 

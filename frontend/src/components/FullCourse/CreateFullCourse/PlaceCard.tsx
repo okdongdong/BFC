@@ -7,7 +7,9 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
+import { connect } from "react-redux";
 import { PlaceCardProps } from "../../../types/main";
+import noImage from "../../../assets/img/place_img.png";
 import StarScore from "../../Main/StarScore";
 
 const CardStyle = styled(Card)(() => ({
@@ -18,6 +20,10 @@ const CardStyle = styled(Card)(() => ({
   zIndex: 100,
   width: 350,
   position: "relative",
+
+  "&:hover": {
+    backgroundColor: "#FFEFB5",
+  },
 }));
 
 const CardMediaStyle = styled(CardMedia)(() => ({
@@ -42,23 +48,30 @@ const PlaceAddressNameStyle = styled("p")(() => ({
 }));
 
 function PlaceCard({
+  placeId,
   name,
   thumbnail,
   address,
   averageScore,
   keywords = [],
-}: PlaceCardProps) {
+  selectedPlaceId,
+}: PlaceCardProps & Props) {
   const newKeywords: Array<string> = keywords.slice(0, 3);
-
+  console.log(placeId, selectedPlaceId);
   return (
     // 카테고리 별로 이동경로가 달라야 함
-    <CardStyle onClick={() => {}}>
+    <CardStyle
+      sx={{ backgroundColor: placeId === selectedPlaceId ? "#FFE793" : "" }}
+    >
       <div style={{ display: "flex", alignItems: "center" }}>
         <Paper
           sx={{ margin: 1, minHeight: 100, width: "100%", padding: 0.5 }}
           square
         >
-          <CardMediaStyle image={thumbnail} title={name} />
+          <CardMediaStyle
+            image={thumbnail === " " ? noImage : thumbnail}
+            title={name}
+          />
         </Paper>
       </div>
       <CardContent sx={{ width: "100%" }}>
@@ -83,4 +96,9 @@ function PlaceCard({
   );
 }
 
-export default PlaceCard;
+const mapStateToProps = ({ placeDetailReducer }: any) => ({
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
+});
+
+type Props = ReturnType<typeof mapStateToProps>;
+export default connect(mapStateToProps)(PlaceCard);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import { getPlaceListWithDistance } from "../../../redux/placeList/actions";
 import { PlaceListInfoForGet } from "../../../redux/placeList/types";
@@ -12,9 +12,12 @@ interface PlaceCardListProps {
   recommendDistance: number;
   selectedScheduleId: number;
   finished: boolean;
+  nowFilterTypeIdx: number;
 }
 function PlaceCardList({
   selectedScheduleId,
+  nowFilterTypeIdx,
+  nowLoading,
   recommendDistance,
   getPlaceListWithDistance,
   placeList,
@@ -31,6 +34,7 @@ function PlaceCardList({
     };
 
     getPlaceListWithDistance(data);
+    addPage(1);
   };
 
   const options = {
@@ -40,9 +44,9 @@ function PlaceCardList({
   };
   const interSectRef = useRef<HTMLDivElement>(null);
 
-  const handleObserver = useCallback(async (entries) => {
-    if (finished) {
-      console.log("모든리스트를 조회했습니다.");
+  const handleObserver = async (entries: any) => {
+    if (finished || nowLoading) {
+      console.log("모든리스트를 조회||로딩중");
       return;
     }
 
@@ -55,9 +59,9 @@ function PlaceCardList({
     const target = entries[0];
     if (target.isIntersecting) {
       console.log("is InterSecting");
-      addPage(1);
+      infiniteHandler();
     }
-  }, []);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, options);
@@ -66,10 +70,6 @@ function PlaceCardList({
     }
     return () => observer.disconnect();
   }, [handleObserver]);
-
-  useEffect(() => {
-    infiniteHandler();
-  }, [page]);
 
   useEffect(() => {
     console.log(placeList);
@@ -92,12 +92,15 @@ function PlaceCardList({
           </div>
         ))}
       {!finished || <div>끗</div>}
-      <div style={{ height: 200, width: 1 }} ref={interSectRef}></div>
+      {nowFilterTypeIdx !== 1 || (
+        <div style={{ height: 100, width: 1 }} ref={interSectRef}></div>
+      )}
     </div>
   );
 }
-const mapStateToProps = ({ schedule }: any) => ({
+const mapStateToProps = ({ schedule, baseInfo }: any) => ({
   page: schedule.page,
+  nowLoading: baseInfo.nowLoading,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
@@ -106,6 +109,7 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(getPlaceListWithDistance(placeListInfoForGet)),
     addPage: (page: number) => dispatch(addPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
+   
   };
 };
 
