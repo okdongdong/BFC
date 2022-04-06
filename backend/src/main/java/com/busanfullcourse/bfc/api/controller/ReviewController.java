@@ -31,7 +31,7 @@ public class ReviewController {
     public ResponseEntity<Page<ReviewListRes>> getReviewList(
             @PathVariable Long placeId,
             @PageableDefault(size = 5, sort = "reviewId", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ReviewListRes.of(reviewService.getReviewListByPlaceId(placeId, pageable)));
+        return ResponseEntity.ok(reviewService.getReviewListByPlaceId(placeId, pageable));
     }
 
     @PutMapping("/{reviewId}")
