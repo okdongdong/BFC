@@ -63,22 +63,24 @@ public class PlaceService {
     }
 
     public List<PlaceListRes> getMainRecommendRestaurantList(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user,true));
     }
 
     public List<PlaceListRes> getMainRecommendAttractionList(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         return PlaceListRes.of(mainRecommendRepository.findTop8ByMainRecommendPlaceAndCategoryIs(user, false));
     }
 
     public Page<PlaceListRes> getRecommendPlaceList(String username, Pageable pageable) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         return PlaceListRes.ofRecommend(recommendRepository.findAllByUser(user, pageable));
     }
 
     public Page<PlaceListRes> getSurveyRecommendPlaceList(Long fullCourseId, Pageable pageable) {
         return PlaceListRes.ofSurveyRecommend(surveyRecommendRepository.findAllByFullCourseFullCourseId(fullCourseId, pageable));
     }
-
 }
