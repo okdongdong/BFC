@@ -45,7 +45,7 @@ function PlaceCard({
   thumbnail,
   address,
   averageScore,
-  keywords,
+  label,
 }: PlaceCardProps) {
   const navigate = useNavigate();
 
@@ -64,11 +64,7 @@ function PlaceCard({
             <StarScore starScore={averageScore}></StarScore>
           </PlaceNameStyle>
           <PlaceAddressNameStyle>{address}</PlaceAddressNameStyle>
-          <Stack direction="row" spacing={1}>
-            {keywords.map((item, key) => (
-              <Chip key={key} label={`#${item}`} />
-            ))}
-          </Stack>
+          <Chip label={`#${label}`} />
         </CardContent>
       </CardActionArea>
     </CardStyle>
