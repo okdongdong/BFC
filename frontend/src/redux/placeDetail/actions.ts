@@ -28,7 +28,7 @@ export const getPlaceDetail = (placeId: number) => {
     try {
       const res = await customAxios({
         method: "get",
-        url: `/place/restaurant/${placeId}`,
+        url: `/place/${placeId}`,
       });
 
       const placeDetail: PlaceDetailState = {

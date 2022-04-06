@@ -83,7 +83,7 @@ function Main({
         },
       });
       console.log("내풀코스데이터", res);
-      setMyFullCourseList(res.data);
+      setMyFullCourseList(res.data.content);
     } catch (e) {
       console.log(e);
     }

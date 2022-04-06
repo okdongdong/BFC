@@ -54,14 +54,28 @@ export interface FullCourseDetailProps {
   dayPlaceList: MyFullCourseContentDayProps[];
 }
 
+export interface ScheduleDetail {
+  address: string;
+  customPlaceId: number | null;
+  day: number;
+  lat: number;
+  lon: number;
+  memo: string;
+  name: string;
+  placeId: number | null;
+  scheduleId: number;
+  sequence: number;
+}
+
 export interface FullCourseContentProps {
   fullCourseId?: number;
   title: string;
   startOn: string;
   finishedOn: string;
-  dayPlaceList: MyFullCourseContentDayProps[];
+  thumbnailList: string[];
+  scheduleDetailList?: Array<ScheduleDetail | null>;
 }
 
 export interface FullCourseDetailListProps {
-  fullCourseDetailList: FullCourseDetailProps[];
+  fullCourseDetailList: FullCourseContentProps[];
 }

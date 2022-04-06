@@ -7,7 +7,7 @@ export const ModalScrollableBox = styled("div")(({ theme }) => ({
   backgroundColor: "white",
   borderRadius: "0px",
   margin: 0,
-  overflowY: "scroll",
+  overflow: "overlay",
   position: "relative",
   /* 스크롤바 설정*/
   "&::-webkit-scrollbar": {
@@ -33,7 +33,7 @@ export const ScrollableBox = styled("div")(({ theme }) => ({
   borderRadius: "0px",
   boxShadow: "2px 2px 2px 1px rgba(0, 0, 0, 0.2)",
   margin: 0,
-  overflowY: "scroll",
+  overflow: "overlay",
   position: "relative",
   /* 스크롤바 설정*/
   "&::-webkit-scrollbar": {
@@ -59,7 +59,7 @@ export const InfiniteScrollableBox = styled("div")(({ theme }) => ({
   borderRadius: "0px",
   boxShadow: "2px 2px 2px 1px rgba(0, 0, 0, 0.2)",
   margin: 0,
-  overflowY: "scroll",
+  overflow: "overlay",
   position: "relative",
   /* 스크롤바 설정*/
   "&::-webkit-scrollbar": {
