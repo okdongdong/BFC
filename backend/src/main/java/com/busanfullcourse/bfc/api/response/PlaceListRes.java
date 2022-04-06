@@ -29,6 +29,8 @@ public class PlaceListRes implements Serializable {
 
     private String label;
 
+    private Boolean category;
+
     private Float averageScore;
 
     private Integer scoreCount;
@@ -43,6 +45,7 @@ public class PlaceListRes implements Serializable {
                         .lat(place.getLat())
                         .label(place.getLabel())
                         .address(place.getAddress())
+                        .category(place.getCategory())
                         .averageScore(place.getAverageScore())
                         .scoreCount(place.getScoreCount())
                         .thumbnail(place.getThumbnail())
@@ -58,6 +61,7 @@ public class PlaceListRes implements Serializable {
                 .lat(place.getLat())
                 .label(place.getLabel())
                 .address(place.getAddress())
+                .category(place.getCategory())
                 .averageScore(place.getAverageScore())
                 .scoreCount(place.getScoreCount())
                 .thumbnail(place.getThumbnail())
@@ -73,6 +77,7 @@ public class PlaceListRes implements Serializable {
                 .lat(recommend.getPlace().getLat())
                 .label(recommend.getPlace().getLabel())
                 .address(recommend.getPlace().getAddress())
+                .category(recommend.getPlace().getCategory())
                 .averageScore(recommend.getPlace().getAverageScore())
                 .scoreCount(recommend.getPlace().getScoreCount())
                 .thumbnail(recommend.getPlace().getThumbnail())
@@ -87,6 +92,7 @@ public class PlaceListRes implements Serializable {
                 .lat(surveyRecommend.getPlace().getLat())
                 .label(surveyRecommend.getPlace().getLabel())
                 .address(surveyRecommend.getPlace().getAddress())
+                .category(surveyRecommend.getPlace().getCategory())
                 .averageScore(surveyRecommend.getPlace().getAverageScore())
                 .scoreCount(surveyRecommend.getPlace().getScoreCount())
                 .thumbnail(surveyRecommend.getPlace().getThumbnail())
