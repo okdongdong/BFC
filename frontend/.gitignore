@@ -3,7 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=react,visualstudiocode,git,windows
 
 ## 환경변수파일
-.env.local
+# .env.local
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
