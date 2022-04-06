@@ -1,25 +1,30 @@
 import Reviewer from "./Reviewer";
 import ReviewContent from "./ReviewContent";
 import { ReviewProps } from "../../../types/review";
+import { SetReview } from "../../../types/detail";
 const ReviewListItem = ({
-  reviewId,
-  profile,
+  profileImg,
   nickname,
   content,
-}: ReviewProps) => {
+  reviewId,
+  userId,
+  index,
+}: SetReview) => {
   return (
     <div style={{ width: "100%" }}>
       <Reviewer
-        profile={profile}
+        index={index}
+        profileImg={profileImg}
         nickname={nickname}
-        reviewId={reviewId}
         content={content}
       ></Reviewer>
       <ReviewContent
-        profile={profile}
+        index={index}
+        profileImg={profileImg}
         nickname={nickname}
-        reviewId={reviewId}
         content={content}
+        reviewId={reviewId}
+        userId={userId}
       ></ReviewContent>
       <hr></hr>
     </div>

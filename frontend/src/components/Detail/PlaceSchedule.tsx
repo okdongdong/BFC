@@ -5,27 +5,38 @@ import Fade from "@mui/material/Fade";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import IconButton from "@mui/material/IconButton";
-const time =
-  "월요일:09:00~18:00 \n 월요일:09:00~18:00 \n월요일:09:00~18:00 \n월요일:09:00~18:00 \n월요일:09:00~18:00";
-const icon = (
-  <Paper
-    sx={{
-      m: 1,
-      padding: "10px",
-      whiteSpace: "pre-wrap",
-      textAlign: "center",
-    }}
-    elevation={4}
-  >
-    {time}
-  </Paper>
-);
-function PlaceSchedule() {
+import { connect } from "react-redux";
+function PlaceSchedule({ openTime }: Props) {
   const [checked, setChecked] = React.useState(false);
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
+  const [time, setTime] = React.useState([]);
+  // setTime(openTime);
+  const icon = (
+    <Paper
+      sx={{
+        m: 1,
+        padding: "10px",
+        whiteSpace: "pre-wrap",
+        textAlign: "center",
+      }}
+      elevation={4}
+    >
+      {openTime ? (
+        <div>
+          <div>{openTime[0]}</div>
+          <div>{openTime[1]}</div>
+        </div>
+      ) : (
+        <div style={{ color: "gray" }}>운영시간정보 준비중</div>
+      )}
 
+      {/* {time.map((t, idx) => (
+        <div>{openTime[idx]}</div>
+      ))} */}
+    </Paper>
+  );
   return (
     <Box sx={{ height: 180 }}>
       <div onClick={handleChange}>
@@ -44,4 +55,11 @@ function PlaceSchedule() {
     </Box>
   );
 }
-export default PlaceSchedule;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    openTime: place.openTime,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceSchedule);
