@@ -20,5 +20,4 @@ public class UserProfileRes {
     private List<InterestListRes> interestList;
     private List<FullCourseListRes> myList;
     private List<FullCourseListRes> likeList;
-//    private List<Badge> badges;
 }

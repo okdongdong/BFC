@@ -36,9 +36,9 @@ public class ElasticSearchService {
     }
 
     public void saveAll() {
-        placeSearchRepository.saveAll(placeRepository.findAll().stream()
-                .peek(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())))
-                .collect(Collectors.toList()));
+        List<Place> places = placeRepository.findAll();
+        places.forEach(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())));
+        placeSearchRepository.saveAll(places);
     }
 
     public void deleteAll() {
