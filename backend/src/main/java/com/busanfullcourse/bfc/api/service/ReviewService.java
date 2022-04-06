@@ -1,6 +1,8 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.ReviewUpdateReq;
+import com.busanfullcourse.bfc.api.response.ReviewListRes;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
 import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Review;
@@ -25,6 +27,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final PlaceRepository placeRepository;
     private final UserRepository userRepository;
+    private final ConvertUtil convertUtil;
 
 
     public void createReview(ReviewUpdateReq req, String username, Long placeId) {
@@ -39,8 +42,17 @@ public class ReviewService {
         );
     }
 
-    public Page<Review> getReviewListByPlaceId(Long placeId, Pageable pageable) {
-        return reviewRepository.findAllByPlacePlaceId(placeId, pageable);
+    public Page<ReviewListRes> getReviewListByPlaceId(Long placeId, Pageable pageable) {
+        Page<Review> list = reviewRepository.findAllByPlacePlaceId(placeId, pageable);
+        return list.map(review -> ReviewListRes.builder()
+                .reviewId(review.getReviewId())
+                .content(review.getContent())
+                .userId(review.getUser().getId())
+                .nickname(review.getUser().getNickname())
+                .profileImg(convertUtil.convertByteArrayToString(review.getUser().getProfileImg()))
+                .postedAt(review.getPostedAt())
+                .updatedAt(review.getUpdatedAt())
+                .build());
     }
 
     public void updateReview(ReviewUpdateReq req, String username, Long reviewId) throws IllegalAccessException {
