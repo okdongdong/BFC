@@ -11,8 +11,6 @@ services:
       - "443:443"
     volumes:
       - /home/ubuntu/certbot:/var/www/html
-            # - /app/node_modules
-            # - ./:/app
     container_name: "frontend"
   
   backend:
