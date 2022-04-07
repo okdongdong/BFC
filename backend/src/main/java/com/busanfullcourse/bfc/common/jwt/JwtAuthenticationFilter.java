@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = getToken(request);
+        String accessToken = getToken(request, "Authorization");
         String requestURI = request.getRequestURI();
         if (accessToken != null && !requestURI.equals("/api/v1/auth/reissue")) {
             // 로그아웃에 사용된 토큰인지 확인
@@ -49,11 +49,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 processSecurity(request, userDetails);
             }
         }
+
+        if (requestURI.equals("/api/v1/auth/reissue")) {
+            String refreshToken = getToken(request,"RefreshToken");
+
+            String username = jwtTokenUtil.getUsername(refreshToken);
+            if (username != null) {
+                UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
+                // 토큰이 가지고 있는 정보에 기록된 사용자가 인증받은 사용자인지 확인
+                equalsUsernameFromTokenAndUserDetails(userDetails.getUsername(), username);
+                // 유효한 토큰인지 확인
+                validateAccessToken(refreshToken, userDetails);
+                // SecurityContext에 Authentication 객체를 저장
+                processSecurity(request, userDetails);
+            }
+        }
         filterChain.doFilter(request, response);
     }
 
-    private String getToken(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
+    private String getToken(HttpServletRequest request, String header) {
+        String headerAuth = request.getHeader(header);
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
