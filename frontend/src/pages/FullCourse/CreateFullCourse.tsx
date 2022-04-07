@@ -18,6 +18,7 @@ import PlaceHeader from "../../components/FullCourse/CreateFullCourse/PlaceHeade
 import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
 import {
   createNewSchedule,
+  getFullCourseInfo,
   moveCard,
   updateSchedule,
 } from "../../redux/createFullCourse/actions";
@@ -86,6 +87,7 @@ function CreateFullCourse({
   resetSearchPlaceList,
   createNewSchedule,
   updateSchedule,
+  getFullCourseInfo,
   setPage,
 }: Props) {
   const [pickedDay, setPickedDay] = useState<number>(1);
@@ -213,6 +215,12 @@ function CreateFullCourse({
       getPlaceDetail(selectedPlaceId);
     }
   }, [selectedPlaceId]);
+
+  useEffect(() => {
+    if (fullCourseId > 0) {
+      getFullCourseInfo(fullCourseId);
+    }
+  }, []);
 
   return (
     <>
@@ -354,6 +362,8 @@ const mapDispatchToProps = (dispatch: any) => {
     setPage: (page: number) => dispatch(setPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
     getPlaceDetail: (placeId: number) => dispatch(getPlaceDetail(placeId)),
+    getFullCourseInfo: (fullCourseId: number) =>
+      dispatch(getFullCourseInfo(fullCourseId)),
   };
 };
 

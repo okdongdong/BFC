@@ -5,11 +5,11 @@ import {
   MOVE_CARD,
   SET_FULL_COURSE_DATE,
   FullCourseListProps,
-  CREATE_CARD,
   CREATE_FULL_COURSE_SUCCESS,
   ADD_CUSTOM_PLACE,
   DELETE_CARD,
   RESET_FULL_COURSE,
+  SET_FULL_COURSE_INFO,
 } from "./types";
 
 export interface CreateFullCourseDnd {
@@ -41,8 +41,8 @@ const createFullCourseReducer = (
         fullCourseList: newFullCourseList,
       };
 
-    case CREATE_CARD:
-      return { ...initialState };
+    case SET_FULL_COURSE_INFO:
+      return { ...action.payload };
 
     case DELETE_CARD:
       newState.fullCourseList[action.payload.day].splice(
@@ -53,6 +53,7 @@ const createFullCourseReducer = (
       return { ...newState };
 
     case RESET_FULL_COURSE:
+      console.log("리셋");
       return { ...initialState };
 
     // 풀코스 날짜 설정
