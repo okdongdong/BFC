@@ -23,7 +23,6 @@ function ProfileImg({
   userId,
   myProfileImg,
 }: Props) {
-  console.log(profileImg);
   const classes = useStyles();
   const imgRef = useRef(
     document.getElementById("inputFile") as HTMLInputElement
@@ -41,10 +40,6 @@ function ProfileImg({
             //null값 제외 시키기 위해서 필요
             setProfileImg(reader.result);
           }
-
-          // console.log("이미지주소", reader.result);
-          // console.log(file[0]);
-          console.log("여기보세요", formData);
         }
         const token = localStorage.getItem("accessToken") || "";
 
@@ -61,12 +56,9 @@ function ProfileImg({
           //   url: `/users/${userId}/profile`,
           //   data: formData,
         })
-          .then((res) => {
-            console.log(res);
-          })
+          .then((res) => {})
           .catch((err) => {
             console.log(err);
-            console.log(token);
           });
       };
     }
