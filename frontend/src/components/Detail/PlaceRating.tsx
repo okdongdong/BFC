@@ -8,6 +8,7 @@ import Detail from "../../pages/Main/Detail";
 import { Button } from "@mui/material";
 import { setPlaceData } from "../../redux/detail/action";
 import { SetPlaceData } from "../../types/detail";
+import { PlaceReducer } from "../../redux/rootReducer";
 const labels: { [index: string]: string } = {
   0.5: "0.5",
   1: "1.0",
@@ -48,7 +49,6 @@ function PlaceRating({
   };
   React.useEffect(() => {
     fetchData();
-    console.log("확인!!!!!!!!!!!!!!!!!!!!!!");
   }, [isClick]);
 
   function deleteScore() {
@@ -61,7 +61,7 @@ function PlaceRating({
         const newAverageScore =
           (averageScore * scoreCount - value) / (scoreCount - 1);
         newPlace.averageScore = newAverageScore;
-        console.log("ddddddddddddd", place, newPlace);
+
         setPlaceData(newPlace);
       }
       setValue(0);
@@ -82,7 +82,7 @@ function PlaceRating({
           const newAverageScore =
             (value + averageScore * scoreCount) / (scoreCount + 1);
           newPlace.averageScore = newAverageScore;
-          console.log("ddddddddddddd", place, newPlace);
+
           setPlaceData(newPlace);
         }
         setMethod("put");
@@ -102,7 +102,7 @@ function PlaceRating({
           const newAverageScore =
             (value + averageScore * scoreCount) / (scoreCount + 1);
           newPlace.averageScore = newAverageScore;
-          console.log("ddddddddddddd", place, newPlace);
+
           setPlaceData(newPlace);
         }
       });
@@ -162,7 +162,7 @@ function PlaceRating({
     </div>
   );
 }
-const mapStateToProps = ({ place }: any) => {
+const mapStateToProps = ({ place }: PlaceReducer) => {
   return {
     placeId: place.placeId,
     place: place,
@@ -172,9 +172,8 @@ const mapStateToProps = ({ place }: any) => {
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    setPlaceData: (place: SetPlaceData) => {
-      setPlaceData(place);
-    },
+    setPlaceData: (fullCourseData: SetPlaceData) =>
+      dispatch(setPlaceData(fullCourseData)),
   };
 };
 type Props = ReturnType<typeof mapStateToProps> &

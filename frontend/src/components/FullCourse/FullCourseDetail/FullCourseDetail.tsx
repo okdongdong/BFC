@@ -34,7 +34,6 @@ function FullCourseDetail({ setFullCourseData }: Props) {
       </Backdrop>
       {isLoading ? (
         <>
-          <FullCourseDetailKakaoMap></FullCourseDetailKakaoMap>
           <FullCourseHeader></FullCourseHeader>
           <FullCourseMain></FullCourseMain>
         </>
