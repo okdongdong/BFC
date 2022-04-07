@@ -31,7 +31,8 @@ public class FullCourseService {
     private final ConvertUtil convertUtil;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         FullCourse fullCourse = fullCourseRepository.save(FullCourse.builder()
                 .user(user)
                 .isPublic(req.getIsPublic())
@@ -77,7 +78,8 @@ public class FullCourseService {
     }
 
     public FullCourseRes getFullCourse(Long fullCourseId) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourseId);
         return FullCourseRes.builder()
                 .fullCourseId(fullCourseId)
@@ -98,7 +100,8 @@ public class FullCourseService {
     }
 
     public void changeFullCourseDate(Long fullCourseId, FullCourseUpdateReq fullCourseUpdateReq) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         LocalDate oldStartedOn;
         LocalDate oldFinishedOn;
         LocalDate newStartedOn;
@@ -136,20 +139,24 @@ public class FullCourseService {
     }
 
     public void changeFullCoursePublic(Long fullCourseId, Map<String, Boolean> isPublic) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         fullCourse.setIsPublic(isPublic.get("isPublic"));
         fullCourseRepository.save(fullCourse);
     }
 
     public void changeFullCourseReview(Long fullCourseId, Map<String, String> review) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         fullCourse.setReview(review.get("review"));
         fullCourseRepository.save(fullCourse);
     }
 
     public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
 
         Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
 
@@ -171,12 +178,13 @@ public class FullCourseService {
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", isLiked);
         return map;
-
     }
 
     public Map<String, Boolean> getLikeFullCourse(Long fullCourseId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", like.isPresent());
@@ -187,7 +195,7 @@ public class FullCourseService {
         if (fullCourseRepository.existsById(fullCourseId)) {
             fullCourseRepository.deleteById(fullCourseId);
         } else {
-            throw new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE);
+            throw new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND);
         }
     }
 
