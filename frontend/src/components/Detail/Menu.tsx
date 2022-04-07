@@ -1,23 +1,54 @@
-import { Box } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { connect } from "react-redux";
 
-function Menu({ menu }: Props) {
+const PlaceTextStyle = styled("p")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  margin: 0,
+  fontSize: 20,
+  fontWeight: "bold",
+}));
+
+const PlaceMenuItemTextStyle = styled("p")(() => ({
+  fontSize: 14,
+  color: "grey",
+  marginTop: 0,
+  marginBottom: 0,
+}));
+function Menu({ menus }: Props) {
   return (
     <div>
-      {menu ? (
-        <div style={{ textAlign: "left", margin: "8px" }}>
-          메뉴
-          <Box>{menu}</Box>{" "}
-        </div>
-      ) : (
-        <Box>{/* <p style={{ color: "gray" }}>메뉴정보 준비중</p> */}</Box>
+      {menus.length === 0 || (
+        <>
+          <PlaceTextStyle>메뉴</PlaceTextStyle>
+          {menus.map(
+            (
+              menu: { menuId: number; name: string; price: number },
+              idx: number
+            ) => (
+              <div
+                key={`menu-${idx}`}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <PlaceMenuItemTextStyle>{menu.name}</PlaceMenuItemTextStyle>
+                <PlaceMenuItemTextStyle>
+                  {menu.price.toLocaleString()} 원
+                </PlaceMenuItemTextStyle>
+              </div>
+            )
+          )}
+        </>
       )}
     </div>
   );
 }
 const mapStateToProps = ({ place }: any) => {
   return {
-    menu: place.menu,
+    menus: place.menus,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

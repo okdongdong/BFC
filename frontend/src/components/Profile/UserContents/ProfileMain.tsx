@@ -14,27 +14,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 function ProfileMain() {
   const classes = useStyles();
 
-  const tempData = [
-    {
-      title: "여기가 맞나..",
-      placeId: 32,
-      lat: 35.1797913,
-      lng: 129.074987,
-    },
-    {
-      title: "여기가 맞나..",
-      placeId: 356,
-      lat: 35.1697913,
-      lng: 129.074987,
-    },
-    {
-      title: "여기가 맞나..",
-      placeId: 33,
-      lat: 35.1797913,
-      lng: 129.075987,
-    },
-  ];
-
   return (
     <div>
       <div className={classes.likePlace}>
@@ -47,7 +26,7 @@ function ProfileMain() {
           fontWeight: "bold",
           fontSize: 20,
           textAlign: "left",
-          marginLeft: "300px",
+          marginLeft: "200px",
         }}
       >
         관심 장소 위치
@@ -62,11 +41,11 @@ function ProfileMain() {
         <div
           style={{
             display: "flex",
-            width: "1300px",
+            width: "78%",
             height: "500px",
           }}
         >
-          <ProfileKakaoMap placeLocationInfoList={tempData}></ProfileKakaoMap>
+          <ProfileKakaoMap></ProfileKakaoMap>
         </div>
       </div>
       {/* <VisitedPlace></VisitedPlace> */}
