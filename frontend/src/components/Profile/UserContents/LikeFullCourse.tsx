@@ -104,14 +104,14 @@ function Like({ likeList, nickname }: Props) {
           fontWeight: "bold",
           fontSize: 20,
           textAlign: "left",
-          marginLeft: "300px",
+          marginLeft: "200px",
         }}
       >
         {title}
         <Button
           variant="outlined"
           size="small"
-          style={{ float: "right", marginRight: "300px" }}
+          style={{ float: "right", marginRight: "200px" }}
           onClick={() => setOpen(true)}
         >
           더보기

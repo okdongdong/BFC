@@ -17,6 +17,7 @@ export interface PlaceDetailState {
   averageScore: number;
   thumbnail: string;
   menus: string[];
+  scoreCount: number;
 }
 
 const initialState: PlaceDetailState = {
@@ -35,6 +36,7 @@ const initialState: PlaceDetailState = {
   averageScore: 0,
   thumbnail: "",
   menus: [],
+  scoreCount: 0,
 };
 
 const placeDetailReducer = (

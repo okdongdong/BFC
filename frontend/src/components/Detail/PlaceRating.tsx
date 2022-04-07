@@ -6,6 +6,8 @@ import { customAxios } from "../../lib/customAxios";
 import { connect } from "react-redux";
 import Detail from "../../pages/Main/Detail";
 import { Button } from "@mui/material";
+import { setPlaceData } from "../../redux/detail/action";
+import { SetPlaceData } from "../../types/detail";
 const labels: { [index: string]: string } = {
   0.5: "0.5",
   1: "1.0",
@@ -19,7 +21,13 @@ const labels: { [index: string]: string } = {
   5: "5.0",
 };
 
-function PlaceRating({ placeId }: Props) {
+function PlaceRating({
+  placeId,
+  place,
+  setPlaceData,
+  averageScore,
+  scoreCount,
+}: Props) {
   const [value, setValue] = React.useState<number | null>(0); //별점 default값
   const [hover, setHover] = React.useState(-1);
   const [method, setMethod] = React.useState("post");
@@ -48,6 +56,14 @@ function PlaceRating({ placeId }: Props) {
       method: "delete",
       url: `/place/${placeId}/score`,
     }).then((res) => {
+      if (value) {
+        const newPlace = place;
+        const newAverageScore =
+          (averageScore * scoreCount - value) / (scoreCount - 1);
+        newPlace.averageScore = newAverageScore;
+        console.log("ddddddddddddd", place, newPlace);
+        setPlaceData(newPlace);
+      }
       setValue(0);
       setMethod("post");
       setBtnName("등록");
@@ -61,6 +77,14 @@ function PlaceRating({ placeId }: Props) {
         url: `/place/${placeId}/score`,
         data: { score: value },
       }).then((res) => {
+        if (value) {
+          const newPlace = place;
+          const newAverageScore =
+            (value + averageScore * scoreCount) / (scoreCount + 1);
+          newPlace.averageScore = newAverageScore;
+          console.log("ddddddddddddd", place, newPlace);
+          setPlaceData(newPlace);
+        }
         setMethod("put");
         setBtnName("변경");
         setIsClick(true);
@@ -73,6 +97,14 @@ function PlaceRating({ placeId }: Props) {
         data: { score: value },
       }).then((res) => {
         console.log(res);
+        if (value) {
+          const newPlace = place;
+          const newAverageScore =
+            (value + averageScore * scoreCount) / (scoreCount + 1);
+          newPlace.averageScore = newAverageScore;
+          console.log("ddddddddddddd", place, newPlace);
+          setPlaceData(newPlace);
+        }
       });
     }
   }
@@ -133,8 +165,19 @@ function PlaceRating({ placeId }: Props) {
 const mapStateToProps = ({ place }: any) => {
   return {
     placeId: place.placeId,
+    place: place,
+    averageScore: place.averageScore,
+    scoreCount: place.scoreCount,
   };
 };
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setPlaceData: (place: SetPlaceData) => {
+      setPlaceData(place);
+    },
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps)(PlaceRating);
+export default connect(mapStateToProps, mapDispatchToProps)(PlaceRating);
