@@ -348,7 +348,7 @@ def tour_predict_score(request):
 	our_list = our_counts['index'].values.tolist()
 	
 	# 테이블 만들기
-	UserUser, user = food_user_matrix(our_list)
+	UserUser, user = tour_user_matrix(our_list)
 	
 	for people in our_list:
 		simliar_userlist = UserUser.sort_values(by=people, ascending=False)[people].to_frame().index
