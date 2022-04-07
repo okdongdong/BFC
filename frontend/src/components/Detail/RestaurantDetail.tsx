@@ -5,13 +5,13 @@ import PlaceImg from "./PlaceImg";
 import PlaceInfo from "../../components/Detail/PlaceInfo";
 import Grid from "@mui/material/Grid";
 import PlaceRating from "./PlaceRating";
-import AnotherPlatform from "./AnotherPlatform";
 import PlaceLike from "./PlaceLike";
 import Menu from "./Menu";
 import { useEffect, useState } from "react";
 import { customAxios } from "../../lib/customAxios";
 import { connect } from "react-redux";
 import KakaoMap from "../FullCourse/CreateFullCourse/KakaoMap";
+import { PlaceReducer } from "../../redux/rootReducer";
 const PlaceNameStyle = styled("h2")(() => ({
   display: "flex",
   alignItems: "center",
@@ -66,7 +66,7 @@ function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
     </div>
   );
 }
-const mapStateToProps = ({ place }: any) => {
+const mapStateToProps = ({ place }: PlaceReducer) => {
   return {
     name: place.name,
     averageScore: place.averageScore,
