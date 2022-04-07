@@ -4,6 +4,7 @@ import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
 import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
@@ -27,6 +28,7 @@ public class FullCourseService {
     private final WishPlaceRepository wishPlaceRepository;
     private final ScheduleRepository scheduleRepository;
     private final LikeRepository likeRepository;
+    private final ConvertUtil convertUtil;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
@@ -37,6 +39,7 @@ public class FullCourseService {
                 .view(0)
                 .startedOn(req.getStartedOn())
                 .finishedOn(req.getFinishedOn())
+                .likeCnt(0)
                 .build());
 
         List<WishFood> wishFoodList = new ArrayList<>();
@@ -88,6 +91,9 @@ public class FullCourseService {
                 .wishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
                 .wishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
                 .likeCnt(fullCourse.getLikeCnt())
+                .userId(fullCourse.getUser().getId())
+                .nickname(fullCourse.getUser().getNickname())
+                .profileImg(convertUtil.convertByteArrayToString(fullCourse.getUser().getProfileImg()))
                 .build();
     }
 
