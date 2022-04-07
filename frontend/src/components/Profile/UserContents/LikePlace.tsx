@@ -52,12 +52,22 @@ function LikePlace({ interestList, profileUserId }: Props) {
                 borderRadius: "10px",
               }}
             >
-              <CardMedia
-                component="img"
-                height="140"
-                image={interestList[i].thumbnail}
-                alt="green iguana"
-              />
+              {interestList[i].thumbnail ? (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={interestList[i].thumbnail}
+                  alt="green iguana"
+                />
+              ) : (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image="https://www.chanchao.com.tw/images/default.jpg" //default 이미지 등록!!!!!!!!!
+                  alt="green iguana"
+                />
+              )}
+
               <CardContent
                 style={{
                   display: "flex",
