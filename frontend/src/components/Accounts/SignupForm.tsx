@@ -76,7 +76,6 @@ function SignupForm() {
 
   // 회원가입 요청전송
   function requestSignup(): void {
-    console.log(userInfo);
     axios({
       method: "post",
       url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
@@ -91,7 +90,6 @@ function SignupForm() {
       },
     })
       .then((res) => {
-        console.log(res);
         navigate("login");
       }) // redux로 저장해서 사용해야할듯
       .catch((err) => console.log(err));
@@ -106,7 +104,6 @@ function SignupForm() {
     } else {
       // 인증
       console.log("이메일 인증요청");
-      console.log(userInfo);
       setSendEmailConfirmation(() => true);
       axios({
         method: "POST",
@@ -133,7 +130,6 @@ function SignupForm() {
     } else {
       // 닉네임 인증
       console.log("닉네임 중복검사 요청");
-      console.log(userInfo);
       setSendCheckNickname(() => true);
       axios({
         method: "get",
@@ -142,7 +138,6 @@ function SignupForm() {
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
-          console.log(res);
         })
         .catch((err) => {
           setSendCheckNickname(() => false);
@@ -227,8 +222,6 @@ function SignupForm() {
       default:
         return;
     }
-
-    console.log(userInfo);
   }
 
   // 이메일 인증번호 입력
@@ -236,7 +229,6 @@ function SignupForm() {
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
     const userCertificationNumber: string = event.target.value;
-    console.log(userCertificationNumber);
     if (userCertificationNumber.length === 8) {
       if (userCertificationNumber === responseCertificationNumber) {
         setEmailConfirmation(() => true);
@@ -255,7 +247,6 @@ function SignupForm() {
     const newUserInfo: SignupUserInfo = { ...userInfo };
     newUserInfo.agreement = event.target.checked;
     setUserInfo(() => newUserInfo);
-    console.log(userInfo);
   }
 
   return (
