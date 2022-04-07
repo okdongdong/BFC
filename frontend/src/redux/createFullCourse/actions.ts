@@ -263,7 +263,7 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
         lng: customPlaceInfo.lon,
       };
       const newSchedule = {
-        id: `customPlace-${new Date().getTime()}`,
+        id: `customPlace-${new Date().getTime()}-${Math.random()}`,
         content: newContent,
       };
 
@@ -313,7 +313,7 @@ export const getFullCourseInfo = (fullCourseId: number) => {
 
           newState.fullCourseList[scheduleDetail.day - 1].push({
             scheduleId: scheduleDetail.scheduleId,
-            id: `shedule-${new Date().getTime()}`,
+            id: `shedule-${idx}-${new Date().getTime()}-${Math.random()}`,
             content: {
               scheduleId: scheduleDetail.scheduleId,
               thumbnail: scheduleDetail.thumbnail,
