@@ -2,7 +2,6 @@ package com.busanfullcourse.bfc.api.request;
 
 import lombok.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @Getter
