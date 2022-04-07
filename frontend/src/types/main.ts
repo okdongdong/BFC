@@ -48,7 +48,7 @@ export interface FullCourseDetailProps {
   fullCourseId?: number;
   title: string;
   views?: number;
-  startOn: string;
+  startedOn: string;
   finishedOn: string;
   thumbnailList: string[];
   dayPlaceList: MyFullCourseContentDayProps[];
@@ -70,7 +70,7 @@ export interface ScheduleDetail {
 export interface FullCourseContentProps {
   fullCourseId?: number;
   title: string;
-  startOn: string;
+  startedOn: string;
   finishedOn: string;
   thumbnailList: string[];
   scheduleDetailList?: Array<ScheduleDetail | null>;
