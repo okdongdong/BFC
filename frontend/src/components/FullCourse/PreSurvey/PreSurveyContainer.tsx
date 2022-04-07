@@ -222,26 +222,8 @@ function PreSuveyContainer({
                 onChange={onChangeHandler}
               ></TextField>
               <br />
-              <DatePicker></DatePicker>
               <WishBox>
                 <div>가고싶어요</div>
-                <Button
-                  onClick={() =>
-                    nowKeyword === "food"
-                      ? setNowKeyword("")
-                      : setNowKeyword("food")
-                  }
-                >
-                  추가
-                </Button>
-              </WishBox>
-              <WishKeywordList
-                wishKeywordList={meogEoBoJaList}
-                setWishKeywordList={setMeogEoBoJaList}
-              ></WishKeywordList>
-              <br />
-              <WishBox>
-                <div>먹고싶어요</div>
                 <Button
                   onClick={() =>
                     nowKeyword === "place"
@@ -256,6 +238,25 @@ function PreSuveyContainer({
                 wishKeywordList={gaBoJaList}
                 setWishKeywordList={setGaBoJa}
               ></WishKeywordList>
+              <br />
+              <DatePicker></DatePicker>
+              <WishBox>
+                <div>먹고싶어요</div>
+                <Button
+                  onClick={() =>
+                    nowKeyword === "food"
+                      ? setNowKeyword("")
+                      : setNowKeyword("food")
+                  }
+                >
+                  추가
+                </Button>
+              </WishBox>
+              <WishKeywordList
+                wishKeywordList={meogEoBoJaList}
+                setWishKeywordList={setMeogEoBoJaList}
+              ></WishKeywordList>
+
               <div
                 style={{
                   display: "flex",

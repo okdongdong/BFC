@@ -107,7 +107,7 @@ export const creatNewFullCourse = (
 
       console.log(res2);
     } catch (e) {
-      errorControl(dispatch, "풀코스 생성실패..");
+      errorControl(dispatch, "설문기반 추천 연동 실패..");
       console.log(e);
     }
     loadingControl(dispatch, false);

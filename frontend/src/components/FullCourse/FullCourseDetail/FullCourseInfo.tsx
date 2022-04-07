@@ -63,6 +63,7 @@ function FullCourseInfo({
   const navigate = useNavigate();
   function updateFullCourse() {
     createFullCourseSuccess(fullCourseId);
+    navigate("/fullCourse/create");
   }
   function deleteFullCourse() {
     customAxios({

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +33,10 @@ public class ElasticSearchService {
 
     public Page<Place> searchAll(Pageable pageable) {
         return placeSearchRepository.findAll(pageable);
+    }
+
+    public Page<Place> searchPlaceByNameByJPA(String name, Pageable pageable) {
+        return placeRepository.findByNameContains(name.strip(),pageable);
     }
 
     public void saveAll() {

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router";
 import PreSurveyContainer from "../../components/FullCourse/PreSurvey/PreSurveyContainer";
 import PreSurveyModal from "../../components/FullCourse/PreSurvey/PreSurveyModal";
 import FixedMainBackground from "../../components/Main/FixedMainBackground";
 
-function PreSurvey({ fullCourseId }: Props) {
+function PreSurvey({ fullCourseId, isLogin }: Props) {
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -12,6 +14,13 @@ function PreSurvey({ fullCourseId }: Props) {
       setOpenModal(true);
     }
   }, [fullCourseId]);
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate(-1);
+    }
+  }, [isLogin]);
+
   return (
     <div>
       <FixedMainBackground></FixedMainBackground>
@@ -24,9 +33,10 @@ function PreSurvey({ fullCourseId }: Props) {
   );
 }
 
-const mapStateToProps = ({ createFullCourse }: any) => {
+const mapStateToProps = ({ createFullCourse, account }: any) => {
   return {
     fullCourseId: createFullCourse.fullCourseId,
+    isLogin: account.isLogin,
   };
 };
 

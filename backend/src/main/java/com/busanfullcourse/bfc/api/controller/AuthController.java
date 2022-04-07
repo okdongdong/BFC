@@ -25,9 +25,8 @@ public class AuthController {
     private final EmailService emailService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignUpReq signUpReq) {
-        userService.signup(signUpReq);
-        return ResponseEntity.ok("회원 가입 완료");
+    public ResponseEntity<Map<String,Long>> signup(@RequestBody SignUpReq signUpReq) {
+        return ResponseEntity.ok(userService.signup(signUpReq));
     }
 
     @PostMapping("/signup/admin")
