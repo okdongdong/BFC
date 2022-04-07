@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import StarScore from "../../Main/StarScore";
 import PlaceCard from "../../Main/PlaceCard";
 import noImage from "../../../assets/img/logo_with_text.png";
+import clearStage from "../../../assets/img/clearStage.png";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -39,12 +40,25 @@ function LikePlace({ interestList, profileUserId }: Props) {
           style={{
             display: "flex",
             alignItems: "flex-end",
+            position: "relative",
           }}
         >
           <Link
             to={`/place/${interestList[i].placeId}`}
             style={{ textDecoration: "none" }}
           >
+            {interestList[i].isClear ? (
+              <img
+                src={clearStage}
+                style={{
+                  position: "absolute",
+                  marginTop: "-25px",
+                  marginLeft: "20px",
+                }}
+              ></img>
+            ) : (
+              <></>
+            )}
             <Card
               sx={{
                 width: "220px",

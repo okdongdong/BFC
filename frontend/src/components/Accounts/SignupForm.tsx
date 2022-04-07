@@ -107,8 +107,11 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         method: "get",
         url: `recommend/new_user/${userId}`,
       });
+      console.log(res2)
+
     } catch (e: any) {
       console.log(e);
+      console.log(e.data);
       if (e.message === "SinupFailed") {
         errorControl("회원가입에 실패했습니다.");
       } else {
