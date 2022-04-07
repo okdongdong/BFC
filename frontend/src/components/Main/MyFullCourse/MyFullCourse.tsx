@@ -73,7 +73,7 @@ function MyFullCourse({ fullCourseDetailList }: FullCourseDetailListProps) {
                     }}
                   >
                     <MyFullCourseContent
-                      startOn={fullCourseDetail.startOn}
+                      startedOn={fullCourseDetail.startedOn}
                       finishedOn={fullCourseDetail.finishedOn}
                       fullCourseId={fullCourseDetail.fullCourseId}
                       title={fullCourseDetail.title}

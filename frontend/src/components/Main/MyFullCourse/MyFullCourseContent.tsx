@@ -10,12 +10,12 @@ import MyFullCourseContentDay from "./MyFullCourseContentDay";
 const BoxStyle = styled(Box)(() => ({
   width: 900,
   position: "absolute",
-  top: "-120px",
+  top: "-160px",
   color: "white",
 }));
 
 function MyFullCourseContent({
-  startOn,
+  startedOn,
   finishedOn,
   title,
   scheduleDetailList,
@@ -46,7 +46,7 @@ function MyFullCourseContent({
 
   if (today - new Date(finishedOn).getTime() > 0) {
     nowStatus = "종료된 여행";
-  } else if (today - new Date(startOn).getTime() > 0) {
+  } else if (today - new Date(startedOn).getTime() > 0) {
     nowStatus = "현재 여행중";
   } else {
     nowStatus = "예정된 여행";
@@ -63,6 +63,7 @@ function MyFullCourseContent({
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         {dayPlaceList.map((placeNameList: string[], index: number) => (
           <MyFullCourseContentDay
+            startedOn={startedOn}
             key={index}
             day={index + 1}
             placeNameList={placeNameList}

@@ -33,6 +33,7 @@ interface FullCourseKakaoMapProps {
   expandedPlaceDetail: boolean;
   nowFilterTypeIdx: number;
   nowCenter: { lat: number; lng: number };
+  recommendDistance: number;
   setNowCenter: React.Dispatch<
     React.SetStateAction<{
       lat: number;
@@ -55,6 +56,7 @@ function FullCourseKakaoMap({
   searchPlaceList,
   nowCenter,
   selectedPlaceId,
+  recommendDistance,
   setNowCenter,
 }: FullCourseKakaoMapProps & Props) {
   const [dailyFullCoursePath, setDailyFullCoursePath] = useState<Array<LatLng>>(

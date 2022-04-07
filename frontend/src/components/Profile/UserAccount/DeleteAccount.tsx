@@ -8,6 +8,7 @@ import axios from "axios";
 import { Alert } from "@mui/material";
 import { AccountReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -26,6 +27,7 @@ function DeleteAccount({ userId, username }: Props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const token = localStorage.getItem("accessToken") || "";
+  const navigate = useNavigate();
   function changePassword(e: React.ChangeEvent<HTMLInputElement>): void {
     setPassword(e.target.value);
   }
@@ -44,6 +46,7 @@ function DeleteAccount({ userId, username }: Props) {
     })
       .then((res) => {
         alert("탈퇴되었습니다");
+        navigate("/");
         console.log(res);
       })
       .catch((err) => {

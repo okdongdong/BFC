@@ -116,6 +116,17 @@ public class PlaceController {
                                                  Pageable pageable) {
         return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
     }
+    @GetMapping("/search2")
+    public ResponseEntity<Page<Place>> searchPlaceByJPA(@RequestParam String name,
+                                                  @PageableDefault(size = 8)
+                                                  @SortDefault.SortDefaults({
+                                                          @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                                                          @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                                                  })
+                                                          Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchPlaceByNameByJPA(name, pageable));
+    }
+
     @GetMapping("/search/test")
     public ResponseEntity<Page<Place>> searchAll(@PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(searchService.searchAll(pageable));

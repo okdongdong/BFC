@@ -4,13 +4,15 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Fade,
   styled,
-  Stack,
+  Theme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StarScore from "./StarScore";
 
 import { PlaceCardProps } from "../../types/main";
+import { useEffect, useRef, useState } from "react";
 
 const CardStyle = styled(Card)(() => ({
   width: 240,
@@ -48,26 +50,57 @@ function PlaceCard({
   label,
 }: PlaceCardProps) {
   const navigate = useNavigate();
+  const interSectRef = useRef<HTMLDivElement>(null);
+
+  const [isVisible, setVisible] = useState(false);
+
+  const options = {
+    root: null,
+    rootMargin: "20px",
+    threshold: 0.8,
+  };
+
+  const handleObserver = async (entries: any) => {
+    const target = entries[0];
+    if (target.isIntersecting && !isVisible) {
+      console.log("is InterSecting");
+      setVisible(true);
+    }
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, options);
+    if (interSectRef.current !== null) {
+      observer.observe(interSectRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
 
   return (
     // 카테고리 별로 이동경로가 달라야 함
-    <CardStyle
-      onClick={() =>
-        navigate(`/${category ? "restaurant" : "attraction"}/${placeId}`)
-      }
+    <div
+      ref={interSectRef}
+      className={`fade-in-section ${isVisible ? "is-visible" : ""}`}
+      style={{ padding: 5 }}
     >
-      <CardActionArea>
-        <CardMediaStyle image={thumbnail} title={name} />
-        <CardContent>
-          <PlaceNameStyle>
-            {name}
-            <StarScore starScore={averageScore}></StarScore>
-          </PlaceNameStyle>
-          <PlaceAddressNameStyle>{address}</PlaceAddressNameStyle>
-          <Chip label={`#${label}`} />
-        </CardContent>
-      </CardActionArea>
-    </CardStyle>
+      <CardStyle
+        onClick={() =>
+          navigate(`/${category ? "restaurant" : "attraction"}/${placeId}`)
+        }
+      >
+        <CardActionArea>
+          <CardMediaStyle image={thumbnail} title={name} />
+          <CardContent>
+            <PlaceNameStyle>
+              {name}
+              <StarScore starScore={averageScore}></StarScore>
+            </PlaceNameStyle>
+            <PlaceAddressNameStyle>{address}</PlaceAddressNameStyle>
+            <Chip label={`#${label}`} />
+          </CardContent>
+        </CardActionArea>
+      </CardStyle>
+    </div>
   );
 }
 
