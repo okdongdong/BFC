@@ -14,13 +14,22 @@ import {
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { SignupUserInfo } from "../../types/account";
+import { customAxios, customAxiosDjango } from "../../lib/customAxios";
+import { errorControl, loadingControl } from "../../redux/baseInfo/actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: "white",
+    padding: theme.spacing(3),
+    paddingTop: theme.spacing(6),
+    paddingBottom: theme.spacing(6),
+    borderRadius: 15,
+    zIndex: 1,
+    position: "relative",
   },
   form: {
     width: "100%", // Fix IE 11 issue.
@@ -31,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function SignupForm() {
+function SignupForm({ errorControl, loadingControl }: Props) {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -69,27 +78,46 @@ function SignupForm() {
     useState<string>("");
 
   // 회원가입 요청전송
-  function requestSignup(): void {
-    console.log(userInfo);
-    axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
-      data: {
-        username: userInfo.username,
-        password: userInfo.password,
-        passwordCheck: userInfo.passwordConfirmation,
-        nickname: userInfo.nickname,
-        birthday: userInfo.birthday,
-        gender: userInfo.gender,
-        // agreement: userInfo.agreement,
-      },
-    })
-      .then((res) => {
-        console.log(res);
-        navigate("main");
-      }) // redux로 저장해서 사용해야할듯
-      .catch((err) => console.log(err));
-  }
+  const requestSignup = async () => {
+    loadingControl(true);
+
+    try {
+      const res = await customAxios({
+        method: "post",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
+        data: {
+          username: userInfo.username,
+          password: userInfo.password,
+          passwordCheck: userInfo.passwordConfirmation,
+          nickname: userInfo.nickname,
+          birthday: userInfo.birthday,
+          gender: userInfo.gender,
+        },
+      });
+
+      console.log(res);
+      if (res.status !== 200) {
+        throw new Error("SinupFailed");
+      }
+
+      const userId = res.data.userId;
+
+      navigate("/login");
+      const res2 = await customAxiosDjango({
+        method: "get",
+        url: `recommend/new_user/${userId}`,
+      });
+    } catch (e: any) {
+      console.log(e);
+      if (e.message === "SinupFailed") {
+        errorControl("회원가입에 실패했습니다.");
+      } else {
+        errorControl("알수없는 에러가 발생했습니다.");
+      }
+    }
+
+    loadingControl(false);
+  };
 
   // 이메일 인증요청
   function requsetEmailConfirmation(): void {
@@ -100,7 +128,6 @@ function SignupForm() {
     } else {
       // 인증
       console.log("이메일 인증요청");
-      console.log(userInfo);
       setSendEmailConfirmation(() => true);
       axios({
         method: "POST",
@@ -127,7 +154,6 @@ function SignupForm() {
     } else {
       // 닉네임 인증
       console.log("닉네임 중복검사 요청");
-      console.log(userInfo);
       setSendCheckNickname(() => true);
       axios({
         method: "get",
@@ -136,7 +162,6 @@ function SignupForm() {
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
-          console.log(res);
         })
         .catch((err) => {
           setSendCheckNickname(() => false);
@@ -221,8 +246,6 @@ function SignupForm() {
       default:
         return;
     }
-
-    console.log(userInfo);
   }
 
   // 이메일 인증번호 입력
@@ -230,7 +253,6 @@ function SignupForm() {
     event: React.ChangeEvent<HTMLInputElement>
   ): void {
     const userCertificationNumber: string = event.target.value;
-    console.log(userCertificationNumber);
     if (userCertificationNumber.length === 8) {
       if (userCertificationNumber === responseCertificationNumber) {
         setEmailConfirmation(() => true);
@@ -249,136 +271,160 @@ function SignupForm() {
     const newUserInfo: SignupUserInfo = { ...userInfo };
     newUserInfo.agreement = event.target.checked;
     setUserInfo(() => newUserInfo);
-    console.log(userInfo);
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          회원가입
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextFieldWithButton
-            label="이메일"
-            id="username"
-            autoComplete="email"
-            onChange={changeUserInfo}
-            onClickButton={requsetEmailConfirmation}
-            buttonText="인증번호발송"
-            disabled={sendEmailConfirmation}
-            helperText={emailMessage}
-          ></TextFieldWithButton>
-          <TextField
-            inputProps={{ maxLength: 8 }}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            id="certificationNumber"
-            label="인증번호"
-            type="text"
-            name="certificationNumber"
-            onChange={changeUserCertificationNumber}
-            helperText={emailConfirmMessage}
-            error={!!emailConfirmMessage}
-          />
-          <TextField
-            error={!!passwordMessage}
-            helperText={passwordMessage}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="password"
-            label="비밀번호"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={changeUserInfo}
-          />
-          <TextField
-            error={!!passwordConfirmMessage}
-            helperText={passwordConfirmMessage}
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="passwordConfirmation"
-            label="비밀번호 확인"
-            type="password"
-            id="passwordConfirmation"
-            onChange={changeUserInfo}
-          />
-          <TextFieldWithButton
-            label="닉네임"
-            id="nickname"
-            onChange={changeUserInfo}
-            onClickButton={requsetCheckNickname}
-            buttonText="닉네임중복확인"
-            disabled={sendCheckNickname}
-            helperText={nickNameMessage}
-          ></TextFieldWithButton>
-          <ButtonGroup
-            color="primary"
-            aria-label="primary button group"
-            className={classes.form}
-          >
-            <Button
-              variant={userInfo.gender === 1 ? "contained" : "outlined"}
-              onClick={() => selectGender(1)}
-            >
-              남
-            </Button>
-            <Button
-              variant={userInfo.gender === 0 ? "contained" : "outlined"}
-              onClick={() => selectGender(0)}
-            >
-              여
-            </Button>
-          </ButtonGroup>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            name="birthday"
-            label="생년월일"
-            type="date"
-            id="birthday"
-            value={userInfo.birthday || "2022-02-02"} // 생년월일 입력하지 않았을 때 기본값
-            onChange={changeUserInfo}
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                id="agreement"
-                onChange={checkAgreement}
-                color="primary"
-              />
-            }
-            label="약관동의"
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={requestSignup}
-            disabled={
-              userInfo.password !== userInfo.passwordConfirmation ||
-              userInfo.username === "" ||
-              userInfo.password === "" ||
-              userInfo.passwordConfirmation === "" ||
-              userInfo.nickname === "" ||
-              userInfo.agreement === false ||
-              emailConfirmation === false ||
-              nicknameConfirmation === false
-            }
-          >
+    <div
+      style={{
+        display: "flex",
+        position: "absolute",
+        alignItems: "center",
+        height: "calc(100% - 80px)",
+        width: "100%",
+      }}
+    >
+      <Container component="main" maxWidth="sm">
+        <div className={classes.paper}>
+          <Typography component="h1" variant="h5">
             회원가입
-          </Button>
-        </form>
-      </div>
-    </Container>
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextFieldWithButton
+              label="이메일"
+              id="username"
+              autoComplete="email"
+              onChange={changeUserInfo}
+              onClickButton={requsetEmailConfirmation}
+              buttonText="인증번호발송"
+              disabled={sendEmailConfirmation}
+              helperText={emailMessage}
+            ></TextFieldWithButton>
+            <TextField
+              inputProps={{ maxLength: 8 }}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="certificationNumber"
+              label="인증번호"
+              type="text"
+              name="certificationNumber"
+              onChange={changeUserCertificationNumber}
+              helperText={emailConfirmMessage}
+              error={!!emailConfirmMessage}
+            />
+            <TextField
+              error={!!passwordMessage}
+              helperText={passwordMessage}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="password"
+              label="비밀번호"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={changeUserInfo}
+            />
+            <TextField
+              error={!!passwordConfirmMessage}
+              helperText={passwordConfirmMessage}
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="passwordConfirmation"
+              label="비밀번호 확인"
+              type="password"
+              id="passwordConfirmation"
+              onChange={changeUserInfo}
+            />
+            <TextFieldWithButton
+              label="닉네임"
+              id="nickname"
+              onChange={changeUserInfo}
+              onClickButton={requsetCheckNickname}
+              buttonText="닉네임중복확인"
+              disabled={sendCheckNickname}
+              helperText={nickNameMessage}
+            ></TextFieldWithButton>
+            <ButtonGroup
+              color="primary"
+              aria-label="primary button group"
+              className={classes.form}
+            >
+              <Button
+                variant={userInfo.gender === 1 ? "contained" : "outlined"}
+                onClick={() => selectGender(1)}
+              >
+                남
+              </Button>
+              <Button
+                variant={userInfo.gender === 0 ? "contained" : "outlined"}
+                onClick={() => selectGender(0)}
+              >
+                여
+              </Button>
+            </ButtonGroup>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="birthday"
+              label="생년월일"
+              type="date"
+              id="birthday"
+              value={userInfo.birthday || "2022-02-02"} // 생년월일 입력하지 않았을 때 기본값
+              onChange={changeUserInfo}
+            />
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id="agreement"
+                  onChange={checkAgreement}
+                  color="primary"
+                />
+              }
+              label="약관동의"
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={requestSignup}
+              disabled={
+                userInfo.password !== userInfo.passwordConfirmation ||
+                userInfo.username === "" ||
+                userInfo.password === "" ||
+                userInfo.passwordConfirmation === "" ||
+                userInfo.nickname === "" ||
+                userInfo.agreement === false ||
+                emailConfirmation === false ||
+                nicknameConfirmation === false
+              }
+            >
+              회원가입
+            </Button>
+          </form>
+        </div>
+      </Container>
+    </div>
   );
 }
 
-export default SignupForm;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    errorControl: (errorMessage: string) => {
+      errorControl(dispatch, errorMessage);
+    },
+    loadingControl: (state: boolean) => {
+      loadingControl(dispatch, state);
+    },
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupForm);

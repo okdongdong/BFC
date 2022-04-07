@@ -1,247 +1,152 @@
-import { Stack } from "@mui/material";
+import { Backdrop, Stack, CircularProgress } from "@mui/material";
 import FullCourseCardList from "../../components/Main/FullCourseCardList";
-import MainBackground from "../../components/Main/MainBackground";
+import MainBackground from "../../components/Main/MainBackgroundCarousel";
 import MyFullCourse from "../../components/Main/MyFullCourse/MyFullCourse";
 import PlaceCardList from "../../components/Main/PlaceCardList";
 import { connect } from "react-redux";
 import { AccountReducer } from "../../redux/rootReducer";
-function Main({ isLogin }: Props) {
-  // 더미데이터
-  const fullCourseDetailList = [
-    {
-      fullCourseId: 123,
-      title: "풀코스이름",
-      views: 123456789,
-      startOn: new Date("2022-03-17"),
-      finishedOn: new Date("2022-03-19"),
-      thumbnailList: [
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-        "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
-        "https://img.huffingtonpost.com/asset/5b3d67181a00002700ce358a.jpeg?cache=EOIukoBNd9&ops=1200_630",
-        "https://t1.daumcdn.net/cfile/tistory/99504C385EF819AA07",
-      ],
-      dayPlaceList: [
-        {
-          courseDate: "2022.03.17",
-          day: 1,
-          placeList: [
-            { name: "친구집", order: 1 },
-            { name: "해운대", order: 1 },
-          ],
-        },
-        {
-          courseDate: "2022.03.18",
-          day: 2,
-          placeList: [
-            { name: "다대포", order: 1 },
-            { name: "해운대", order: 1 },
-          ],
-        },
-        {
-          courseDate: "2022.03.19",
-          day: 3,
-          placeList: [
-            { name: "수변공원", order: 1 },
-            { name: "광안리", order: 1 },
-          ],
-        },
-      ],
-    },
-    {
-      fullCourseId: 122,
-      title: "태현이의 부산 탐방기",
-      views: 123456789,
-      startOn: new Date("2022-04-17"),
-      finishedOn: new Date("2022-04-19"),
-      thumbnailList: [
-        "https://blog.kakaocdn.net/dn/20621/btqT0tVl5DD/k69nk3mj7lVyu4kRxntsk1/img.jpg",
-        "https://blog.kakaocdn.net/dn/moS9T/btqT18b9inN/WYF8WSvhtyIWdtiLOltL4K/img.jpg",
-        "https://t1.daumcdn.net/cfile/tistory/99A5BB3B5E2A1B0513",
-      ],
-      dayPlaceList: [
-        {
-          courseDate: "2022.04.15",
-          day: 1,
-          placeList: [
-            { name: "너희집", order: 1 },
-            { name: "몰운대", order: 1 },
-          ],
-        },
-        {
-          courseDate: "2022.04.16",
-          day: 2,
-          placeList: [
-            { name: "이기대", order: 1 },
-            { name: "부경대", order: 1 },
-          ],
-        },
-        {
-          courseDate: "2022.04.17",
-          day: 3,
-          placeList: [
-            { name: "우리집", order: 1 },
-            { name: "광안리", order: 1 },
-            { name: "국밥", order: 1 },
-          ],
-        },
-      ],
-    },
-  ];
+import { fullCourseDetailList } from "../../assets/dummyData/dummyData";
+import { customAxios } from "../../lib/customAxios";
+import { useEffect, useState } from "react";
+import { errorControl, loadingControl } from "../../redux/baseInfo/actions";
+import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
 
-  const fullCourseList = [
-    {
-      fullCourseId: 254,
-      title: "마이 풀코스",
-      thumbnailList: [
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-        "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
-        "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
-      ],
-      startOn: new Date("2022-03-17"),
-      finishedOn: new Date("2022-03-22"),
-      views: 2541234,
-    },
-    {
-      fullCourseId: 254,
-      title: "마이 풀코스",
-      thumbnailList: [
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-        "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
-        "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      ],
-      startOn: new Date("2022-02-28"),
-      finishedOn: new Date("2022-03-22"),
-      views: 2541234,
-    },
-    {
-      fullCourseId: 254,
-      title: "마이 풀코스",
-      thumbnailList: [
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-        "http://ojsfile.ohmynews.com/STD_IMG_FILE/2009/0109/IE001003508_STD.JPG",
-        "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      ],
-      startOn: new Date("2022-03-17"),
-      finishedOn: new Date("2022-03-22"),
-      views: 2541234,
-    },
-    {
-      fullCourseId: 254,
-      title: "마이 풀코스",
-      thumbnailList: [
-        "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      ],
-      startOn: new Date("2022-02-28"),
-      finishedOn: new Date("2022-03-22"),
-      views: 2541234,
-    },
-  ];
+function Main({
+  isLogin,
+  userId,
+  nowLoading,
+  errorControl,
+  loadingControl,
+}: Props) {
+  const [attrationList, setAttrationList] = useState([]);
+  const [restaurantList, setRestaurantList] = useState([]);
+  const [popularFullCourseList, setPopularFullCourseList] = useState([]);
+  const [myFullCourseList, setMyFullCourseList] = useState([]);
 
-  const placeList = [
-    {
-      placeId: 123,
-      name: "관광지",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
+  const getRestaurantRecommend = async () => {
+    loadingControl(true);
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `place/restaurant/${isLogin ? "mainRecommend" : "popular"}`,
+      });
+      console.log("음식데이터", res);
+      setRestaurantList(res.data);
+    } catch (e) {
+      console.log(e);
+      errorControl("음식점 정보를 불러오는데 실패했습니다.");
+    }
+    loadingControl(false);
+  };
 
-      address: "부산광역시 금정구 장전동",
-      averageScore: 3.2,
-      category: 0,
-      keywords: [
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-      ],
-    },
-    {
-      placeId: 124,
-      name: "다른 관광지",
-      thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
-      address: "부산광역시 금정구 장전동",
-      averageScore: 3.2,
-      category: 0,
-      keywords: [
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-      ],
-    },
-    {
-      placeId: 123,
-      name: "관광지",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      address: "부산광역시 금정구 장전동",
-      averageScore: 3.2,
-      category: 0,
-      keywords: [
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-      ],
-    },
-    {
-      placeId: 124,
-      name: "다른 관광지",
-      thumbnail: "https://t1.daumcdn.net/cfile/tistory/197F26384EED897C12",
+  const getAttrationRecommend = async () => {
+    loadingControl(true);
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `place/attraction/${isLogin ? "mainRecommend" : "popular"}`,
+      });
+      console.log("관광데이터", res);
+      setAttrationList(res.data);
+    } catch (e) {
+      console.log(e);
+      errorControl("관광지 정보를 불러오는데 실패했습니다.");
+    }
+    loadingControl(false);
+  };
 
-      address: "부산광역시 금정구 장전동",
-      averageScore: 3.2,
-      category: 0,
-      keywords: [
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-        "국밥",
-        "소주",
-      ],
-    },
-  ];
+  const getPopularFullCourse = async () => {
+    loadingControl(true);
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: "fullCourse/popular",
+      });
+      console.log("추천풀코스데이터", res);
+      setPopularFullCourseList(res.data);
+    } catch (e) {
+      console.log(e);
+      errorControl("풀코스 정보를 불러오는데 실패했습니다.");
+    }
+    loadingControl(false);
+  };
+
+  const getMyFullCourse = async () => {
+    loadingControl(true);
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `/users/${userId}/userFullCourse`,
+        params: {
+          page: 0,
+          size: 4,
+        },
+      });
+      console.log("내풀코스데이터", res);
+      setMyFullCourseList(res.data.content);
+    } catch (e) {
+      console.log(e);
+    }
+    loadingControl(false);
+  };
+
+  const getInfo = () => {
+    getRestaurantRecommend();
+    getAttrationRecommend();
+    getPopularFullCourse();
+    if (isLogin) {
+      console.log("내풀코스 내놔라");
+      getMyFullCourse();
+    }
+  };
+
+  useEffect(() => {
+    console.log("-----");
+    getInfo();
+  }, []);
 
   return (
-    <Stack spacing={10}>
-      {isLogin ? (
-        <MyFullCourse
-          fullCourseDetailList={fullCourseDetailList}
-        ></MyFullCourse>
-      ) : (
-        <MainBackground></MainBackground>
-      )}
-      <FullCourseCardList
-        fullCourseList={fullCourseList}
-        title="인기 풀코스"
-      ></FullCourseCardList>
-      <PlaceCardList placeList={placeList} title="관광지"></PlaceCardList>
-      <PlaceCardList placeList={placeList} title="맛집"></PlaceCardList>
-    </Stack>
+    <>
+      <Notice></Notice>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={nowLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Stack spacing={10}>
+        {isLogin && myFullCourseList.length > 0 ? (
+          <MyFullCourse fullCourseDetailList={myFullCourseList}></MyFullCourse>
+        ) : (
+          <MainBackground></MainBackground>
+        )}
+        <FullCourseCardList
+          fullCourseList={popularFullCourseList}
+          title="인기 풀코스"
+        ></FullCourseCardList>
+        <PlaceCardList placeList={attrationList} title="관광지"></PlaceCardList>
+        <PlaceCardList placeList={restaurantList} title="맛집"></PlaceCardList>
+      </Stack>
+    </>
   );
 }
 
-const mapStateToProps = ({ account }: AccountReducer) => ({
+const mapStateToProps = ({ account, baseInfo }: AccountReducer) => ({
   isLogin: account.isLogin,
+  userId: account.userId,
+
+  nowLoading: baseInfo.nowLoading,
 });
 
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    errorControl: (errMessage: string) => errorControl(dispatch, errMessage),
+    loadingControl: (nowLoading: boolean) =>
+      loadingControl(dispatch, nowLoading),
+  };
+};
 
-export default connect(mapStateToProps)(Main);
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

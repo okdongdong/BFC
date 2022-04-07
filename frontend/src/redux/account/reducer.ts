@@ -1,6 +1,8 @@
 import { AnyAction } from "redux";
 import { NavUserInfo } from "../../types/account";
 import {
+  SET_PROFILE_IMG,
+  SET_USER_INFO,
   USER_LOGIN_FAILURE,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
@@ -11,6 +13,10 @@ interface AccountStateType extends NavUserInfo {
   loading: boolean;
   err?: any;
   isLogin: boolean;
+  gender: boolean;
+  birthday: string;
+  password: string;
+  passwordConfirmation: string;
 }
 
 const initialState: AccountStateType = {
@@ -19,6 +25,10 @@ const initialState: AccountStateType = {
   profileImg: null,
   loading: false,
   isLogin: false,
+  gender: false,
+  birthday: "",
+  password: "",
+  passwordConfirmation: "",
 };
 
 const accountReducer = (
@@ -47,6 +57,17 @@ const accountReducer = (
     case USER_LOGOUT:
       return {
         ...initialState,
+      };
+    case SET_PROFILE_IMG:
+      return {
+        ...state,
+        profileImg: action.payload,
+      };
+
+    case SET_USER_INFO:
+      return {
+        ...state,
+        ...action.payload,
       };
 
     default:

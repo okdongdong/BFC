@@ -4,7 +4,6 @@ import com.busanfullcourse.bfc.api.request.ChangePasswordReq;
 import com.busanfullcourse.bfc.api.request.UserDeleteReq;
 import com.busanfullcourse.bfc.api.request.UserUpdateReq;
 import com.busanfullcourse.bfc.api.response.*;
-import com.busanfullcourse.bfc.api.service.FullCourseService;
 import com.busanfullcourse.bfc.api.service.InterestService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,7 +25,6 @@ public class UserController {
 
     private final UserService userService;
     private final InterestService interestService;
-    private final FullCourseService fullCourseService;
 
     @GetMapping("/{nickname}/profile")
     public ResponseEntity<UserProfileRes> getUserProfile(@PathVariable String nickname) {
@@ -33,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<MyInfoRes> getMyInfo(@PathVariable Long userId) {
+    public ResponseEntity<MyInfoRes> getMyInfo(@PathVariable Long userId) throws IllegalAccessException {
         return ResponseEntity.ok(userService.getMyInfo(userId));
     }
 
@@ -61,21 +60,36 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/follow")
-    public ResponseEntity<FollowRes> follow(@PathVariable Long userId) {
+    public ResponseEntity<FollowRes> follow(@PathVariable Long userId) throws IllegalAccessException {
         return ResponseEntity.ok(userService.follow(userId));
     }
 
+    @GetMapping("/{userId}/followFrom")
+    public ResponseEntity<List<FollowListRes>> followFromList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followFromList(userId));
+    }
+
+    @GetMapping("/{userId}/followTo")
+    public ResponseEntity<List<FollowListRes>> followToList(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.followToList(userId));
+    }
 
     @GetMapping("/{userId}/interest")
     public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
-                                                                       @PageableDefault(size = 4, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
+                                                                       @PageableDefault(size = 8, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(interestService.getMoreInterestPlace(userId, pageable));
     }
 
-    @GetMapping("/{userId}/like")
+    @GetMapping("/{userId}/userFullCourse")
+    public ResponseEntity<Page<FullCourseListRes>> getMoreUserFullCourse(@PathVariable Long userId,
+                                                                         @PageableDefault(size = 8, sort = "startedOn", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(userService.getMoreUserFullCourse(userId, pageable));
+    }
+
+    @GetMapping("/{userId}/likedFullCourse")
     public ResponseEntity<Page<FullCourseListRes>> getMoreLikedFullCourse(@PathVariable Long userId,
-                                                                          @PageableDefault(size = 4, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(fullCourseService.getMoreLikedFullCourse(userId, pageable));
+                                                                          @PageableDefault(size = 8, sort = "likeId", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(userService.getMoreLikedFullCourse(userId, pageable));
     }
 
 

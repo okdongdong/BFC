@@ -2,11 +2,14 @@ package com.busanfullcourse.bfc.api.controller;
 
 import com.busanfullcourse.bfc.api.request.ScoreReq;
 import com.busanfullcourse.bfc.api.response.*;
-import com.busanfullcourse.bfc.api.service.InterestService;
-import com.busanfullcourse.bfc.api.service.PlaceService;
-import com.busanfullcourse.bfc.api.service.ScoreService;
-import com.busanfullcourse.bfc.api.service.UserService;
+import com.busanfullcourse.bfc.api.service.*;
+import com.busanfullcourse.bfc.db.entity.Place;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,25 +24,47 @@ public class PlaceController {
     private final ScoreService scoreService;
     private final UserService userService;
     private final InterestService interestService;
+    private final ElasticSearchService searchService;
 
-    @GetMapping("/restaurant/{placeId}")
-    public ResponseEntity<RestaurantDetailRes> getRestaurantDetail(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.getRestaurantDetail(placeId));
+    @GetMapping("/{placeId}")
+    public ResponseEntity<PlaceDetailRes> getPlaceDetail(@PathVariable Long placeId) {
+        return ResponseEntity.ok(placeService.getPlaceDetail(placeId));
     }
 
-    @GetMapping("/attraction/{placeId}")
-    public ResponseEntity<AttractionDetailRes> getAttractionDetail(@PathVariable Long placeId) {
-        return ResponseEntity.ok(placeService.getAttractionDetail(placeId));
-    }
 
     @GetMapping("/restaurant/popular")
-    public ResponseEntity<List<RestaurantListRes>> getPopularRestaurantList() {
+    public ResponseEntity<List<PlaceListRes>> getPopularRestaurantList() {
         return ResponseEntity.ok(placeService.getPopularRestaurantList());
     }
 
     @GetMapping("/attraction/popular")
-    public ResponseEntity<List<AttractionListRes>> getPopularAttractionList() {
+    public ResponseEntity<List<PlaceListRes>> getPopularAttractionList() {
         return ResponseEntity.ok(placeService.getPopularAttractionList());
+    }
+
+    @GetMapping("/restaurant/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendRestaurantList() {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getMainRecommendRestaurantList(username));
+    }
+
+    @GetMapping("/attraction/mainRecommend")
+    public ResponseEntity<List<PlaceListRes>> getMainRecommendAttractionList() {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getMainRecommendAttractionList(username));
+    }
+
+    @GetMapping("/restaurant/recommend")
+    public ResponseEntity<List<PlaceListRes>> getRecommendRestaurantList() {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getRecommendRestaurantList(username));
+    }
+
+
+    @GetMapping("/attraction/recommend")
+    public ResponseEntity<List<PlaceListRes>> getRecommendAttractionList() {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getRecommendAttractionList(username));
     }
 
     @PostMapping("/{placeId}/score")
@@ -79,5 +104,68 @@ public class PlaceController {
     public ResponseEntity<Map<String, Boolean>> getPlaceInterest(@PathVariable Long placeId) {
         String username = userService.getCurrentUsername();
         return ResponseEntity.ok(interestService.getPlaceInterest(placeId, username));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<PlaceListRes>> searchPlace(@RequestParam String name,
+                                         @PageableDefault(size = 8)
+                                                 @SortDefault.SortDefaults({
+                                                         @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                                                         @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                                                 })
+                                                 Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchPlaceByName(name, pageable));
+    }
+    @GetMapping("/search2")
+    public ResponseEntity<Page<Place>> searchPlaceByJPA(@RequestParam String name,
+                                                  @PageableDefault(size = 8)
+                                                  @SortDefault.SortDefaults({
+                                                          @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                                                          @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                                                  })
+                                                          Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchPlaceByNameByJPA(name, pageable));
+    }
+
+    @GetMapping("/search/test")
+    public ResponseEntity<Page<Place>> searchAll(@PageableDefault(size = 8, sort = "placeId", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(searchService.searchAll(pageable));
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveAll() {
+        searchService.saveAll();
+        return ResponseEntity.ok("성공적으로 저장되었습니다.");
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteAll() {
+        searchService.deleteAll();
+        return ResponseEntity.ok("성공적으로 삭제되었습니다.");
+    }
+
+    @GetMapping("/search/near")
+    public ResponseEntity<Page<PlaceListRes>> searchByDistance(
+            @RequestParam Long scheduleId,
+            @RequestParam Integer distance,
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+            }) Pageable pageable
+            ) {
+        return ResponseEntity.ok(searchService.searchByDistance(scheduleId, distance, pageable));
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<Page<PlaceListRes>> getRecommendPlaceList(
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+            }) Pageable pageable
+    ) {
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(placeService.getRecommendPlaceList(username, pageable));
     }
 }

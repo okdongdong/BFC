@@ -1,35 +1,34 @@
 import PlaceCard from "./PlaceCard";
 import { PlaceCardListProps } from "../../types/main";
-import { styled } from "@mui/material";
+import { Container, Grid, styled } from "@mui/material";
 
+const TitleTextStyle = styled("h1")(() => ({
+  fontSize: 32,
+  marginBottom: 32,
+  fontFamily: "Sunflower, sans-serif",
+}));
 function PlaceCardList({ placeList, title }: PlaceCardListProps) {
-  const TitleTextStyle = styled("h1")(() => ({
-    fontSize: 32,
-    marginBottom: 32,
-    fontFamily: "Sunflower, sans-serif",
-  }));
-
-  const PlaceCardListStyle = styled("div")(() => ({
-    justifyContent: "center",
-    display: "flex",
-  }));
-
   return (
     <div>
       <TitleTextStyle>{title}</TitleTextStyle>
-      <PlaceCardListStyle>
-        {placeList.map((place) => (
-          <PlaceCard
-            placeId={place.placeId}
-            name={place.name}
-            thumbnail={place.thumbnail}
-            address={place.address}
-            averageScore={place.averageScore}
-            category={place.category}
-            keywords={place.keywords}
-          ></PlaceCard>
-        ))}
-      </PlaceCardListStyle>
+      <Container component="main" maxWidth="lg">
+        <Grid container spacing={2}>
+          {placeList.map((place, index) => (
+            <Grid item xs={6} md={3}>
+              <PlaceCard
+                key={index}
+                placeId={place.placeId}
+                name={place.name}
+                thumbnail={place.thumbnail}
+                address={place.address}
+                averageScore={place.averageScore}
+                category={place.category}
+                label={place.label}
+              ></PlaceCard>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
     </div>
   );
 }

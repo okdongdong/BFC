@@ -1,6 +1,5 @@
 package com.busanfullcourse.bfc.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,18 +41,27 @@ public class FullCourse {
     private User user;
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Sharing> sharings = new ArrayList<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<WishFood> wishFoods = new ArrayList<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<WishPlace> wishPlaces = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Like> likeList = new ArrayList<>();
 
     @Column(name = "like_count")
     private Integer likeCnt;

@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.ScoreRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Score;
 import com.busanfullcourse.bfc.db.entity.User;
@@ -24,19 +25,20 @@ public class ScoreService {
 
     public void setPlaceScore(Long placeId, String username, Float score) {
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
 
-
-        Float newAverageScore = (place.getAverageScore()*place.getScoreCount()+score)/(place.getScoreCount()+1);
+        Float newAverageScore = (place.getAverageScore() * place.getScoreCount() + score) / (place.getScoreCount() + 1);
         place.setAverageScore(newAverageScore);
-        place.setScoreCount(place.getScoreCount()+1);
+        place.setScoreCount(place.getScoreCount() + 1);
         placeRepository.save(place);
         scoreRepository.save(Score.builder()
-                        .place(place)
-                        .score(score)
-                        .user(user)
-                        .build());
+                .place(place)
+                .score(score)
+                .user(user)
+                .build());
     }
 
     public ScoreRes getPlaceScore(Long placeId, String username) {
@@ -54,11 +56,12 @@ public class ScoreService {
     public void updatePlaceScore(Long placeId, String username, Float newScore) throws IllegalAccessException {
         Score score = scoreRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
         if (!score.getUser().getUsername().equals(username)) {
-            throw new IllegalAccessException("본인이 아닙니다.");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
         Float oldScore = score.getScore();
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
-        Float newAverageScore = (place.getAverageScore()*place.getScoreCount()-oldScore+newScore)/(place.getScoreCount());
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
+        Float newAverageScore = (place.getAverageScore() * place.getScoreCount() - oldScore + newScore) / (place.getScoreCount());
 
         place.setAverageScore(newAverageScore);
         placeRepository.save(place);
@@ -70,13 +73,14 @@ public class ScoreService {
     public void deletePlaceScore(Long placeId, String username) throws IllegalAccessException {
         Score score = scoreRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
         if (!score.getUser().getUsername().equals(username)) {
-            throw new IllegalAccessException("본인이 아닙니다.");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
 
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException("장소가 없습니다."));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
         Float newAverageScore = (place.getAverageScore() * place.getScoreCount() - score.getScore()) / (place.getScoreCount() - 1);
         place.setAverageScore(newAverageScore);
-        place.setScoreCount(place.getScoreCount()-1);
+        place.setScoreCount(place.getScoreCount() - 1);
         placeRepository.save(place);
         scoreRepository.delete(scoreRepository.findByPlacePlaceIdAndUserUsername(placeId, username));
     }

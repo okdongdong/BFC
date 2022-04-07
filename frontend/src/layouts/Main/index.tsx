@@ -1,5 +1,6 @@
-import { styled } from "@mui/material";
+import { Stack, styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import Footer from "../Footer";
 import Navbar from "../Navbar";
 
 const MainLayout = () => {
@@ -12,18 +13,21 @@ const MainLayout = () => {
     overflow: "hidden",
   });
 
-  const MainStyle = styled("div")(({ theme }) => ({
+  const MainStyle = styled("div")({
     flexGrow: 1,
-    overflow: "auto",
-    marginTop: 108,
-  }));
+    overflow: "hidden",
+    marginTop: 80,
+  });
 
   return (
     <RootStyle>
-      <Navbar />
-      <MainStyle>
-        <Outlet />
-      </MainStyle>
+      <Stack sx={{ width: "100%" }}>
+        <Navbar />
+        <MainStyle>
+          <Outlet />
+        </MainStyle>
+        <Footer />
+      </Stack>
     </RootStyle>
   );
 };
