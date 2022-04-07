@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, KeyboardEvent } from "react";
 
 import kakaoLogo from "../../assets/img/kakaoLogo.png";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -69,7 +69,11 @@ function LoginForm({ userLogin, isLogin }: Props) {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const onKeyPress = (e: KeyboardEvent<HTMLImageElement>) => {
+    if (e.key === "Enter") {
+      login(); //enter누르면 작성
+    }
+  };
   const onEmailHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.currentTarget.value);
     console.log(event.currentTarget.value);
@@ -133,6 +137,7 @@ function LoginForm({ userLogin, isLogin }: Props) {
               id="password"
               autoComplete="current-password"
               onChange={onPasswordHandler}
+              onKeyPress={onKeyPress}
             />
             <Grid container>
               <Grid item xs>
