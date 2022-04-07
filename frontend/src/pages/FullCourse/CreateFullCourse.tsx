@@ -33,6 +33,7 @@ import { getPlaceDetail } from "../../redux/placeDetail/actions";
 
 import {
   resetPlaceListWithDistance,
+  resetPlaceListWithSurvey,
   resetSearchPlaceList,
 } from "../../redux/placeList/actions";
 import { setFinished, setPage } from "../../redux/schedule/actions";
@@ -76,18 +77,18 @@ function CreateFullCourse({
   fullCourseId,
   placeList,
   placeListWithDistance,
+  placeListWithSurvey,
   searchPlaceList,
   nowLoading,
   finished,
   selectedScheduleId,
   selectedPlaceId,
-  lat,
-  lng,
   isLogin,
   getPlaceDetail,
   setFinished,
   resetPlaceListWithDistance,
   resetSearchPlaceList,
+  resetPlaceListWithSurvey,
   createNewSchedule,
   updateSchedule,
   getFullCourseInfo,
@@ -102,10 +103,7 @@ function CreateFullCourse({
   const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
   const [recommendDistance, setRecommendDistance] = useState<number>(500);
 
-  // 인피니티 스크롤 관련 변수
-  const [nowPage, setNowPage] = useState<number>(0);
   const [placeName, setPlaceName] = useState<string>("");
-  const SIZE = 8;
 
   // 탭을 여닫는 변수
   const [expandedFullCourse, setExpandedFullCourse] = useState(true);
@@ -125,7 +123,7 @@ function CreateFullCourse({
       : nowFilterTypeIdx === 1
       ? placeListWithDistance
       : nowFilterTypeIdx === 2
-      ? placeList
+      ? placeListWithSurvey
       : searchPlaceList;
 
   const onDragEnd = (result: any) => {
@@ -211,6 +209,7 @@ function CreateFullCourse({
     setFinished(false);
     resetPlaceListWithDistance();
     resetSearchPlaceList();
+    resetPlaceListWithSurvey();
   }, [nowFilterTypeIdx, recommendDistance, selectedScheduleId]);
 
   useEffect(() => {
@@ -357,6 +356,7 @@ const mapStateToProps = ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
+  placeListWithSurvey: placeListReducer.placeListWithSurvey,
   searchPlaceList: placeListReducer.searchPlaceList,
   fullCourseId: createFullCourse.fullCourseId,
   nowLoading: baseInfo.nowLoading,
@@ -375,6 +375,7 @@ const mapDispatchToProps = (dispatch: any) => {
     updateSchedule: (newState: UpdateScheduleProps) =>
       dispatch(updateSchedule(newState)),
     resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
+    resetPlaceListWithSurvey: () => dispatch(resetPlaceListWithSurvey()),
     resetSearchPlaceList: () => {
       dispatch(resetSearchPlaceList());
     },

@@ -3,12 +3,14 @@ export const GET_PLACE_LIST = "GET_PLACE_LIST";
 export const SET_PLACE_LIST = "GET_PLACE_LIST";
 
 // 거리기반 장소목록 불러오기
-export const GET_PLACE_LIST_WITH_DISTANCE = "GET_PLACE_LIST_WITH_DISTANCE";
 export const SET_PLACE_LIST_WITH_DISTANCE = "SET_PLACE_LIST_WITH_DISTANCE";
 export const RESET_PLACE_LIST_WITH_DISTANCE = "RESET_PLACE_LIST_WITH_DISTANCE";
 
+// 설문기반 장소목록 불러오기
+export const SET_PLACE_LIST_WITH_SURVEY = "SET_PLACE_LIST_WITH_SURVEY";
+export const RESET_PLACE_LIST_WITH_SURVEY = "RESET_PLACE_LIST_WITH_SURVEY";
+
 // 장소이름으로 장소검색
-export const GET_SEARCH_PLACE_LIST = "GET_SEARCH_PLACE_LIST";
 export const SET_SEARCH_PLACE_LIST = "SET_SEARCH_PLACE_LIST";
 export const RESET_SEARCH_PLACE_LIST = "RESET_SEARCH_PLACE_LIST";
 
@@ -16,6 +18,11 @@ export const RESET_SEARCH_PLACE_LIST = "RESET_SEARCH_PLACE_LIST";
 export interface PlaceListInfoForGet {
   distance: number; // 미터 단위
   scheduleId: number;
+  page: number;
+  size: number;
+}
+export interface SurveyPlaceListInfoForGet {
+  userId: number;
   page: number;
   size: number;
 }
