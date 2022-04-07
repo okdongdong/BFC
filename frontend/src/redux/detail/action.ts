@@ -6,10 +6,10 @@ import {
 } from "../../types/detail";
 import { SET_FULLCOURSE_DATA, SET_PLACE_DATA, SET_REVIEW_LIST } from "./type";
 
-export const setPlaceData = (profileData: SetPlaceData) => {
+export const setPlaceData = (placeData: SetPlaceData) => {
   return {
     type: SET_PLACE_DATA,
-    payload: profileData,
+    payload: placeData,
   };
 };
 export const setReviewList = (reviewListData: SetReview[]) => {
