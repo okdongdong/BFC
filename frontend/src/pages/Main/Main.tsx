@@ -1,23 +1,15 @@
-import { Backdrop, Stack, CircularProgress } from "@mui/material";
+import { Stack } from "@mui/material";
 import FullCourseCardList from "../../components/Main/FullCourseCardList";
 import MainBackground from "../../components/Main/MainBackgroundCarousel";
 import MyFullCourse from "../../components/Main/MyFullCourse/MyFullCourse";
 import PlaceCardList from "../../components/Main/PlaceCardList";
 import { connect } from "react-redux";
 import { AccountReducer } from "../../redux/rootReducer";
-import { fullCourseDetailList } from "../../assets/dummyData/dummyData";
 import { customAxios } from "../../lib/customAxios";
 import { useEffect, useState } from "react";
 import { errorControl, loadingControl } from "../../redux/baseInfo/actions";
-import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
 
-function Main({
-  isLogin,
-  userId,
-  nowLoading,
-  errorControl,
-  loadingControl,
-}: Props) {
+function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
   const [attrationList, setAttrationList] = useState([]);
   const [restaurantList, setRestaurantList] = useState([]);
   const [popularFullCourseList, setPopularFullCourseList] = useState([]);
@@ -107,13 +99,6 @@ function Main({
 
   return (
     <>
-      <Notice></Notice>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={nowLoading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
       <Stack spacing={10}>
         {isLogin && myFullCourseList.length > 0 ? (
           <MyFullCourse fullCourseDetailList={myFullCourseList}></MyFullCourse>
@@ -134,8 +119,6 @@ function Main({
 const mapStateToProps = ({ account, baseInfo }: AccountReducer) => ({
   isLogin: account.isLogin,
   userId: account.userId,
-
-  nowLoading: baseInfo.nowLoading,
 });
 
 const mapDispatchToProps = (dispatch: any) => {

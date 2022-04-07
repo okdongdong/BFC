@@ -1,21 +1,14 @@
 // import { Map, MapMarker } from "react-kakao-maps-sdk";
 
-import { Box, Button, Icon, IconButton, Stack } from "@mui/material";
+import { Button, Icon, Stack } from "@mui/material";
 import { useEffect } from "react";
-import fullCourseCircle from "../../../assets/img/full_course_circle.png";
-import fullCourseCircleHover from "../../../assets/img/full_course_circle_hover.png";
-import fullCourseCircleClicked from "../../../assets/img/full_course_circle_clicked.png";
-import {
-  CustomOverlayMap,
-  Map,
-  MapMarker,
-  Polyline,
-} from "react-kakao-maps-sdk";
+import { Map, Polyline } from "react-kakao-maps-sdk";
 import { connect } from "react-redux";
-import { PlaceCard, PlaceCardList } from "../../../redux/placeList/types";
+import { PlaceCard } from "../../../redux/placeList/types";
 import { useState } from "react";
 import FullCourseKakaoMapMarkers from "./FullCourseKakaoMapMarkers";
 import PlaceKakaoMapMarkers from "./PlaceKakaoMapMarkers";
+import placeMarkerBlue from "../../../assets/img/place_marker_blue.png";
 
 const { kakao } = window;
 
@@ -53,6 +46,7 @@ function FullCourseKakaoMap({
   fullCourseList,
   placeList,
   placeListWithDistance,
+  placeListWithSurvey,
   searchPlaceList,
   nowCenter,
   selectedPlaceId,
@@ -72,7 +66,7 @@ function FullCourseKakaoMap({
       : nowFilterTypeIdx === 1
       ? placeListWithDistance
       : nowFilterTypeIdx === 2
-      ? placeList
+      ? placeListWithSurvey
       : searchPlaceList;
 
   const setCenter = ({ lat, lng }: { lat: number; lng: number }) => {
@@ -197,6 +191,7 @@ const mapStateToProps = ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
+  placeListWithSurvey: placeListReducer.placeListWithSurvey,
   searchPlaceList: placeListReducer.searchPlaceList,
   selectedPlaceId: placeDetailReducer.selectedPlaceId,
 });

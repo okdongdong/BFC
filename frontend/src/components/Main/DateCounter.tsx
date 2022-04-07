@@ -26,7 +26,7 @@ function DateCounter({ startedOn, finishedOn }: DateCounterProps) {
 
   return (
     <CardStyle>
-      <DayCountStyle>{dayDiff}</DayCountStyle>
+      <DayCountStyle>{dayDiff + 1}</DayCountStyle>
       <br />
       <span>{dayDiff === 1 ? "DAY" : "DAYS"}</span>
     </CardStyle>
