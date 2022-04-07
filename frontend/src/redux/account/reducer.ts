@@ -4,8 +4,6 @@ import {
   RESET_USER_INFO,
   SET_PROFILE_IMG,
   SET_USER_INFO,
-  USER_LOGIN_FAILURE,
-  USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
 } from "./types";
 
@@ -36,22 +34,10 @@ const accountReducer = (
   action: AnyAction
 ) => {
   switch (action.type) {
-    case USER_LOGIN_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-
     case USER_LOGIN_SUCCESS:
       return {
         ...action.payload,
         isLogin: true,
-      };
-
-    case USER_LOGIN_FAILURE:
-      return {
-        ...state,
-        err: action.payload,
       };
 
     case SET_PROFILE_IMG:
