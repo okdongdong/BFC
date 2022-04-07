@@ -70,7 +70,6 @@ const mapStateToProps = ({ place }: any) => {
   return {
     name: place.name,
     averageScore: place.averageScore,
-    // placeId: place.placeId,
     lat: place.lat,
     lng: place.lon,
   };

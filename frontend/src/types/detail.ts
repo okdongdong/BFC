@@ -13,6 +13,7 @@ export interface SetPlaceData {
   averageScore: number;
   thumbnail: string | null;
   menus?: Array<string>;
+  scoreCount: number;
 }
 export interface SetReview {
   index: number;
