@@ -16,10 +16,12 @@ export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
   fullCourseDate: Array<string | null>;
   fullCourseId?: number;
-  fullCourseTitle?: number;
+  fullCourseTitle?: string;
 }
 
 const initialState: CreateFullCourseDnd = {
+  fullCourseId: 0,
+  fullCourseTitle: "",
   fullCourseList: [[]],
   fullCourseDate: [null, null],
 };
