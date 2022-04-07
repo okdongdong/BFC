@@ -53,28 +53,29 @@ function MyFullCourse({ myList, nickname }: Props) {
   const navigate = useNavigate();
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
-      baseCard.push(
-        <CardStyle
-          onClick={() => navigate(`/fullcourse/${myList[i].fullCourseId}`)}
-        >
-          <CardActionArea>
-            <FullCouresThumbnail
-              thumbnailList={myList[i].thumbnailLlist}
-            ></FullCouresThumbnail>
-            <CardContentStyle>
-              <Box sx={{ alignItems: "center" }}>
-                <LikeCount likeCount={0}></LikeCount>
-                <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
-              </Box>
-              <Box sx={{ flexGrow: 1 }} />
-              <DateCounter
-                startOn={new Date(myList[i].startOn)}
-                finishedOn={new Date(myList[i].finishedOn)}
-              ></DateCounter>
-            </CardContentStyle>
-          </CardActionArea>
-        </CardStyle>
-      );
+      baseCard
+        .push
+        // <CardStyle
+        //   onClick={() => navigate(`/fullcourse/${myList[i].fullCourseId}`)}
+        // >
+        //   <CardActionArea>
+        //     <FullCouresThumbnail
+        //       thumbnailList={myList[i].thumbnailLlist}
+        //     ></FullCouresThumbnail>
+        //     <CardContentStyle>
+        //       <Box sx={{ alignItems: "center" }}>
+        //         <LikeCount likeCount={0}></LikeCount>
+        //         <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
+        //       </Box>
+        //       <Box sx={{ flexGrow: 1 }} />
+        //       <DateCounter
+        //         startedOn={new Date(myList[i].startOn)}
+        //         finishedOn={new Date(myList[i].finishedOn)}
+        //       ></DateCounter>
+        //     </CardContentStyle>
+        //   </CardActionArea>
+        // </CardStyle>
+        ();
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
     }

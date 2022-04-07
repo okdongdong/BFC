@@ -20,21 +20,26 @@ const style = {
   textAlign: "center",
 };
 
-interface PreSurveyModalProps {
+interface ExitCreateModalProps {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PreSurveyModal = ({
+const ExitCreateModal = ({
   openModal,
   setOpenModal,
   resetFullCourse,
-}: PreSurveyModalProps & Props) => {
+}: ExitCreateModalProps & Props) => {
+  const navigate = useNavigate();
+
   const handleClose = () => {
-    resetFullCourse();
     setOpenModal(false);
   };
-  const navigate = useNavigate();
+
+  const exitHandler = () => {
+    resetFullCourse();
+    navigate("/");
+  };
 
   return (
     <div>
@@ -51,10 +56,10 @@ const PreSurveyModal = ({
         <Fade in={openModal}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              이전에 작성중인 풀코스가 있습니다.
+              작성된 내용은 자동저장됩니다.
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              작성중인 풀코스를 불러올까요?
+              정말 나갈까요?
             </Typography>
             <div
               style={{
@@ -63,12 +68,10 @@ const PreSurveyModal = ({
                 marginTop: 32,
               }}
             >
-              <Button onClick={() => handleClose()} color="error">
-                새로 작성하기
+              <Button onClick={() => exitHandler()} color="error">
+                나가기
               </Button>
-              <Button onClick={() => navigate("/fullcourse/create")}>
-                불러오기
-              </Button>
+              <Button onClick={() => handleClose()}>계속작성하기</Button>
             </div>
           </Box>
         </Fade>
@@ -88,4 +91,4 @@ const mapDispatchToProps = (dispatch: any) => {
 type Props = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps, mapDispatchToProps)(PreSurveyModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ExitCreateModal);

@@ -8,6 +8,7 @@ import CollapseContainer from "../../components/FullCourse/CreateFullCourse/Coll
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
 import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
 import { reorder } from "../../components/FullCourse/CreateFullCourse/dndFunction";
+import ExitCreateModal from "../../components/FullCourse/CreateFullCourse/ExitCreateModal";
 import FullCourseHeader from "../../components/FullCourse/CreateFullCourse/FullCourseHeader";
 import FullCourseKakaoMap from "../../components/FullCourse/CreateFullCourse/FullCourseKakaoMap";
 import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
@@ -107,6 +108,7 @@ function CreateFullCourse({
   const [expandedFullCourse, setExpandedFullCourse] = useState(true);
   const [expandedPlace, setExpandedPlace] = useState(true);
   const [expandedPlaceDetail, setExpandedPlaceDetail] = useState(true);
+  const [openExitModal, setOpenExitModal] = useState(false);
 
   // 지도 중심좌표관련
   const [nowCenter, setNowCenter] = useState<{ lat: number; lng: number }>({
@@ -255,6 +257,7 @@ function CreateFullCourse({
               pickedDay={pickedDay}
               setPickedDay={setPickedDay}
               setDayChange={setDayChange}
+              setOpenModal={setOpenExitModal}
             ></DayBar>
             <CollapseContainer
               expanded={expandedFullCourse}
@@ -326,6 +329,10 @@ function CreateFullCourse({
           </div>
         </DragDropContext>
       </div>
+      <ExitCreateModal
+        openModal={openExitModal}
+        setOpenModal={setOpenExitModal}
+      ></ExitCreateModal>
     </>
   );
 }
