@@ -15,12 +15,7 @@ import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { SignupUserInfo } from "../../types/account";
 import { customAxios, customAxiosDjango } from "../../lib/customAxios";
-import {
-  errorControl,
-  loadingControl,
-  setErrorMessage,
-  setNowLoading,
-} from "../../redux/baseInfo/actions";
+import { errorControl, loadingControl } from "../../redux/baseInfo/actions";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -100,19 +95,19 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         },
       });
 
+      console.log(res);
       if (res.status !== 200) {
         throw new Error("SinupFailed");
       }
 
       const userId = res.data.userId;
 
+      navigate("/login");
       const res2 = await customAxiosDjango({
         method: "get",
         url: `recommend/new_user/${userId}`,
       });
-
-      navigate("/login");
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
       if (e.message === "SinupFailed") {
         errorControl("회원가입에 실패했습니다.");

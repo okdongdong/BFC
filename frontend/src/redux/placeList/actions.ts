@@ -2,11 +2,8 @@
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import {
-  GET_PLACE_LIST,
-  GET_PLACE_LIST_WITH_DISTANCE,
   PlaceListInfoForGet,
   PlaceCardList,
-  PlaceInfo,
   PlaceCard,
   SET_PLACE_LIST,
   SET_PLACE_LIST_WITH_DISTANCE,
