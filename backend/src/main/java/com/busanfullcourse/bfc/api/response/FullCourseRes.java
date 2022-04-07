@@ -71,6 +71,7 @@ public class FullCourseRes {
         private Double lat;
         private Double lon;
         private String thumbnail;
+        private Float averageScore;
 
         public static List<ScheduleDetail> of(List<Schedule> list) {
             List<ScheduleDetail> res = new ArrayList<>();
@@ -99,6 +100,7 @@ public class FullCourseRes {
                             .lat(schedule.getPlace().getLat())
                             .lon(schedule.getPlace().getLon())
                             .thumbnail(schedule.getPlace().getThumbnail())
+                            .averageScore(schedule.getPlace().getAverageScore())
                             .build());
                 }
             }
