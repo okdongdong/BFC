@@ -2,6 +2,7 @@ import { Button, Modal, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 //모달 스타일
 const useStyles = makeStyles((theme: Theme) => ({
@@ -74,23 +75,35 @@ function FollowModal({ open, setOpen, contentList, title }: ModalProps) {
           </div>
           <div>
             {contentList.map((item, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: "flex",
-                  marginTop: "8px",
-                  alignItems: "center",
-                }}
+              <Link
+                to={`/profile/${item.nickname}`}
+                style={{ textDecoration: "none" }}
               >
-                <img
-                  className={classes.myImg}
-                  src={item.profileImg}
-                  alt="fullCourseImg"
-                ></img>
+                <div
+                  key={idx}
+                  style={{
+                    display: "flex",
+                    marginTop: "8px",
+                    alignItems: "center",
+                  }}
+                >
+                  {item.profileImg ? (
+                    <img
+                      className={classes.myImg}
+                      src={item.profileImg}
+                      alt="fullCourseImg"
+                    ></img>
+                  ) : (
+                    <img
+                      className={classes.myImg}
+                      src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+                      alt="fullCourseImg"
+                    ></img>
+                  )}
 
-                <p>{item.nickname}</p>
+                  <p>{item.nickname}</p>
 
-                {item.isFollowing ? (
+                  {/* {item.isFollowing ? (
                   <Button
                     variant="outlined"
                     onClick={() => {
@@ -122,8 +135,9 @@ function FollowModal({ open, setOpen, contentList, title }: ModalProps) {
                   >
                     팔로우
                   </Button>
-                )}
-              </div>
+                )} */}
+                </div>
+              </Link>
             ))}
           </div>
         </Box>

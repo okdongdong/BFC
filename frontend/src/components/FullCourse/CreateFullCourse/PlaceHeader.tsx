@@ -6,46 +6,55 @@ import {
   TextField,
   styled,
 } from "@mui/material";
-import React, { useState } from "react";
 import { connect } from "react-redux";
-import { getSearchPlaceList } from "../../../redux/placeList/actions";
+import {
+  getSearchPlaceList,
+  resetSearchPlaceList,
+} from "../../../redux/placeList/actions";
 import { PlaceSearchInfo } from "../../../redux/placeList/types";
+import { addPage } from "../../../redux/schedule/actions";
 
 interface PlaceHeaderProps {
-  nowPage: number;
-  setNowPage: React.Dispatch<React.SetStateAction<number>>;
-  SIZE: number;
+  placeName: string;
+  nowFilterTypeIdx: number;
+  recommendDistance: number;
+  setNowFilterTypeIdx: React.Dispatch<React.SetStateAction<number>>;
+  setRecommendDistance: React.Dispatch<React.SetStateAction<number>>;
+  setPlaceName: React.Dispatch<React.SetStateAction<string>>;
 }
+const SearchInput = styled(TextField)({
+  "& label.Mui-focused": {
+    color: "rgba(0,0,0,0)",
+  },
+  "& .MuiInput-underline:after": {
+    borderBottomColor: "rgba(0,0,0,0)",
+  },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+    "&:hover fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "rgba(0,0,0,0)",
+    },
+  },
+});
 
 function PlaceHeader({
   getSearchPlaceList,
-  nowPage,
-  setNowPage,
-  SIZE,
+  nowFilterTypeIdx,
+  page,
+  recommendDistance,
+  setNowFilterTypeIdx,
+  setRecommendDistance,
+  resetSearchPlaceList,
+  addPage,
+  placeName,
+  setPlaceName,
 }: Props & PlaceHeaderProps) {
   const filterType = ["평점순", "거리순", "사전설문순"];
-  const [placeName, setPlaceName] = useState<string>("");
-  const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
-
-  const SearchInput = styled(TextField)({
-    "& label.Mui-focused": {
-      color: "rgba(0,0,0,0)",
-    },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "rgba(0,0,0,0)",
-    },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-      "&:hover fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "rgba(0,0,0,0)",
-      },
-    },
-  });
 
   const FilterTextStyle = styled("div")((attr: { idx: number }) => ({
     backgroundColor: `${attr.idx === nowFilterTypeIdx ? "#57A3EC" : "white"}`,
@@ -58,6 +67,23 @@ function PlaceHeader({
     width: "100%",
     position: "relative",
     fontSize: 20,
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#9ACBF2",
+      color: "white",
+    },
+  }));
+  const DistanceTextStyle = styled("div")((attr: { val: number }) => ({
+    backgroundColor: `${attr.val === recommendDistance ? "#57A3EC" : "white"}`,
+    color: `${attr.val !== recommendDistance || "white"}`,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "15px",
+    height: 30,
+    width: "100%",
+    position: "relative",
+    fontSize: 12,
     fontWeight: "bold",
     "&:hover": {
       backgroundColor: "#9ACBF2",
@@ -81,38 +107,32 @@ function PlaceHeader({
 
   const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
-      getSearchPlaceList({
-        placeName: placeName,
-        page: nowPage,
-        size: SIZE,
-      });
+      onSearchHandler();
     }
   };
 
   const onSearchHandler = () => {
-    getSearchPlaceList({
-      placeName: placeName,
-      page: nowPage,
-      size: SIZE,
-    });
+    resetSearchPlaceList();
+    setNowFilterTypeIdx(3);
   };
 
   const onSearchChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(event);
     setPlaceName(event.target.value);
   };
 
   return (
     <div
       style={{
-        marginTop: 32,
+        paddingTop: 32,
         width: "100%",
         justifyContent: "center",
         display: "flex",
         position: "sticky",
         top: 0,
+        zIndex: 500,
+        backgroundColor: "white",
       }}
     >
       <div
@@ -155,19 +175,43 @@ function PlaceHeader({
             </FilterTextBox>
           ))}
         </Stack>
+
+        {nowFilterTypeIdx !== 1 || (
+          <Stack direction="row" spacing={1} sx={{ height: 50, marginTop: 1 }}>
+            {[500, 1000, 2000, 3000, 4000].map((val, idx) => (
+              <DistanceTextStyle
+                key={idx}
+                val={val}
+                onClick={() => setRecommendDistance(val)}
+              >
+                <div style={{ zIndex: 400 }}>
+                  {val < 1000 ? (
+                    <span>{val}m</span>
+                  ) : (
+                    <span>{Math.floor(val / 1000)}km</span>
+                  )}
+                </div>
+              </DistanceTextStyle>
+            ))}
+          </Stack>
+        )}
       </div>
     </div>
   );
 }
 
-const mapStateToProps = ({ createFullCourse }: any) => {
-  return {};
+const mapStateToProps = ({ schedule }: any) => {
+  return { page: schedule.page };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getSearchPlaceList: (placeSearchInfo: PlaceSearchInfo) =>
       dispatch(getSearchPlaceList(placeSearchInfo)),
+    resetSearchPlaceList: () => {
+      dispatch(resetSearchPlaceList());
+    },
+    addPage: (page: number) => dispatch(addPage(page)),
   };
 };
 

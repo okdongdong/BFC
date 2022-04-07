@@ -4,25 +4,34 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import IconButton from "@mui/material/IconButton";
 import { pink } from "@mui/material/colors";
 import { customAxios } from "../../lib/customAxios";
-function PlaceLike() {
+import { connect } from "react-redux";
+function PlaceLike({ placeId }: Props) {
   const [checked, setChecked] = React.useState(false);
-  const handleChange = () => {
-    onClick();
-    setChecked((prev) => !prev);
+
+  const fetchData = async () => {
+    const result = await customAxios({
+      method: "get",
+      url: `/place/${placeId}/interest`,
+    });
+    setChecked(result.data.interested);
   };
-  const place_id = 1; //데이터 가져옴
+  React.useEffect(() => {
+    fetchData();
+  }, []);
   function onClick() {
     customAxios({
       method: "post",
-      url: `/place/${place_id}/interest`,
+      url: `/place/${placeId}/interest`,
     }).then((res) => {
-      console.log(res);
+      setChecked(res.data.interested);
+
+      fetchData();
     });
   }
   return (
-    <div onClick={handleChange} style={{ marginRight: "100%" }}>
+    <div onClick={onClick} style={{ marginRight: "100%" }}>
       <IconButton>
-        {checked ? (
+        {checked === true ? (
           <FavoriteIcon sx={{ color: pink[500] }}></FavoriteIcon>
         ) : (
           <FavoriteBorderIcon sx={{ color: pink[500] }}></FavoriteBorderIcon>
@@ -31,4 +40,11 @@ function PlaceLike() {
     </div>
   );
 }
-export default PlaceLike;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    placeId: place.placeId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceLike);

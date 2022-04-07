@@ -31,9 +31,18 @@ interface FullCourseKakaoMapProps {
   expandedFullCourse: boolean;
   expandedPlace: boolean;
   expandedPlaceDetail: boolean;
+  nowFilterTypeIdx: number;
+  nowCenter: { lat: number; lng: number };
+  setNowCenter: React.Dispatch<
+    React.SetStateAction<{
+      lat: number;
+      lng: number;
+    }>
+  >;
 }
 
 function FullCourseKakaoMap({
+  nowFilterTypeIdx,
   expandedFullCourse,
   expandedPlace,
   expandedPlaceDetail,
@@ -44,16 +53,25 @@ function FullCourseKakaoMap({
   placeList,
   placeListWithDistance,
   searchPlaceList,
+  nowCenter,
+  selectedPlaceId,
+  setNowCenter,
 }: FullCourseKakaoMapProps & Props) {
   const [dailyFullCoursePath, setDailyFullCoursePath] = useState<Array<LatLng>>(
     []
   );
-  const [nowCenter, setNowCenter] = useState<{ lat: number; lng: number }>({
-    lat: lat,
-    lng: lng,
-  });
+
   const [map, setMap] = useState<any>();
   const [expandCnt, setExpandCnt] = useState<number>(0);
+
+  const nowSelectedPlaceList = () =>
+    nowFilterTypeIdx === 0
+      ? placeList
+      : nowFilterTypeIdx === 1
+      ? placeListWithDistance
+      : nowFilterTypeIdx === 2
+      ? placeList
+      : searchPlaceList;
 
   const setCenter = ({ lat, lng }: { lat: number; lng: number }) => {
     const newLng =
@@ -73,34 +91,6 @@ function FullCourseKakaoMap({
     if (!map) return;
     map.setLevel(map.getLevel() + 1);
   };
-
-  const positions = [
-    { title: "aaa", latlng: { lat: 35.1797913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1897913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1757913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1797913, lng: 129.064987 } },
-    { title: "aaa", latlng: { lat: 35.1897913, lng: 129.075987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.054987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.084987 } },
-    {
-      title: "카카오",
-      latlng: { lat: 33.450705, lng: 126.570677 },
-    },
-    {
-      title: "생태연못",
-      latlng: { lat: 33.450936, lng: 126.569477 },
-    },
-    {
-      title: "텃밭",
-      latlng: { lat: 33.450879, lng: 126.56994 },
-    },
-    {
-      title: "근린공원",
-      latlng: { lat: 33.451393, lng: 126.570738 },
-    },
-  ];
-
   const createDailyFullCoursePath = (placeCardList: PlaceCard[]) => {
     const tempPath: Array<LatLng> = [];
     placeCardList.map((placeCard) => {
@@ -151,7 +141,7 @@ function FullCourseKakaoMap({
         onCreate={(map) => setMap(map)}
       >
         <PlaceKakaoMapMarkers
-          placeCardList={placeList}
+          placeCardList={nowSelectedPlaceList()}
           setCenter={setCenter}
         ></PlaceKakaoMapMarkers>
         <Polyline
@@ -162,6 +152,7 @@ function FullCourseKakaoMap({
           strokeStyle={"dashed"} // 선의 스타일입니다
         />
         <FullCourseKakaoMapMarkers
+          selectedPlaceId={selectedPlaceId}
           placeCardList={fullCourseList[pickedDay]}
           setCenter={setCenter}
         ></FullCourseKakaoMapMarkers>
@@ -196,11 +187,16 @@ function FullCourseKakaoMap({
   );
 }
 
-const mapStateToProps = ({ createFullCourse, placeListReducer }: any) => ({
+const mapStateToProps = ({
+  createFullCourse,
+  placeListReducer,
+  placeDetailReducer,
+}: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
   searchPlaceList: placeListReducer.searchPlaceList,
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
 });
 
 const mapDispatchToProps = (dispatch: any) => {

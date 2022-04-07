@@ -1,6 +1,6 @@
 // import axios from "axios";
 import { Dispatch } from "redux";
-import { customAxios } from "../../lib/customAxios";
+import { customAxios, customAxiosDjango } from "../../lib/customAxios";
 import {
   AddCustomPlaceProps,
   ADD_CUSTOM_PLACE,
@@ -11,8 +11,10 @@ import {
   CREATE_FULL_COURSE_SUCCESS,
   CustomPlaceInfoProps,
   DeleteScheduleProps,
+  DELETE_CARD,
   FullCourseListProps,
   MOVE_CARD,
+  RESET_FULL_COURSE,
   SET_FULL_COURSE_DATE,
   UpdateScheduleProps,
   UpdateScheduleRequestDataProps,
@@ -40,6 +42,13 @@ export const createCard = (newState: FullCourseListProps) => {
   };
 };
 
+const deleteCard = (delInfo: { day: number; sequence: number }) => {
+  return {
+    type: DELETE_CARD,
+    payload: delInfo,
+  };
+};
+
 // 나만의 장소 일정에 추가
 const addCustomPlace = (newState: AddCustomPlaceProps) => {
   return {
@@ -59,6 +68,12 @@ export const createFullCourseSuccess = (fullCourseId: number) => {
   return {
     type: CREATE_FULL_COURSE_SUCCESS,
     payload: fullCourseId,
+  };
+};
+
+export const resetFullCourse = () => {
+  return {
+    type: RESET_FULL_COURSE,
   };
 };
 
@@ -82,9 +97,15 @@ export const creatNewFullCourse = (
       const fullCourseId = res.data.fullCourseId;
       dispatch(createFullCourseSuccess(fullCourseId));
       console.log(res);
+      // 새로운 풀코스를 생성한 뒤 Django 서버로 추가요청
+      const res2 = await customAxiosDjango({
+        method: "get",
+        url: `/recommend/${fullCourseId}/${fullCourseInfo.userId}`,
+      });
+
+      console.log(res2);
     } catch (e) {
-      errorControl(dispatch,"풀코스 생성실패..")
-      
+      errorControl(dispatch, "풀코스 생성실패..");
       console.log(e);
     }
     loadingControl(dispatch, false);
@@ -129,8 +150,7 @@ export const createNewSchedule = ({
     } catch (err: any) {
       console.log(err);
       console.log(err.response);
-      errorControl(dispatch,"스케줄 추가 실패 ㅠ.ㅠ")
-      
+      errorControl(dispatch, "스케줄 추가 실패 ㅠ.ㅠ");
     }
     loadingControl(dispatch, false);
   };
@@ -176,9 +196,8 @@ export const updateSchedule = ({
       //
     } catch (err) {
       console.log(err);
-       
-      errorControl(dispatch,"스케줄 변경 실패!!")
-      
+
+      errorControl(dispatch, "스케줄 변경 실패!!");
     }
     loadingControl(dispatch, false);
   };
@@ -186,37 +205,37 @@ export const updateSchedule = ({
 
 // 스케줄(카드) 삭제
 export const deleteSchedule = ({
-  deleteScheduleListInfo,
   day,
   sequence,
-  fullCourseId,
-}: DeleteScheduleProps) => {
+  scheduleId,
+}: {
+  day: number;
+  sequence: number;
+  scheduleId: number;
+}) => {
   return async (dispatch: Dispatch) => {
     loadingControl(dispatch, true);
 
-    const data: CreateScheduleRequestDataProps = {
-      placeId: deleteScheduleListInfo[day][sequence].content.placeId,
-      scheduleId: deleteScheduleListInfo[day][sequence].content.scheduleId,
-      day: day + 1,
-      sequence: sequence + 1,
+    const data: { day: number; sequence: number } = {
+      day: day,
+      sequence: sequence,
     };
 
     try {
       const res = await customAxios({
         method: "delete",
-        url: `/schedule/${fullCourseId}`,
-        data: data,
+        url: `/schedule/${scheduleId}`,
       });
 
       console.log(res);
       // 결과받으면 새로운 카드 추가
-      dispatch(moveCard(deleteScheduleListInfo));
+      dispatch(deleteCard(data));
 
       //
     } catch (err) {
-      errorControl(dispatch,"스케줄 삭제 실패!!")
-      
+      errorControl(dispatch, "스케줄 삭제 실패!!");
     }
+
     loadingControl(dispatch, false);
   };
 };
@@ -227,7 +246,11 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
     loadingControl(dispatch, true);
 
     try {
-      const res = await customAxios({ method: "post", data: customPlaceInfo });
+      const res = await customAxios({
+        method: "post",
+        url: "/customPlace",
+        data: customPlaceInfo,
+      });
 
       const newContent = {
         scheduleId: res.data.scheduleId,
@@ -244,8 +267,7 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
       dispatch(addCustomPlace(newState));
     } catch (e) {
       console.log(e);
-      errorControl(dispatch,"나만의 장소 추가 실패")
-      
+      errorControl(dispatch, "나만의 장소 추가 실패");
     }
     loadingControl(dispatch, false);
   };

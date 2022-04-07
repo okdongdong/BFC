@@ -44,9 +44,9 @@ function ProfileHeader() {
         <Profileimg></Profileimg>
         {/* <ProfileName></ProfileName> */}
       </div>
-      <div className={classes.badges}>
+      {/* <div className={classes.badges}>
         <BadgeItem></BadgeItem>
-      </div>
+      </div> */}
       <div className={classes.myInfo}>
         <ProfileInfo></ProfileInfo>
       </div>

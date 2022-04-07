@@ -3,58 +3,134 @@ import Rating from "@mui/material/Rating";
 import Box from "@mui/material/Box";
 import StarIcon from "@mui/icons-material/Star";
 import { customAxios } from "../../lib/customAxios";
+import { connect } from "react-redux";
+import Detail from "../../pages/Main/Detail";
+import { Button } from "@mui/material";
 const labels: { [index: string]: string } = {
   0.5: "0.5",
-  1: "1",
+  1: "1.0",
   1.5: "1.5",
-  2: "2",
+  2: "2.0",
   2.5: "2.5",
-  3: "3",
+  3: "3.0",
   3.5: "3.5",
-  4: "4",
+  4: "4.0",
   4.5: "4.5",
-  5: "5",
+  5: "5.0",
 };
 
-function PlaceRating() {
-  const [value, setValue] = React.useState<number | null>(1); //별점 default값
+function PlaceRating({ placeId }: Props) {
+  const [value, setValue] = React.useState<number | null>(0); //별점 default값
   const [hover, setHover] = React.useState(-1);
-  const place_id = 1; //데이터 가져오기
-  function onChange() {
-    const score = value;
+  const [method, setMethod] = React.useState("post");
+  const [btnName, setBtnName] = React.useState("등록");
+  const [isClick, setIsClick] = React.useState(false);
+  // 내평점가져오기
+  const fetchData = async () => {
+    const result = await customAxios({
+      method: "get",
+      url: `/place/${placeId}/score`,
+    });
+    setValue(result.data.score);
+    console.log("데이터 가져옴", result.data.score);
+    if (result.data.score) {
+      setMethod("put");
+      setBtnName("변경");
+    }
+  };
+  React.useEffect(() => {
+    fetchData();
+    console.log("확인!!!!!!!!!!!!!!!!!!!!!!");
+  }, [isClick]);
+
+  function deleteScore() {
     customAxios({
-      method: "post",
-      url: `/place/${place_id}/score`,
-      data: score,
+      method: "delete",
+      url: `/place/${placeId}/score`,
     }).then((res) => {
+      setValue(0);
+      setMethod("post");
+      setBtnName("등록");
       console.log(res);
     });
   }
+  function onChange() {
+    if (method === "post") {
+      customAxios({
+        method: "post",
+        url: `/place/${placeId}/score`,
+        data: { score: value },
+      }).then((res) => {
+        setMethod("put");
+        setBtnName("변경");
+        setIsClick(true);
+        console.log(res);
+      });
+    } else if (method === "put") {
+      customAxios({
+        method: "put",
+        url: `/place/${placeId}/score`,
+        data: { score: value },
+      }).then((res) => {
+        console.log(res);
+      });
+    }
+  }
   return (
-    <Box
-      sx={{
-        width: 200,
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <Rating
-        name="hover-feedback"
-        value={value}
-        precision={0.5}
-        onChange={(event, newValue) => {
-          onChange();
-          setValue(newValue);
+    <div style={{ display: "flex" }}>
+      <Box
+        sx={{
+          width: 200,
+          display: "flex",
+          alignItems: "center",
         }}
-        onChangeActive={(event, newHover) => {
-          setHover(newHover);
-        }}
-        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-      />
-      {value !== null && (
-        <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
-      )}
-    </Box>
+      >
+        <Rating
+          name="hover-feedback"
+          value={value}
+          precision={0.5}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          onChangeActive={(event, newHover) => {
+            setHover(newHover);
+          }}
+          emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+        />
+
+        <div>
+          {value !== null && (
+            <Box sx={{ ml: 1, mr: 1 }}>
+              {labels[hover !== -1 ? hover : value]}
+            </Box>
+          )}
+        </div>
+      </Box>
+      <div style={{ display: "flex" }}>
+        <Button variant="outlined" onClick={onChange} style={{ width: "60px" }}>
+          {btnName}
+        </Button>
+        {method === "put" ? (
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={deleteScore}
+            style={{ width: "60px" }}
+          >
+            삭제
+          </Button>
+        ) : (
+          <></>
+        )}
+      </div>
+    </div>
   );
 }
-export default PlaceRating;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    placeId: place.placeId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceRating);

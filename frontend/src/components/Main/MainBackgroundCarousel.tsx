@@ -5,7 +5,7 @@ import background5 from "../../assets/img/background5.jpg";
 import background6 from "../../assets/img/background6.jpg";
 import background8 from "../../assets/img/background8.jpg";
 
-function MainBackgroundPart({ background }: any) {
+export function MainBackgroundPart({ background }: any) {
   const MainBackgroundContainerStyle = styled("div")(({ theme }) => ({
     width: "100%",
     height: 450,
