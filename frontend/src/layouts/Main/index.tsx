@@ -15,7 +15,7 @@ const MainLayout = () => {
 
   const MainStyle = styled("div")({
     flexGrow: 1,
-    overflow: "auto",
+    overflow: "hidden",
     marginTop: 80,
   });
 
