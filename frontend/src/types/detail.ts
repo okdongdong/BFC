@@ -39,6 +39,7 @@ export interface ScheduleData {
   address: string;
   lat: number;
   lon: number;
+  thumbnail: string;
 }
 export interface SetFullCourseData {
   fullCourseId: number;
@@ -49,4 +50,7 @@ export interface SetFullCourseData {
   finishedOn: string;
   scheduleDetailList: ScheduleData[];
   likeCnt: null | number;
+  userId: number;
+  nickname: string;
+  profileImg: string;
 }

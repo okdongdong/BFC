@@ -5,7 +5,9 @@ import IconButton from "@mui/material/IconButton";
 import { pink } from "@mui/material/colors";
 import { customAxios } from "../../../lib/customAxios";
 import { connect } from "react-redux";
-function FullCourseLike({ fullCourseId }: Props) {
+import { SetFullCourseData } from "../../../types/detail";
+import { setFullCourseData } from "../../../redux/detail/action";
+function FullCourseLike({ fullCourseId, likeCnt, fullCourse }: Props) {
   const [checked, setChecked] = React.useState(false);
 
   const fetchData = async () => {
@@ -24,8 +26,19 @@ function FullCourseLike({ fullCourseId }: Props) {
       method: "post",
       url: `/fullCourse/${fullCourseId}/like`,
     }).then((res) => {
-      console.log(res.data);
       setChecked(res.data.isLiked);
+      console.log("기존 풀코스", fullCourse);
+      const newFullCourse = fullCourse;
+      if (res.data.isLiked) {
+        const newLikeCnt = likeCnt + 1;
+        newFullCourse.likeCnt = newLikeCnt;
+      } else {
+        const newLikeCnt = likeCnt - 1;
+        newFullCourse.likeCnt = newLikeCnt;
+      }
+      console.log("새로운 풀코스", newFullCourse);
+      setFullCourseData(newFullCourse);
+
       fetchData();
     });
   }
@@ -44,8 +57,17 @@ function FullCourseLike({ fullCourseId }: Props) {
 const mapStateToProps = ({ fullCourse }: any) => {
   return {
     fullCourseId: fullCourse.fullCourseId,
+    fullCourse: fullCourse,
+    likeCnt: fullCourse.likeCnt,
   };
 };
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setFullCourseData: (fullCourseData: SetFullCourseData) =>
+      dispatch(setFullCourseData(fullCourseData)),
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps)(FullCourseLike);
+export default connect(mapStateToProps, mapDispatchToProps)(FullCourseLike);

@@ -3,8 +3,11 @@ import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
 import FullCourseModal from "./Modal/FullCourseModal";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-
+import { Box, Card, CardActionArea, CardContent, styled } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import FullCouresThumbnail from "../../Main/FullCourseThumbnail";
+import LikeCount from "../../Main/LikeCount";
+import DateCounter from "../../Main/DateCounter";
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
@@ -21,6 +24,25 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: "center",
   },
 }));
+const CardStyle = styled(Card)(() => ({
+  width: 240,
+  borderRadius: "25px",
+  textAlign: "left",
+  marginRight: 15,
+  marginLeft: 15,
+}));
+
+const CardContentStyle = styled(CardContent)(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+}));
+
+const FullCourseNameStyle = styled("h2")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  margin: 0,
+}));
 function MyFullCourse({ myList, nickname }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
@@ -28,44 +50,30 @@ function MyFullCourse({ myList, nickname }: Props) {
   const title = `${nickname}님의 풀코스`;
   const type = 1;
   let baseCard = [];
+  const navigate = useNavigate();
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
       baseCard.push(
-        <Link
-          to={`/fullCourseDetail/${myList[i].fullCourseId}`}
-          style={{ textDecoration: "none" }}
+        <CardStyle
+          onClick={() => navigate(`/fullcourse/${myList[i].fullCourseId}`)}
         >
-          <div key={i} style={{ position: "relative" }}>
-            <img
-              style={{
-                width: "200px",
-                height: "200px",
-                marginRight: "10px",
-                marginLeft: "10px",
-                borderRadius: "10px",
-              }}
-              src={myList[i].thumbnail}
-              alt="fullCourseImg"
-            ></img>
-            <div
-              style={{
-                width: "200px",
-                height: "200px",
-                marginRight: "10px",
-                marginLeft: "10px",
-                borderRadius: "10px",
-                position: "absolute",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                top: 0,
-                left: 0,
-              }}
-            >
-              <p style={{ color: "white" }}>#{myList[i].label}</p>
-            </div>
-          </div>
-        </Link>
+          <CardActionArea>
+            <FullCouresThumbnail
+              thumbnailList={myList[i].thumbnailLlist}
+            ></FullCouresThumbnail>
+            <CardContentStyle>
+              <Box sx={{ alignItems: "center" }}>
+                <LikeCount likeCount={0}></LikeCount>
+                <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
+              </Box>
+              <Box sx={{ flexGrow: 1 }} />
+              <DateCounter
+                startOn={new Date(myList[i].startOn)}
+                finishedOn={new Date(myList[i].finishedOn)}
+              ></DateCounter>
+            </CardContentStyle>
+          </CardActionArea>
+        </CardStyle>
       );
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);

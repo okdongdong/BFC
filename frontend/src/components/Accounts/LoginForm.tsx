@@ -22,11 +22,7 @@ import { AccountReducer } from "../../redux/rootReducer";
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-<<<<<<< HEAD
       <Link color="inherit" href="/">
-=======
-      <Link color="#fff" href="https://mui.com/">
->>>>>>> 19d08948692a951f38b10f385aae4654d2e46868
         Busan Full Course
       </Link>{" "}
       {new Date().getFullYear()}
