@@ -68,7 +68,7 @@ function FullCourseCard({
       className={`fade-in-section ${isVisible ? "is-visible" : ""}`}
       style={{ padding: 5 }}
     >
-      <CardStyle onClick={() => navigate(`/fullcourse/${fullCourseId}`)}>
+      <CardStyle onClick={() => navigate(`/fullcourseDetail/${fullCourseId}`)}>
         <CardActionArea>
           <FullCouresThumbnail
             thumbnailList={thumbnailList}
