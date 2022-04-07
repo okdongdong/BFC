@@ -36,6 +36,10 @@ public class ElasticSearchService {
         return placeSearchRepository.findAll(pageable);
     }
 
+    public Page<Place> searchPlaceByNameByJPA(String name, Pageable pageable) {
+        return placeRepository.findByNameContains(name.strip(),pageable);
+    }
+
     public void saveAll() {
         List<Place> places = placeRepository.findAll();
         places.forEach(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())));
