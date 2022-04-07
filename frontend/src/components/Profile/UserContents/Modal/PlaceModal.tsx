@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { customAxios } from "../../../../lib/customAxios";
 import StarScore from "../../../Main/StarScore";
+import clearStage from "../../../../assets/img/clearStage.png";
 
 //모달 스타일
 const style = {
@@ -41,6 +42,7 @@ interface content {
   averageScore: number;
   thumbnail: string;
   placeId: number;
+  isClear: boolean;
 }
 interface ModalProps {
   open: boolean;
@@ -149,6 +151,14 @@ function PlaceModal({
                     style={{ textDecoration: "none" }}
                   >
                     <div style={Box2} ref={boxRef} key={index}>
+                      {item.isClear ? (
+                        <img
+                          src={clearStage}
+                          style={{ position: "absolute" }}
+                        ></img>
+                      ) : (
+                        <></>
+                      )}
                       <Card
                         key={index}
                         sx={{
@@ -211,6 +221,14 @@ function PlaceModal({
                     to={`/place/${item.placeId}`}
                     style={{ textDecoration: "none" }}
                   >
+                    {item.isClear ? (
+                      <img
+                        src={clearStage}
+                        style={{ position: "absolute" }}
+                      ></img>
+                    ) : (
+                      <></>
+                    )}
                     <div style={Box2} key={index}>
                       <Card
                         key={index}
