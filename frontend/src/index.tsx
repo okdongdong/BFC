@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
@@ -11,7 +11,7 @@ import store from "./redux/store";
 
 const persistor = persistStore(store);
 ReactDOM.render(
-  <React.StrictMode>
+  <>
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
@@ -19,7 +19,11 @@ ReactDOM.render(
         </PersistGate>
       </Provider>
     </BrowserRouter>
-  </React.StrictMode>,
+    <script
+      type="text/javascript"
+      src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}&libraries=services,clusterer`}
+    ></script>
+  </>,
   document.getElementById("root")
 );
 

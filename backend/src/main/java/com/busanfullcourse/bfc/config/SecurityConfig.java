@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailService customUserDetailService;
 
+    @Override
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManagerBean();
@@ -49,11 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .httpBasic().disable() // rest api 이므로 기본설정 사용안함. 기본설정은 비인증시 로그인폼 화면으로 리다이렉트 된다. 어쩌면 필요할수도?
-                .csrf().disable() // rest api이므로 csrf 보안이 필요없으므로 disable처리.
+                .csrf().disable() // NOSONAR, rest api이므로 csrf 보안이 필요없으므로 disable처리.
                 .authorizeRequests()// 다음 리퀘스트에 대한 사용권한 체크
-                .antMatchers("/", "/auth/signup/**", "/auth/login", "/auth/nickname", "/email/verification","/**/popular").permitAll() // 누구나 접근가능한 요청
+                .antMatchers("/", "/auth/signup/**", "/auth/login", "/auth/nickname", "/email/verification","/**/popular","/auth/verification","/auth/verification/reset/", "/auth/reissue").permitAll() // 누구나 접근가능한 요청
                 .anyRequest().hasRole("USER")// 그외 나머지 요청은 모두 인증된 회원만 접근 가능
-
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtEntryPoint)

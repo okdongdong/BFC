@@ -2,6 +2,8 @@ package com.busanfullcourse.bfc.api.request;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -9,12 +11,13 @@ import lombok.*;
 @Builder
 public class CustomPlaceUpdateReq {
 
+    @NotBlank
     private String name;
 
     private String address;
 
-    private Float lat;
+    private Double lat;
 
-    private Float lng;
+    private Double lon;
 
 }

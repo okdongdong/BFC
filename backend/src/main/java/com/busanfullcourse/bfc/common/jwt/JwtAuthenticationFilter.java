@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.common.jwt;
 
 import com.busanfullcourse.bfc.api.service.CustomUserDetailService;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.common.util.JwtTokenUtil;
 import com.busanfullcourse.bfc.db.repository.LogoutAccessTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = getToken(request);
-        if (accessToken != null) {
+        String requestURI = request.getRequestURI();
+        if (accessToken != null && !requestURI.equals("/api/v1/auth/reissue")) {
             // 로그아웃에 사용된 토큰인지 확인
             checkLogout(accessToken);
 
@@ -71,8 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void validateAccessToken(String accessToken, UserDetails userDetails) {
-        if (!jwtTokenUtil.validateToken(accessToken, userDetails)) {
-            throw new IllegalArgumentException("토큰 검증 실패");
+        if (Boolean.FALSE.equals(jwtTokenUtil.validateToken(accessToken, userDetails))) {
+            throw new IllegalArgumentException(ExceptionUtil.INVALID_AUTH_TOKEN);
         }
     }
 

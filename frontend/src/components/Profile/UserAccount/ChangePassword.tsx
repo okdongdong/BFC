@@ -1,7 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 import { Button, Container, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { connect } from "react-redux";
+import { AccountReducer } from "../../../redux/rootReducer";
+import axios from "axios";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -27,13 +29,12 @@ interface UserInfo {
   [key: string]: any; // 이거를 쓰면 ts를 쓰는 의미가 없긴한데 일단 오류를 해결하기 위해 사용
 }
 
-function ChangePassword() {
+function ChangePassword({ username, userId }: Props) {
   const classes = useStyles();
-  const user_id = 1; //redux
   // 유저정보 기본값
   const initUserInfo: UserInfo = {
-    username: "jhj20071@naver.com",
-    oldPassword: "jj12341234!",
+    username: username,
+    oldPassword: "",
     newPassword: "",
     passwordCheck: "",
   };
@@ -47,15 +48,25 @@ function ChangePassword() {
     useState<string>("");
 
   // 비밀번호 수정 요청전송
-  function requestSignup(userInfo: UserInfo): void {
-    console.log(userInfo);
+  function requestSetpassword() {
+    const token = localStorage.getItem("accessToken") || "";
     axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${user_id}/password`,
+      method: "put",
+      url: `${process.env.REACT_APP_BASE_URL}/api/v1/users/${userId}/password`,
       data: userInfo,
+      headers: {
+        Authorization: token,
+      },
     })
-      .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
-      .catch((err) => console.log(err));
+      .then((res) => {
+        console.log(res);
+        console.log("바뀜바뀜");
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("기존비밀번호가 틀렸습니다.");
+      });
   }
 
   // 비밀번호수정 정보입력
@@ -104,8 +115,6 @@ function ChangePassword() {
       default:
         return;
     }
-
-    console.log(userInfo);
   }
 
   return (
@@ -131,7 +140,7 @@ function ChangePassword() {
             fullWidth
             name="newPassword"
             label="비밀번호"
-            type="newPassword"
+            type="password"
             id="newPassword"
             autoComplete="current-password"
             onChange={changeUserInfo}
@@ -144,7 +153,7 @@ function ChangePassword() {
             fullWidth
             name="passwordCheck"
             label="비밀번호 확인"
-            type="newPassword"
+            type="password"
             id="passwordCheck"
             onChange={changeUserInfo}
           />
@@ -153,7 +162,7 @@ function ChangePassword() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={() => requestSignup}
+            onClick={requestSetpassword}
             disabled={
               userInfo.newPassword !== userInfo.passwordCheck ||
               userInfo.oldPassword === ""
@@ -166,5 +175,12 @@ function ChangePassword() {
     </Container>
   );
 }
+const mapStateToProps = ({ account }: AccountReducer) => {
+  return {
+    userId: account.userId,
+    username: account.username,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
 
-export default ChangePassword;
+export default connect(mapStateToProps)(ChangePassword);

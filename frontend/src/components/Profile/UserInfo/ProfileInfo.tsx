@@ -1,7 +1,10 @@
-import { Theme } from "@mui/material";
+import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { customAxios } from "../../../lib/customAxios";
+import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
 
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
@@ -11,16 +14,83 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function ProfileInfo() {
-  const nickname: string = "나는 윈터야";
+function ProfileInfo({
+  currentNickname,
+  nickname,
+  isFollowing,
+  profileUserId,
+}: Props) {
   const classes = useStyles();
+  const [btnNane, setBtnName] = useState(isFollowing);
+  function follow() {
+    customAxios({
+      method: "post",
+      url: `/users/${profileUserId}/follow`,
+    })
+      .then((res) => {
+        console.log("팔로우성공");
+        setBtnName(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  function unFollow() {
+    customAxios({
+      method: "post",
+      url: `/users/${profileUserId}/follow`,
+    })
+      .then((res) => {
+        console.log("팔로우 취소 성공");
+        setBtnName(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <div>
       <span style={{ fontWeight: "bold", fontSize: 20 }}>{nickname}</span>
-      <RouterLink to="/changeUser">
-        <button className={classes.btn}>회원정보관리</button>
-      </RouterLink>
+      {currentNickname === nickname ? (
+        <Link to="/changeUser" style={{ textDecoration: "none" }}>
+          <Button variant="contained" className={classes.btn}>
+            회원정보관리
+          </Button>
+        </Link>
+      ) : (
+        <>
+          {btnNane ? (
+            <Button
+              variant="outlined"
+              color="error"
+              className={classes.btn}
+              onClick={unFollow}
+            >
+              팔로우 취소
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              className={classes.btn}
+              onClick={follow}
+            >
+              팔로우
+            </Button>
+          )}
+        </>
+      )}
     </div>
   );
 }
-export default ProfileInfo;
+const mapStateToProps = ({ account, profile }: any) => {
+  return {
+    isLogin: account.isLogin,
+    currentNickname: account.nickname,
+    nickname: profile.nickname,
+    isFollowing: profile.isFollowing,
+    profileUserId: profile.userId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(ProfileInfo);

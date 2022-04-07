@@ -6,7 +6,15 @@ import FindPassword from "./pages/Accounts/FindPassword";
 import Profile from "./pages/Profile/Profile";
 import Main from "./pages/Main/Main";
 import ChangeUser from "./pages/Profile/ChangeUser";
+import Detail from "./pages/Main/Detail";
 import DeleteAccount from "./components/Profile/UserAccount/DeleteAccount";
+import CreateFullCourse from "./pages/FullCourse/CreateFullCourse";
+import Test from "./pages/Test";
+import CreateFullCourseLayout from "./layouts/CreateFullCourse";
+import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
+import PreSurvey from "./pages/FullCourse/PreSurvey";
+import PageNotFound from "./pages/PageNotFound";
+import RecommendList from "./pages/Recommend/RecommendList";
 function Router() {
   return useRoutes([
     {
@@ -23,13 +31,13 @@ function Router() {
           element: <Signup />,
         },
         {
-          path: "fullcourse/:fullCourseId",
-          element: <Signup />,
+          path: "fullcourse/detail/:fullCourseId",
+          element: <FullCourseDetail />,
         },
         {
           path: "attraction",
           children: [
-            { path: "", element: <Login /> },
+            { path: "", element: <RecommendList category={false} /> },
             {
               path: ":placeId",
               element: <Signup />,
@@ -39,7 +47,7 @@ function Router() {
         {
           path: "restaurant",
           children: [
-            { path: "", element: <Login /> },
+            { path: "", element: <RecommendList category={true} /> },
             {
               path: ":placeId",
               element: <Signup />,
@@ -55,7 +63,7 @@ function Router() {
           element: <FindPassword />,
         },
         {
-          path: "profile",
+          path: "profile/:nickname",
           element: <Profile />,
         },
         {
@@ -63,11 +71,29 @@ function Router() {
           element: <ChangeUser />,
         },
         {
-          path: "deleteAccount",
-          element: <DeleteAccount />,
+          path: "place/:placeId",
+          element: <Detail />,
         },
+        {
+          path: "fullcourseDetail/:fullCourseId",
+          element: <FullCourseDetail />,
+        },
+        { path: "/404", element: <PageNotFound /> },
       ],
     },
+    {
+      path: "test",
+      element: <Test />,
+    },
+    {
+      path: "fullcourse",
+      element: <CreateFullCourseLayout />,
+      children: [
+        { path: "presurvey", element: <PreSurvey /> },
+        { path: "create", element: <CreateFullCourse /> },
+      ],
+    },
+
     { path: "*", element: <Navigate to="/404" replace /> },
   ]);
 }

@@ -23,10 +23,12 @@ public class Review {
 
     private String content;
 
+    @Builder.Default
     @CreationTimestamp
     @Column(name = "posted_at")
     private LocalDateTime postedAt = LocalDateTime.now();
 
+    @Builder.Default
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();

@@ -1,16 +1,20 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.request.FullCourseReq;
+import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
+import com.busanfullcourse.bfc.common.util.ConvertUtil;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.*;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -24,9 +28,11 @@ public class FullCourseService {
     private final WishPlaceRepository wishPlaceRepository;
     private final ScheduleRepository scheduleRepository;
     private final LikeRepository likeRepository;
+    private final ConvertUtil convertUtil;
 
     public Map<String, Long> createFullCourse(FullCourseReq req, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         FullCourse fullCourse = fullCourseRepository.save(FullCourse.builder()
                 .user(user)
                 .isPublic(req.getIsPublic())
@@ -34,9 +40,10 @@ public class FullCourseService {
                 .view(0)
                 .startedOn(req.getStartedOn())
                 .finishedOn(req.getFinishedOn())
+                .likeCnt(0)
                 .build());
 
-        List<WishFood> wishFoodList = new ArrayList<WishFood>();
+        List<WishFood> wishFoodList = new ArrayList<>();
         for (String foodKeyword
                 : req.getWishFoodKeywords()) {
             wishFoodList.add(WishFood.builder()
@@ -46,7 +53,7 @@ public class FullCourseService {
         }
         wishFoodRepository.saveAll(wishFoodList);
 
-        List<WishPlace> wishPlaceList = new ArrayList<WishPlace>();
+        List<WishPlace> wishPlaceList = new ArrayList<>();
         for (String placeKeyword
                 : req.getWishPlaceKeywords()) {
             wishPlaceList.add(WishPlace.builder()
@@ -70,8 +77,13 @@ public class FullCourseService {
         return listRes;
     }
 
-    public FullCourseRes getFullCourse(Long fullCourseId) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+    public FullCourseRes getFullCourse(Long fullCourseId, String username) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        if (!username.equals(fullCourse.getUser().getUsername())) {
+            fullCourse.setView(fullCourse.getView()+1);
+            fullCourseRepository.save(fullCourse);
+        }
         List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourseId);
         return FullCourseRes.builder()
                 .fullCourseId(fullCourseId)
@@ -82,16 +94,73 @@ public class FullCourseService {
                 .startedOn(fullCourse.getStartedOn())
                 .finishedOn(fullCourse.getFinishedOn())
                 .scheduleDetailList(FullCourseRes.ScheduleDetail.of(scheduleList))
-                .WishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
-                .WishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
-                .LikeCnt(fullCourse.getLikeCnt())
+                .wishFoodList(FullCourseRes.ofWishFoodList(fullCourse.getWishFoods()))
+                .wishPlaceList(FullCourseRes.ofWishPlaceList(fullCourse.getWishPlaces()))
+                .likeCnt(fullCourse.getLikeCnt())
+                .userId(fullCourse.getUser().getId())
+                .nickname(fullCourse.getUser().getNickname())
+                .profileImg(convertUtil.convertByteArrayToString(fullCourse.getUser().getProfileImg()))
                 .build();
     }
 
+    public void changeFullCourseDate(Long fullCourseId, FullCourseUpdateReq fullCourseUpdateReq) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        LocalDate oldStartedOn;
+        LocalDate oldFinishedOn;
+        LocalDate newStartedOn;
+        LocalDate newFinishedOn;
+        oldStartedOn = fullCourse.getStartedOn();
+        oldFinishedOn = fullCourse.getFinishedOn();
+        newStartedOn = LocalDate.parse(fullCourseUpdateReq.getNewStartedOn(), DateTimeFormatter.ISO_LOCAL_DATE);
+        newFinishedOn = LocalDate.parse(fullCourseUpdateReq.getNewFinishedOn(), DateTimeFormatter.ISO_LOCAL_DATE);
+
+        long oldDiff = ChronoUnit.DAYS.between(oldStartedOn, oldFinishedOn);
+        long newDiff = ChronoUnit.DAYS.between(newStartedOn, newFinishedOn);
+        if (newDiff < oldDiff) {
+            // 바뀐 기간이 더 짧으면 모든 스케쥴을 마지막날로 밀어넣어야함
+            Integer lastDay = Math.toIntExact(newDiff + 1);  // 마지막 날짜
+            Optional<Schedule> finSchedule = scheduleRepository.findTop1ByFullCourseFullCourseIdAndDayOrderBySequenceDesc(fullCourseId, lastDay);
+            Integer lastSeq = 0;
+            if (finSchedule.isPresent()) {
+                lastSeq = finSchedule.get().getSequence();
+            }
+
+            List<Schedule> changeSchedules = scheduleRepository.findAllByFullCourseFullCourseIdAndDayGreaterThanOrderByDayAscSequenceAsc(fullCourseId, lastDay);
+
+            for (Schedule changeSchedule : changeSchedules) {
+                lastSeq ++;
+                changeSchedule.setDay(lastDay);
+                changeSchedule.setSequence(lastSeq);
+            }
+
+            scheduleRepository.saveAll(changeSchedules);
+        }
+        // 바뀐 날짜 적용
+        fullCourse.setStartedOn(newStartedOn);
+        fullCourse.setFinishedOn(newFinishedOn);
+        fullCourseRepository.save(fullCourse);
+    }
+
+    public void changeFullCoursePublic(Long fullCourseId, Map<String, Boolean> isPublic) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        fullCourse.setIsPublic(isPublic.get("isPublic"));
+        fullCourseRepository.save(fullCourse);
+    }
+
+    public void changeFullCourseReview(Long fullCourseId, Map<String, String> review) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        fullCourse.setReview(review.get("review"));
+        fullCourseRepository.save(fullCourse);
+    }
 
     public Map<String,Boolean> likeFullCourse(Long fullCourseId, String username) {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
 
         Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
 
@@ -113,12 +182,13 @@ public class FullCourseService {
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", isLiked);
         return map;
-
     }
 
     public Map<String, Boolean> getLikeFullCourse(Long fullCourseId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException("회원이 없습니다."));
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         Optional<Like> like = likeRepository.findByUserAndFullCourse(user, fullCourse);
         Map<String, Boolean> map = new HashMap<>();
         map.put("isLiked", like.isPresent());
@@ -129,20 +199,8 @@ public class FullCourseService {
         if (fullCourseRepository.existsById(fullCourseId)) {
             fullCourseRepository.deleteById(fullCourseId);
         } else {
-            throw new NoSuchElementException("풀코스가 없습니다.");
+            throw new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND);
         }
     }
 
-    public Page<FullCourseListRes> getMoreLikedFullCourse(Long userId, Pageable pageable) {
-        Page<Like> page = likeRepository.findAllByUserId(userId, pageable);
-
-        return page.map(like -> FullCourseListRes.builder()
-                .fullCourseId(like.getFullCourse().getFullCourseId())
-                .likeCnt(like.getFullCourse().getLikeCnt())
-                .title(like.getFullCourse().getTitle())
-                .startedOn(like.getFullCourse().getStartedOn())
-                .finishedOn(like.getFullCourse().getFinishedOn())
-                .thumbnailList(FullCourseListRes.ofThumbnailList(scheduleRepository.findTop4ByFullCourseFullCourseIdAndPlaceIsNotNullAndPlaceThumbnailIsNotNull(like.getFullCourse().getFullCourseId())))
-                .build());
-    }
 }

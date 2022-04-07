@@ -16,6 +16,8 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,10 +37,16 @@ public class CacheConfig {
                         .SerializationPair
                         .fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
+        Map<String, RedisCacheConfiguration> cacheConfiguration = new HashMap<>();
+        cacheConfiguration.put(CacheKey.POPULAR_RESTAURANT, RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(CacheKey.POPULAR_EXPIRE_HOUR)));
+        cacheConfiguration.put(CacheKey.POPULAR_ATTRACTION, RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(CacheKey.POPULAR_EXPIRE_HOUR)));
 
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory)
                 .cacheDefaults(configuration)
+                .withInitialCacheConfigurations(cacheConfiguration)
                 .build();
 
     }

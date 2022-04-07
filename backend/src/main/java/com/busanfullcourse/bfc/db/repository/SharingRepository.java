@@ -14,5 +14,8 @@ public interface SharingRepository extends JpaRepository<Sharing, Long> {
 
     Optional<Sharing> findByFullCourseAndUser(FullCourse fullCourse, User user);
 
-//    List<Sharing> findAllByFullCourse(FullCourse fullCourse);
+    List<Sharing> findAllByFullCourseFullCourseId(Long fullCourseId);
+
+    Sharing findByUserId(Long userId);
+
 }

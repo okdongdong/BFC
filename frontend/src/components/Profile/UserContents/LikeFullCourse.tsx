@@ -1,80 +1,96 @@
 import * as React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { Theme, Paper } from "@mui/material";
-import { style } from "@mui/system";
-
-interface place {
-  fullcourse_id: number;
-  name: string;
-  thumbnail: string;
-  label: string;
-}
+import { Theme, Paper, Button } from "@mui/material";
+import FullCourseModal from "./Modal/FullCourseModal";
+import { connect } from "react-redux";
+import { Box, Card, CardActionArea, CardContent, styled } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import FullCouresThumbnail from "../../Main/FullCourseThumbnail";
+import LikeCount from "../../Main/LikeCount";
+import DateCounter from "../../Main/DateCounter";
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
-    width: "150px",
-    height: "150px",
-    margin: theme.spacing(3),
+    width: "220px",
+    height: "200px",
+    margin: "15px",
+    paddingRight: "0",
+    paddingBottom: "0",
+    paddingTop: "0",
+    paddingLeft: "0",
+    backgroundColor: " rgba(133,133,133,0.5)",
+  },
+  bg: {
+    backgroundColor: " rgba(133,133,133,0.5)",
   },
 }));
-export default function Like() {
+const CardStyle = styled(Card)(() => ({
+  width: 220,
+  borderRadius: "25px",
+  textAlign: "left",
+  marginRight: 15,
+  marginLeft: 15,
+}));
+
+const CardContentStyle = styled(CardContent)(() => ({
+  display: "flex",
+  width: "100%",
+
+  justifyContent: "space-between",
+  color: "white",
+  position: "absolute",
+  marginTop: "-100px",
+  // backgroundColor: "white",
+  backgroundColor: " rgba(0,0,0,0.5)",
+}));
+
+const FullCourseNameStyle = styled("h3")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  margin: 0,
+}));
+function Like({ likeList, nickname }: Props) {
+  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
   const classes = useStyles();
-  const nickname = "나는 윈터야"; // props 받아 가져와야함
-  const placesList: Array<place> = [
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-  ];
+  const title = `${nickname}님이 좋아하는 코스`;
+  const type = 0;
   let baseCard = [];
   for (let i = 0; i < 6; i++) {
-    if (i < placesList.length) {
+    if (i < likeList.length) {
       baseCard.push(
-        <div style={{ position: "relative" }}>
-          <img
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-            }}
-            src={placesList[i].thumbnail}
-          ></img>
-          <div
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-              position: "absolute",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              top: 0,
-              left: 0,
-            }}
-          >
-            <p style={{ color: "white" }}>#{placesList[i].label}</p>
+        <CardStyle
+          onClick={() =>
+            navigate(`/fullcourseDetail/${likeList[i].fullCourseId}`)
+          }
+        >
+          <div style={{ position: "relative" }}>
+            <CardActionArea>
+              <div className={classes.bg}>
+                <FullCouresThumbnail
+                  thumbnailList={likeList[i].thumbnailList}
+                ></FullCouresThumbnail>
+
+                <CardContentStyle>
+                  <Box sx={{ alignItems: "center" }}>
+                    <LikeCount likeCount={likeList[i].likeCnt}></LikeCount>
+
+                    <FullCourseNameStyle>
+                      {likeList[i].title}
+                    </FullCourseNameStyle>
+                  </Box>
+
+                  <DateCounter
+                    startedOn={new Date(likeList[i].startedOn)}
+                    finishedOn={new Date(likeList[i].finishedOn)}
+                  ></DateCounter>
+                  <div></div>
+                </CardContentStyle>
+              </div>
+            </CardActionArea>
           </div>
-        </div>
+        </CardStyle>
       );
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
@@ -88,10 +104,18 @@ export default function Like() {
           fontWeight: "bold",
           fontSize: 20,
           textAlign: "left",
-          marginLeft: "23rem",
+          marginLeft: "300px",
         }}
       >
-        {nickname}님의 풀코스
+        {title}
+        <Button
+          variant="outlined"
+          size="small"
+          style={{ float: "right", marginRight: "300px" }}
+          onClick={() => setOpen(true)}
+        >
+          더보기
+        </Button>
       </p>
       <div
         style={{
@@ -102,6 +126,24 @@ export default function Like() {
       >
         {baseCard}
       </div>
+      {open && (
+        <FullCourseModal
+          open={open}
+          setOpen={() => setOpen(false)}
+          title={title}
+          type={type}
+        ></FullCourseModal>
+      )}
     </div>
   );
 }
+const mapStateToProps = ({ account, profile }: any) => {
+  return {
+    isLogin: account.isLogin,
+    likeList: profile.likeList,
+    nickname: profile.nickname,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(Like);

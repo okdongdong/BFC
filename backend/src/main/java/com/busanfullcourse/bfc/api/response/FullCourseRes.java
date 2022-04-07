@@ -6,7 +6,6 @@ import com.busanfullcourse.bfc.db.entity.WishPlace;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.*;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +32,19 @@ public class FullCourseRes {
 
     private LocalDate finishedOn;
 
-    private List<String> WishFoodList;
+    private List<String> wishFoodList;
 
-    private List<String> WishPlaceList;
+    private List<String> wishPlaceList;
 
     private List<ScheduleDetail> scheduleDetailList;
 
-    private Integer LikeCnt;
+    private Integer likeCnt;
+
+    private Long userId;
+
+    private String nickname;
+
+    private String profileImg;
 
 
     public static List<String> ofWishFoodList(List<WishFood> list) {
@@ -63,8 +68,10 @@ public class FullCourseRes {
         private Long placeId;
         private String name;
         private String address;
-        private Float lat;
-        private Float lng;
+        private Double lat;
+        private Double lon;
+        private String thumbnail;
+        private Float averageScore;
 
         public static List<ScheduleDetail> of(List<Schedule> list) {
             List<ScheduleDetail> res = new ArrayList<>();
@@ -79,7 +86,7 @@ public class FullCourseRes {
                             .name(schedule.getCustomPlace().getName())
                             .address(schedule.getCustomPlace().getAddress())
                             .lat(schedule.getCustomPlace().getLat())
-                            .lng(schedule.getCustomPlace().getLng())
+                            .lon(schedule.getCustomPlace().getLon())
                             .build());
                 } else {
                     res.add(ScheduleDetail.builder()
@@ -91,7 +98,9 @@ public class FullCourseRes {
                             .name(schedule.getPlace().getName())
                             .address(schedule.getPlace().getAddress())
                             .lat(schedule.getPlace().getLat())
-                            .lng(schedule.getPlace().getLng())
+                            .lon(schedule.getPlace().getLon())
+                            .thumbnail(schedule.getPlace().getThumbnail())
+                            .averageScore(schedule.getPlace().getAverageScore())
                             .build());
                 }
             }
