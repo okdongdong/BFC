@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { connect } from "react-redux";
 import StarScore from "../../Main/StarScore";
-import noImage from "../../../assets/img/place_img.png";
+import noImage from "../../../assets/img/logo_with_text.png";
 
 const CardTitle = styled("div")(() => ({
   display: "flex",
