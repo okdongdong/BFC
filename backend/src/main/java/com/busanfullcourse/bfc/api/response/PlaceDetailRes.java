@@ -35,6 +35,8 @@ public class PlaceDetailRes {
 
     private Float averageScore;
 
+    private Integer scoreCount;
+
     private String thumbnail;
 
     private List<Menu> menus;
