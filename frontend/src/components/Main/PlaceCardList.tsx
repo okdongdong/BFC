@@ -2,13 +2,12 @@ import PlaceCard from "./PlaceCard";
 import { PlaceCardListProps } from "../../types/main";
 import { Container, Grid, styled } from "@mui/material";
 
+const TitleTextStyle = styled("h1")(() => ({
+  fontSize: 32,
+  marginBottom: 32,
+  fontFamily: "Sunflower, sans-serif",
+}));
 function PlaceCardList({ placeList, title }: PlaceCardListProps) {
-  const TitleTextStyle = styled("h1")(() => ({
-    fontSize: 32,
-    marginBottom: 32,
-    fontFamily: "Sunflower, sans-serif",
-  }));
-
   return (
     <div>
       <TitleTextStyle>{title}</TitleTextStyle>

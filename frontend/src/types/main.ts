@@ -28,7 +28,7 @@ export interface FullCourseProps {
   fullCourseId: number;
   title: string;
   views: number;
-  startOn: string;
+  startedOn: string;
   finishedOn: string;
   thumbnailList: string[];
 }

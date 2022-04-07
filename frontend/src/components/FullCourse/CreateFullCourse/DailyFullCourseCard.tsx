@@ -13,7 +13,7 @@ import { deleteSchedule } from "../../../redux/createFullCourse/actions";
 import { setSelectedScheduleId } from "../../../redux/schedule/actions";
 import { PlaceCardProps } from "../../../types/main";
 import StarScore from "../../Main/StarScore";
-import noImage from "../../../assets/img/place_img.png";
+import noImage from "../../../assets/img/logo_with_text.png";
 
 const CardStyle = styled(Card)(() => ({
   textAlign: "left",
