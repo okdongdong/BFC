@@ -51,6 +51,7 @@ public class PlaceService {
                 .label(place.getLabel())
                 .station(place.getStation())
                 .averageScore(place.getAverageScore())
+                .scoreCount(place.getScoreCount())
                 .thumbnail(place.getThumbnail())
                 .menus(place.getMenus())
                 .build();
