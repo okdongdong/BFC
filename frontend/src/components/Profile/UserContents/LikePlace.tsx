@@ -4,12 +4,13 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
-import { Theme, Paper } from "@mui/material";
+import { Theme, Paper, styled, Stack, Chip } from "@mui/material";
 import PlaceModal from "./Modal/PlaceModal";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import StarScore from "../../Main/StarScore";
 import PlaceCard from "../../Main/PlaceCard";
+import noImage from "../../../assets/img/logo_with_text.png";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {

@@ -11,7 +11,7 @@ import DateCounter from "../../Main/DateCounter";
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
-    width: "200px",
+    width: "220px",
     height: "200px",
     margin: "10px",
     paddingRight: "0",
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 const CardStyle = styled(Card)(() => ({
-  width: 240,
+  width: 220,
   borderRadius: "25px",
   textAlign: "left",
   marginRight: 15,
@@ -46,13 +46,13 @@ const FullCourseNameStyle = styled("h2")(() => ({
 function MyFullCourse({ myList, nickname }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  console.log("내 풀코스", myList);
   const title = `${nickname}님의 풀코스`;
   const type = 1;
   let baseCard = [];
   const navigate = useNavigate();
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
+<<<<<<< HEAD
       baseCard
         .push
         // <CardStyle
@@ -76,6 +76,33 @@ function MyFullCourse({ myList, nickname }: Props) {
         //   </CardActionArea>
         // </CardStyle>
         ();
+=======
+      console.log("내풀코스다!!!", myList[i]);
+      baseCard.push(
+        <CardStyle
+          onClick={() =>
+            navigate(`/fullcourseDetail/${myList[i].fullCourseId}`)
+          }
+        >
+          <CardActionArea>
+            <FullCouresThumbnail
+              thumbnailList={myList[i].thumbnailList}
+            ></FullCouresThumbnail>
+            <CardContentStyle>
+              <Box sx={{ alignItems: "center" }}>
+                <LikeCount likeCount={myList[i].likeCnt}></LikeCount>
+                <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
+              </Box>
+              <Box sx={{ flexGrow: 1 }} />
+              <DateCounter
+                startedOn={new Date(myList[i].startedOn)}
+                finishedOn={new Date(myList[i].finishedOn)}
+              ></DateCounter>
+            </CardContentStyle>
+          </CardActionArea>
+        </CardStyle>
+      );
+>>>>>>> d7bd2c46b9b53bac75b7ed7c1e2388404cdf4629
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
     }
