@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import {
   getPlaceListWithDistance,
+  getPlaceListWithSurvey,
   getSearchPlaceList,
 } from "../../../redux/placeList/actions";
 import {
   PlaceListInfoForGet,
   PlaceSearchInfo,
+  SurveyPlaceListInfoForGet,
 } from "../../../redux/placeList/types";
 import PlaceCard from "./PlaceCard";
 import { PlaceCardProps } from "../../../types/main";
@@ -28,9 +30,11 @@ function PlaceCardList({
   recommendDistance,
   placeName,
   getPlaceListWithDistance,
+  getPlaceListWithSurvey,
   getSearchPlaceList,
   placeList,
   page,
+  userId,
   finished,
   addPage,
 }: Props & PlaceCardListProps) {
@@ -45,6 +49,17 @@ function PlaceCardList({
         size: 8,
       };
       getPlaceListWithDistance(data);
+
+      // 설문기반 인피니티
+    } else if (nowFilterTypeIdx === 2) {
+      console.log("[fetch search] :", page);
+
+      const data: SurveyPlaceListInfoForGet = {
+        userId: userId,
+        page: page,
+        size: 8,
+      };
+      getPlaceListWithSurvey(data);
 
       // 검색창 인피니티
     } else if (nowFilterTypeIdx === 3) {
@@ -128,15 +143,18 @@ function PlaceCardList({
     </div>
   );
 }
-const mapStateToProps = ({ schedule, baseInfo }: any) => ({
+const mapStateToProps = ({ schedule, baseInfo, account }: any) => ({
   page: schedule.page,
   nowLoading: baseInfo.nowLoading,
+  userId: account.userId,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getPlaceListWithDistance: (placeListInfoForGet: PlaceListInfoForGet) =>
       dispatch(getPlaceListWithDistance(placeListInfoForGet)),
+    getPlaceListWithSurvey: (placeListInfoForGet: SurveyPlaceListInfoForGet) =>
+      dispatch(getPlaceListWithSurvey(placeListInfoForGet)),
     getSearchPlaceList: (placeSearchInfo: PlaceSearchInfo) =>
       dispatch(getSearchPlaceList(placeSearchInfo)),
     addPage: (page: number) => dispatch(addPage(page)),

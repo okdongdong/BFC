@@ -1,5 +1,6 @@
-import { styled } from "@mui/material";
+import { Stack, styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import Footer from "../Footer";
 import Navbar from "../Navbar";
 
 const MainLayout = () => {
@@ -20,11 +21,13 @@ const MainLayout = () => {
 
   return (
     <RootStyle>
-      <Navbar />
-
-      <MainStyle>
-        <Outlet />
-      </MainStyle>
+      <Stack sx={{ width: "100%" }}>
+        <Navbar />
+        <MainStyle>
+          <Outlet />
+        </MainStyle>
+        <Footer />
+      </Stack>
     </RootStyle>
   );
 };
