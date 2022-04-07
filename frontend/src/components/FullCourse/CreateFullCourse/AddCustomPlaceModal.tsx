@@ -5,6 +5,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  listItemSecondaryActionClasses,
   MenuItem,
   Modal,
   Stack,
@@ -55,6 +56,7 @@ function AddCustomPlaceModal({
   const [day, setDay] = useState<number>(1);
   const [memo, setMemo] = useState<string>("");
   const [nowSearch, setNowSearch] = useState<boolean>(false);
+  const [nowMove, setNowMove] = useState<boolean>(false);
   const [location, setLocation] = useState({
     lat: 35.1797913,
     lng: 129.074987,
@@ -92,19 +94,32 @@ function AddCustomPlaceModal({
       lat: location.lat,
       lon: location.lng,
       day: day,
-      sequence: fullCourseList[day - 1].length,
+      sequence: fullCourseList[day - 1].length + 1,
       fullCourseId: fullCourseId,
     };
 
     createCustomPlace(customPlaceInfo);
     setOpenModal(false);
   };
+
+  const onKeyUpHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      setNowSearch(true);
+    }
+  };
+
   const selectSearchPlaceHandler = (customSearch: any) => {
     setSelectedCustomPlaceId(customSearch.id);
     setLocation({
       lat: customSearch.y,
       lng: customSearch.x,
     });
+    console.log(customSearch);
+    if (customPlaceName === "") {
+      setCustomPlaceName(customSearch.place_name);
+    }
+
+    setNowMove(true);
   };
 
   return (
@@ -120,196 +135,167 @@ function AddCustomPlaceModal({
       aria-describedby="modal-modal-description"
     >
       <Stack spacing={2} direction="row" sx={{ maxHeight: 800 }}>
-        <div>
-          <div
-            style={{
-              width: "100%",
-              height: 80,
-              backgroundColor: "#47A3EC",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-              color: "white",
-              borderRadius: "5px 5px 0 0",
-              zIndex: 1200,
+        <ModalScrollableBox
+          style={{
+            height: 800,
+            width: 500,
+            paddingLeft: 10,
+            paddingRight: 10,
+            backgroundColor: "#fff",
+            borderRadius: 5,
+          }}
+        >
+          <h1 style={{ textAlign: "center" }}>나만의 장소 추가</h1>
+          <hr />
+          <Stack
+            spacing={2}
+            sx={{
+              width: "400px",
+              margin: "auto",
             }}
           >
-            <h1 style={{ textAlign: "center", padding: 12 }}>
-              나만의 장소 추가
-            </h1>
-          </div>
-          <ModalScrollableBox>
-            <Stack
-              spacing={2}
-              sx={{
-                width: "400px",
-                margin: "auto",
+            <TextField
+              label="나만의 장소명"
+              fullWidth
+              onChange={placeNameChangeHandler}
+              value={customPlaceName}
+            ></TextField>
+            <TextField
+              label="장소검색"
+              fullWidth
+              onChange={placeAddressChangeHandler}
+              onKeyUp={(event) => onKeyUpHandler(event)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setNowSearch(true)}>
+                      <Icon>search</Icon>
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <TextField
-                label="장소명"
-                fullWidth
-                onChange={placeNameChangeHandler}
-              ></TextField>
-              <TextField
-                label="장소주소"
-                fullWidth
-                onChange={placeAddressChangeHandler}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setNowSearch(true)}>
-                        <Icon>search</Icon>
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              ></TextField>
+            ></TextField>
 
-              <MapContainer>
-                <ModalKakaoMap
-                  setCustomSearchList={setCustomSearchList}
-                  address={address}
-                  nowSearch={nowSearch}
-                  setNowSearch={setNowSearch}
-                  setLocation={setLocation}
-                  mapId={"modal-map"}
-                ></ModalKakaoMap>
-              </MapContainer>
-              <FormControl fullWidth>
-                <InputLabel id="select-day-label">추가할 날짜</InputLabel>
-                <Select
-                  labelId="select-day-label"
-                  label="추가할 날짜"
-                  value={`${day}`}
-                  onChange={dayChangeHandler}
-                >
-                  {fullCourseList.map((fullCourse: any, idx: number) => (
-                    <MenuItem value={idx + 1}>{`Day${
-                      idx + 1
-                    } (${toStringByFormatting(
-                      new Date(
-                        new Date(fullCourseDate[0]).setDate(
-                          new Date(fullCourseDate[0]).getDate() + idx
-                        )
+            <MapContainer>
+              <ModalKakaoMap
+                lat={location.lat}
+                lng={location.lng}
+                setCustomSearchList={setCustomSearchList}
+                address={address}
+                nowSearch={nowSearch}
+                nowMove={nowMove}
+                setNowSearch={setNowSearch}
+                setNowMove={setNowMove}
+                setLocation={setLocation}
+                mapId={"modal-map"}
+              ></ModalKakaoMap>
+            </MapContainer>
+            <FormControl fullWidth>
+              <InputLabel id="select-day-label">추가할 날짜</InputLabel>
+              <Select
+                labelId="select-day-label"
+                label="추가할 날짜"
+                value={`${day}`}
+                onChange={dayChangeHandler}
+              >
+                {fullCourseList.map((fullCourse: any, idx: number) => (
+                  <MenuItem value={idx + 1}>{`Day${
+                    idx + 1
+                  } (${toStringByFormatting(
+                    new Date(
+                      new Date(fullCourseDate[0]).setDate(
+                        new Date(fullCourseDate[0]).getDate() + idx
                       )
-                    )})`}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                label="메모"
-                fullWidth
-                minRows={3}
-                multiline
-                onChange={memoChangeHandler}
-              ></TextField>
-            </Stack>
-          </ModalScrollableBox>
-          <div
-            style={{
-              width: "100%",
-              height: 80,
-              backgroundColor: "#fff",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-              color: "white",
-              borderRadius: "0 0 5px 5px",
-              zIndex: 1200,
-            }}
-          >
-            <Stack
-              spacing={2}
-              direction="row"
-              sx={{
-                paddingTop: 3,
-                justifyContent: "center",
-                alignItems: "center",
-                alignContent: "center",
-              }}
-            >
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#ccc",
-                  color: "g",
-                  "&:hover": {
-                    backgroundColor: "#FF5A5A",
-                    borderColor: "#0062cc",
-                  },
-                }}
-                onClick={handleClose}
-              >
-                취소
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#47A3EC",
-                }}
-                onClick={onclickHandler}
-              >
-                작성완료
-              </Button>
-            </Stack>
-          </div>
-        </div>
-        <div>
-          <div
-            style={{
-              width: "100%",
-              height: 80,
-              backgroundColor: "#47A3EC",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-              color: "white",
-              borderRadius: "5px 5px 0 0",
-              zIndex: 1200,
-            }}
-          >
-            <h1 style={{ textAlign: "center", padding: 12 }}>장소검색결과</h1>
-          </div>
-          <ModalScrollableBox>
-            <Stack
-              spacing={2}
-              sx={{
-                margin: "auto",
-              }}
-            >
-              {customSearchList.length === 0 ||
-                customSearchList.map((customSearch: any, idx: number) => (
-                  <SelectItem
-                    style={{
-                      backgroundColor:
-                        customSearch.id === selectedCustomPlaceId
-                          ? "#FFE793"
-                          : "",
-                    }}
-                    key={idx}
-                    onClick={() => selectSearchPlaceHandler(customSearch)}
-                  >
-                    <p style={{ fontSize: 16, fontWeight: "bold" }}>
-                      {customSearch.place_name}
-                    </p>
-                    <p style={{ color: "grey", fontSize: 12 }}>
-                      {customSearch.road_address_name}
-                    </p>
-                  </SelectItem>
+                    )
+                  )})`}</MenuItem>
                 ))}
-            </Stack>
-          </ModalScrollableBox>
-          <div
-            style={{
-              width: "100%",
-              height: 80,
-              backgroundColor: "#fff",
-              backdropFilter: "blur(6px)",
-              WebkitBackdropFilter: "blur(6px)",
-              color: "white",
-              borderRadius: "0 0 5px 5px",
-              zIndex: 1200,
+              </Select>
+            </FormControl>
+            <TextField
+              label="메모"
+              fullWidth
+              minRows={3}
+              multiline
+              onChange={memoChangeHandler}
+            ></TextField>
+          </Stack>
+
+          <Stack
+            spacing={2}
+            direction="row"
+            sx={{
+              marginTop: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              alignContent: "center",
             }}
-          ></div>
-        </div>
+          >
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#ccc",
+                color: "g",
+                "&:hover": {
+                  backgroundColor: "#FF5A5A",
+                  borderColor: "#0062cc",
+                },
+              }}
+              onClick={handleClose}
+            >
+              취소
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#47A3EC",
+              }}
+              onClick={onclickHandler}
+            >
+              작성완료
+            </Button>
+          </Stack>
+        </ModalScrollableBox>
+        <ModalScrollableBox
+          style={{
+            paddingLeft: 10,
+            paddingRight: 10,
+            width: 300,
+            height: 800,
+            backgroundColor: "#fff",
+            borderRadius: 5,
+            zIndex: 1200,
+          }}
+        >
+          <h1 style={{ textAlign: "center" }}>장소검색결과</h1>
+          <hr />
+          <Stack
+            spacing={2}
+            sx={{
+              margin: "auto",
+            }}
+          >
+            {customSearchList.length === 0 ||
+              customSearchList.map((customSearch: any, idx: number) => (
+                <SelectItem
+                  style={{
+                    backgroundColor:
+                      customSearch.id === selectedCustomPlaceId
+                        ? "#FFE793"
+                        : "",
+                  }}
+                  key={idx}
+                  onClick={() => selectSearchPlaceHandler(customSearch)}
+                >
+                  <p style={{ fontSize: 16, fontWeight: "bold" }}>
+                    {customSearch.place_name}
+                  </p>
+                  <p style={{ color: "grey", fontSize: 12 }}>
+                    {customSearch.road_address_name}
+                  </p>
+                </SelectItem>
+              ))}
+          </Stack>
+        </ModalScrollableBox>
       </Stack>
     </Modal>
   );

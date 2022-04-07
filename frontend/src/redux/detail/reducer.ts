@@ -45,6 +45,9 @@ const initFullCourseData: SetFullCourseData = {
   finishedOn: "",
   scheduleDetailList: [],
   likeCnt: 0,
+  userId: 0,
+  nickname: "",
+  profileImg: "",
 };
 const initContent: string = "";
 

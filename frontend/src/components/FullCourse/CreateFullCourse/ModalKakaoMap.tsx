@@ -18,14 +18,18 @@ interface KakaoMapProps {
     }>
   >;
   nowSearch: boolean;
+  nowMove: boolean;
   setNowSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  setNowMove: React.Dispatch<React.SetStateAction<boolean>>;
   setCustomSearchList: any;
 }
 
 function ModalKakaoMap({
   address,
   nowSearch,
+  nowMove,
   setNowSearch,
+  setNowMove,
   setCustomSearchList,
   mapId = "map",
   lat = 35.1797913,
@@ -56,6 +60,8 @@ function ModalKakaoMap({
 
       // 마커 위치를 클릭한 위치로 옮깁니다
       marker.setPosition(latlng);
+      console.log(latlng);
+
       var message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
       message += "경도는 " + latlng.getLng() + " 입니다";
       setLocation({ lat: latlng.getLat(), lng: latlng.getLng() });
@@ -82,6 +88,14 @@ function ModalKakaoMap({
       setNowSearch(false);
     }
   }, [nowSearch]);
+
+  useEffect(() => {
+    if (nowMove) {
+      loadMap();
+    }
+    setNowMove(false);
+  }, [nowMove]);
+
   return <Box id={mapId} sx={{ flexGrow: 1 }}></Box>;
 }
 

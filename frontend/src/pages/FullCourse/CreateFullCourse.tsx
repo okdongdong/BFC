@@ -8,6 +8,7 @@ import CollapseContainer from "../../components/FullCourse/CreateFullCourse/Coll
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
 import DayBar from "../../components/FullCourse/CreateFullCourse/DayBar";
 import { reorder } from "../../components/FullCourse/CreateFullCourse/dndFunction";
+import ExitCreateModal from "../../components/FullCourse/CreateFullCourse/ExitCreateModal";
 import FullCourseHeader from "../../components/FullCourse/CreateFullCourse/FullCourseHeader";
 import FullCourseKakaoMap from "../../components/FullCourse/CreateFullCourse/FullCourseKakaoMap";
 import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
@@ -18,6 +19,7 @@ import PlaceHeader from "../../components/FullCourse/CreateFullCourse/PlaceHeade
 import PlaceSearch from "../../components/FullCourse/CreateFullCourse/PlaceSearch";
 import {
   createNewSchedule,
+  getFullCourseInfo,
   moveCard,
   updateSchedule,
 } from "../../redux/createFullCourse/actions";
@@ -86,6 +88,7 @@ function CreateFullCourse({
   resetSearchPlaceList,
   createNewSchedule,
   updateSchedule,
+  getFullCourseInfo,
   setPage,
 }: Props) {
   const [pickedDay, setPickedDay] = useState<number>(1);
@@ -105,6 +108,7 @@ function CreateFullCourse({
   const [expandedFullCourse, setExpandedFullCourse] = useState(true);
   const [expandedPlace, setExpandedPlace] = useState(true);
   const [expandedPlaceDetail, setExpandedPlaceDetail] = useState(true);
+  const [openExitModal, setOpenExitModal] = useState(false);
 
   // 지도 중심좌표관련
   const [nowCenter, setNowCenter] = useState<{ lat: number; lng: number }>({
@@ -214,6 +218,12 @@ function CreateFullCourse({
     }
   }, [selectedPlaceId]);
 
+  useEffect(() => {
+    if (fullCourseId > 0) {
+      getFullCourseInfo(fullCourseId);
+    }
+  }, []);
+
   return (
     <>
       <Notice></Notice>
@@ -247,6 +257,7 @@ function CreateFullCourse({
               pickedDay={pickedDay}
               setPickedDay={setPickedDay}
               setDayChange={setDayChange}
+              setOpenModal={setOpenExitModal}
             ></DayBar>
             <CollapseContainer
               expanded={expandedFullCourse}
@@ -318,6 +329,10 @@ function CreateFullCourse({
           </div>
         </DragDropContext>
       </div>
+      <ExitCreateModal
+        openModal={openExitModal}
+        setOpenModal={setOpenExitModal}
+      ></ExitCreateModal>
     </>
   );
 }
@@ -354,6 +369,8 @@ const mapDispatchToProps = (dispatch: any) => {
     setPage: (page: number) => dispatch(setPage(page)),
     setFinished: (finished: boolean) => dispatch(setFinished(finished)),
     getPlaceDetail: (placeId: number) => dispatch(getPlaceDetail(placeId)),
+    getFullCourseInfo: (fullCourseId: number) =>
+      dispatch(getFullCourseInfo(fullCourseId)),
   };
 };
 
