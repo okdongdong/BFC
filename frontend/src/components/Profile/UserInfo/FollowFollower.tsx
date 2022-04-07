@@ -35,7 +35,6 @@ function FollowFollower({ followingCnt, followerCnt, userId }: Props) {
       url: `/users/${userId}/followTo`,
     });
     setFollowingList(result.data);
-    console.log("팔로잉", result.data);
   };
   const fetchData2 = async () => {
     const result = await customAxios({
@@ -43,13 +42,10 @@ function FollowFollower({ followingCnt, followerCnt, userId }: Props) {
       url: `/users/${userId}/followFrom`,
     });
     setFollowerList(result.data);
-    console.log("팔로워", result.data);
   };
   React.useEffect(() => {
     fetchData1();
     fetchData2();
-    console.log(followingList);
-    console.log(followerList);
   }, []);
 
   return (
