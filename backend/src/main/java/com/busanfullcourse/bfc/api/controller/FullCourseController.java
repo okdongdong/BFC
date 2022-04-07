@@ -45,7 +45,8 @@ public class FullCourseController {
 
     @GetMapping("/{fullCourseId}")
     public ResponseEntity<FullCourseRes> getFullCourse(@PathVariable Long fullCourseId) {
-        return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId));
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId, username));
     }
 
     @PutMapping("/{fullCourseId}/date")
