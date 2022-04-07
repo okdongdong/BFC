@@ -92,7 +92,7 @@ export const getPlaceListWithDistance = (
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
-            id: `place-${idx}-${new Date()}`,
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
             content: {
               placeId: place.placeId,
               lat: place.lat,
@@ -154,7 +154,7 @@ export const getPlaceListWithSurvey = (
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
-            id: `place-${idx}-${new Date()}`,
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
             content: {
               placeId: place.placeId,
               lat: place.lat,
@@ -207,7 +207,7 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
-            id: `place-${idx}-${new Date()}`,
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
             content: {
               placeId: place.placeId,
               lat: place.lat,
