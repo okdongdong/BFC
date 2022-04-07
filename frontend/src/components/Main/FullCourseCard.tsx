@@ -30,7 +30,7 @@ function FullCourseCard({
   fullCourseId,
   title,
   thumbnailList,
-  startOn,
+  startedOn,
   finishedOn,
   views,
 }: FullCourseProps) {
@@ -49,7 +49,7 @@ function FullCourseCard({
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <DateCounter
-            startOn={new Date(startOn)}
+            startedOn={new Date(startedOn)}
             finishedOn={new Date(finishedOn)}
           ></DateCounter>
         </CardContentStyle>
