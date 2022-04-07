@@ -1,12 +1,12 @@
 import { AnyAction } from "redux";
 import { NavUserInfo } from "../../types/account";
 import {
+  RESET_USER_INFO,
   SET_PROFILE_IMG,
   SET_USER_INFO,
   USER_LOGIN_FAILURE,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
-  USER_LOGOUT,
 } from "./types";
 
 interface AccountStateType extends NavUserInfo {
@@ -54,10 +54,6 @@ const accountReducer = (
         err: action.payload,
       };
 
-    case USER_LOGOUT:
-      return {
-        ...initialState,
-      };
     case SET_PROFILE_IMG:
       return {
         ...state,
@@ -68,6 +64,11 @@ const accountReducer = (
       return {
         ...state,
         ...action.payload,
+      };
+
+    case RESET_USER_INFO:
+      return {
+        ...initialState,
       };
 
     default:

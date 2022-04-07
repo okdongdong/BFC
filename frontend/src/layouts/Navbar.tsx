@@ -3,8 +3,9 @@ import {
   AppBar,
   Box,
   Button,
-  Menu,
-  MenuItem,
+  Collapse,
+  Icon,
+  Stack,
   styled,
   Toolbar,
 } from "@mui/material";
@@ -12,11 +13,9 @@ import { connect } from "react-redux";
 import { AccountReducer } from "../redux/rootReducer";
 import Logo from "../components/Navbar/Logo";
 import NavbarText from "../components/Navbar/NavbarText";
-import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { userLogout } from "../redux/account/actions";
-import Profile from "../pages/Profile/Profile";
 
 // 헤더 화면 (상단 메뉴바)
 const RootStyle = styled(AppBar)(({ theme }) => ({
@@ -35,36 +34,24 @@ const ToolbarStyle = styled(Toolbar)({
 });
 
 const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const token = localStorage.getItem("accessToken") || "";
-  const refreshToken = localStorage.getItem("refreshToken") || "";
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-    console.log("열림");
-    console.log(event.currentTarget);
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const handleOpen = () => {
+    setMenuOpen(true);
   };
+
   const handleClose = () => {
-    setAnchorEl(null);
-    console.log("닫힘");
+    setMenuOpen(false);
   };
-  function requestLogOut() {
-    axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/logout`,
-      headers: {
-        Authorization: token,
-        RefreshToken: refreshToken,
-      },
-    })
-      .then((res) => {
-        console.log(res);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        userLogout();
-      })
-      .catch((err) => console.log(err));
-  }
+
+  const onClickHandler = async () => {
+    try {
+      await userLogout();
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <RootStyle>
@@ -87,78 +74,55 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
               />
             </Box>
 
-            <div>
-              <Button
-                id="basic-button"
-                aria-controls={open ? "basic-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onMouseEnter={handleClick}
-                // onMouseOut={handleClose}
-              >
-                <div
-                  style={{
-                    alignItems: "center",
-                    textDecoration: "none",
-                    color: "#0787EC",
-                    margin: "16px",
-                    fontSize: "24px",
-                    fontWeight: "bold",
-                    height: 36,
-                  }}
-                >
-                  {nickname}님
-                </div>
-              </Button>
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
+            <div
+              onMouseEnter={handleOpen}
+              onMouseLeave={handleClose}
+              style={{ position: "relative" }}
+            >
+              <NavbarText
+                to={`/profile/${nickname}`}
+                text={`${nickname}님`}
+              ></NavbarText>
+              <Collapse
+                in={menuOpen}
+                style={{
+                  position: "absolute",
+                  top: 34,
+                  paddingTop: 30,
                 }}
               >
-                <MenuItem
-                  onClick={handleClose}
-                  style={{
-                    width: "200px",
-                    height: "30px",
-                    fontSize: "20px",
-                    color: "#0787EC",
-                  }}
-                >
-                  <p style={{ marginLeft: "auto", marginRight: "auto" }}>
-                    <Link
-                      to={`/profile/${nickname}`}
-                      style={{ textDecoration: "none", color: "#0787EC" }}
-                    >
-                      Profile
-                    </Link>
-                  </p>
-                </MenuItem>
-                <MenuItem
-                  onClick={handleClose}
-                  style={{
-                    width: "200px",
-                    height: "30px",
-                    fontSize: "20px",
-                    color: "#0787EC",
-                  }}
-                >
-                  <p
-                    style={{ marginLeft: "auto", marginRight: "auto" }}
-                    onClick={requestLogOut}
+                <Stack spacing={1}>
+                  <Button
+                    sx={{
+                      fontSize: 20,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.8)",
+                      "&:hover": {
+                        backgroundColor: "#47A3EC",
+                        color: "white",
+                      },
+                    }}
+                    onClick={() => navigate(`/profile/${nickname}`)}
                   >
-                    <Link
-                      to="/login"
-                      style={{ textDecoration: "none", color: "#0787EC" }}
-                    >
-                      Logout
-                    </Link>
-                  </p>
-                </MenuItem>
-              </Menu>
+                    Profile
+                    <Icon sx={{ paddingLeft: 2 }}>account_circle</Icon>
+                  </Button>
+                  <Button
+                    sx={{
+                      fontSize: 20,
+                      borderRadius: 2,
+                      backgroundColor: "rgba(255,255,255,0.8)",
+                      "&:hover": {
+                        backgroundColor: "#47A3EC",
+                        color: "white",
+                      },
+                    }}
+                    onClick={onClickHandler}
+                  >
+                    Logout <Icon sx={{ paddingLeft: 2 }}>logout</Icon>
+                  </Button>
+                </Stack>
+              </Collapse>
             </div>
           </Box>
         ) : (
