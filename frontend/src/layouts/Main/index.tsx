@@ -1,5 +1,7 @@
 import { Stack, styled } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import Loading from "../../components/FullCourse/CreateFullCourse/Loading";
+import Notice from "../../components/FullCourse/CreateFullCourse/Notice";
 import Footer from "../Footer";
 import Navbar from "../Navbar";
 
@@ -21,6 +23,8 @@ const MainLayout = () => {
 
   return (
     <RootStyle>
+      <Notice></Notice>
+      <Loading></Loading>
       <Stack sx={{ width: "100%" }}>
         <Navbar />
         <MainStyle>

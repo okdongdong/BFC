@@ -57,7 +57,7 @@ function PlaceCard({
   const options = {
     root: null,
     rootMargin: "20px",
-    threshold: 0.8,
+    threshold: 0.5,
   };
 
   const handleObserver = async (entries: any) => {
