@@ -77,9 +77,13 @@ public class FullCourseService {
         return listRes;
     }
 
-    public FullCourseRes getFullCourse(Long fullCourseId) {
+    public FullCourseRes getFullCourse(Long fullCourseId, String username) {
         FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
                 .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
+        if (!username.equals(fullCourse.getUser().getUsername())) {
+            fullCourse.setView(fullCourse.getView()+1);
+            fullCourseRepository.save(fullCourse);
+        }
         List<Schedule> scheduleList = scheduleRepository.findAllByFullCourseFullCourseIdOrderByDayAscSequenceAsc(fullCourseId);
         return FullCourseRes.builder()
                 .fullCourseId(fullCourseId)

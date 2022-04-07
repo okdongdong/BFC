@@ -5,7 +5,9 @@ import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.api.response.PlaceDetailRes;
 import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.common.util.ProcessUtil;
+import com.busanfullcourse.bfc.db.entity.MainRecommend;
 import com.busanfullcourse.bfc.db.entity.Place;
+import com.busanfullcourse.bfc.db.entity.Recommend;
 import com.busanfullcourse.bfc.db.entity.User;
 import com.busanfullcourse.bfc.db.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -82,5 +86,27 @@ public class PlaceService {
 
     public Page<PlaceListRes> getSurveyRecommendPlaceList(Long fullCourseId, Pageable pageable) {
         return PlaceListRes.ofSurveyRecommend(surveyRecommendRepository.findAllByFullCourseFullCourseId(fullCourseId, pageable));
+    }
+
+    public List<PlaceListRes> getRecommendRestaurantList(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        List<Place> recommendPlaceList = recommendRepository.findAllByUserAndCategoryIs(user, true).stream().map(Recommend::getPlace).collect(Collectors.toList());
+        List<Place> mainRecommendList = mainRecommendRepository.findAllByUserAndCategoryIs(user, true).stream().map(MainRecommend::getPlace).collect(Collectors.toList());
+
+        List<Place> placeList = Stream.concat(recommendPlaceList.stream(), mainRecommendList.stream()).distinct().collect(Collectors.toList());
+
+        return PlaceListRes.of(placeList);
+    }
+
+    public List<PlaceListRes> getRecommendAttractionList(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        List<Place> recommendPlaceList = recommendRepository.findAllByUserAndCategoryIs(user, false).stream().map(Recommend::getPlace).collect(Collectors.toList());
+        List<Place> mainRecommendList = mainRecommendRepository.findAllByUserAndCategoryIs(user, false).stream().map(MainRecommend::getPlace).collect(Collectors.toList());
+
+        List<Place> placeList = Stream.concat(recommendPlaceList.stream(), mainRecommendList.stream()).distinct().collect(Collectors.toList());
+
+        return PlaceListRes.of(placeList);
     }
 }
