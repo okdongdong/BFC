@@ -1,5 +1,6 @@
 import { Box, styled } from "@mui/material";
 import React from "react";
+import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 
 const CircleStlye = styled("div")(() => ({
   marginRight: 0,
@@ -24,12 +25,14 @@ const PlaceNameStlye = styled("div")(() => ({
 
 interface MyFullCourseContentDayProps {
   day: number;
+  startedOn: string;
   placeNameList: string[];
 }
 
 function MyFullCourseContentDay({
   day,
   placeNameList,
+  startedOn,
 }: MyFullCourseContentDayProps) {
   return (
     <Box
@@ -41,6 +44,14 @@ function MyFullCourseContentDay({
         margin: 0,
       }}
     >
+      <div style={{ fontSize: 24, marginBottom: 10, fontWeight: "bold" }}>
+        {toStringByFormatting(
+          new Date(
+            new Date(startedOn).setDate(new Date(startedOn).getDate() + day - 1)
+          ),
+          "."
+        )}
+      </div>
       <CircleStlye>
         <p>{day}</p>
       </CircleStlye>
