@@ -13,15 +13,15 @@ import java.util.List;
 public interface FullCourseRepository extends JpaRepository<FullCourse, Long>, FullCourseQueryRepository {
 
     // 다른사람 프로필 조회할 때 가져올 상위 6개
-    List<FullCourse> findTop6ByIsPublicAndUserOrderByStartedOn(Boolean isPublic,User user);
+    List<FullCourse> findTop6ByIsPublicAndUserOrderByStartedOnDesc(Boolean isPublic,User user);
 
     // 다른사람 프로필 조회할 때 가져올 paging
-    Page<FullCourse> findAllByIsPublicAndUserOrderByStartedOn(Boolean isPublic, User user, Pageable pageable);
+    Page<FullCourse> findAllByIsPublicAndUserOrderByStartedOnDesc(Boolean isPublic, User user, Pageable pageable);
 
     // 내 프로필 조회할 때 가져올 상위 6개
-    List<FullCourse> findTop6ByUserOrderByStartedOn(User user);
+    List<FullCourse> findTop6ByUserOrderByStartedOnDesc(User user);
 
     // 내 프로필 조회할 때 가져올 paging
-    Page<FullCourse> findAllByUserOrderByStartedOn(User user, Pageable pageable);
+    Page<FullCourse> findAllByUserOrderByStartedOnDesc(User user, Pageable pageable);
 
 }

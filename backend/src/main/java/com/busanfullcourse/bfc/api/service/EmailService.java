@@ -1,14 +1,13 @@
 package com.busanfullcourse.bfc.api.service;
 
 import com.busanfullcourse.bfc.api.response.EmailAuthRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.FullCourse;
-import com.busanfullcourse.bfc.db.entity.Sharing;
 import com.busanfullcourse.bfc.db.entity.User;
 import com.busanfullcourse.bfc.db.repository.FullCourseRepository;
 import com.busanfullcourse.bfc.db.repository.SharingRepository;
 import com.busanfullcourse.bfc.db.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,9 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Random;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
@@ -131,7 +128,7 @@ public class EmailService {
 
     public EmailAuthRes sendCode(String email) throws Exception{
         if (!checkUsername(email)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(ExceptionUtil.USER_NOT_FOUND);
         }
         String code = createKey();
         MimeMessage message = createMessage(email, code);
@@ -139,7 +136,7 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MailException mailException) {
             mailException.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
         }
 
         return EmailAuthRes.builder().code(code).build();
@@ -147,7 +144,7 @@ public class EmailService {
 
     public EmailAuthRes sendCodeToUser(String email) throws Exception{
         if (checkUsername(email)) {
-            throw new IllegalArgumentException();
+            throw new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND);
         }
         String code = createKey();
         MimeMessage message = createMessage(email, code);
@@ -155,21 +152,22 @@ public class EmailService {
             javaMailSender.send(message);
         } catch (MailException mailException) {
             mailException.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
         }
 
         return EmailAuthRes.builder().code(code).build();
     }
 
     public void sendResetCode(String email) throws Exception{
-        User user = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+        User user = userRepository.findByUsername(email)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         String newPassword = createPassword();
         MimeMessage message = createNewPasswordMessage(email, newPassword);
         try {
             javaMailSender.send(message);
         } catch (MailException mailException) {
             mailException.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
@@ -177,21 +175,23 @@ public class EmailService {
 
     public void shareFullCourse(Long fullCourseId, Map<String, String> invitedUser) throws Exception {
         String username = userService.getCurrentUsername();
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException("풀코스가 없습니다."));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         if (!fullCourse.getUser().getUsername().equals(username)) {
-            throw new IllegalAccessException("풀코스의 주인만 공유할 수 있습니다.");
+            throw new IllegalArgumentException(ExceptionUtil.UNAUTHORIZED_USER);
         }
         String email = invitedUser.get("invitedUser");
-        User reqUser = userRepository.findByUsername(email).orElseThrow(() -> new NoSuchElementException("존재하지 않는 사용자입니다."));
+        User reqUser = userRepository.findByUsername(email)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         if (sharingRepository.findByFullCourseAndUser(fullCourse, reqUser).isPresent()) {
-            throw new IllegalAccessException("이미 공유된 사용자입니다.");
+            throw new IllegalAccessException(ExceptionUtil.SHARE_DUPLICATE);
         } else {
             MimeMessage message = createShareMessage(email, fullCourse);
             try {
                 javaMailSender.send(message);
             } catch (MailException mailException) {
                 mailException.printStackTrace();
-                throw new IllegalArgumentException();
+                throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
             }
         }
 

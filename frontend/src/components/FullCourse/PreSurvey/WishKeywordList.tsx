@@ -1,14 +1,12 @@
-import { Chip, Stack } from "@mui/material";
+import { Chip, Grid, Stack } from "@mui/material";
 import React from "react";
 
 interface WishKeywordListProps {
-  listLabel?: string;
   wishKeywordList: Array<string>;
   setWishKeywordList: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 function WishKeywordList({
-  listLabel = "",
   wishKeywordList,
   setWishKeywordList,
 }: WishKeywordListProps) {
@@ -20,17 +18,17 @@ function WishKeywordList({
 
   return (
     <div>
-      <div>{listLabel}</div>
-      <Stack direction="row" spacing={1}>
+      <Grid container spacing={1} style={{ maxWidth: 600 }}>
         {wishKeywordList.map((keyword, idx) => (
-          <Chip
-            variant="outlined"
-            label={keyword}
-            key={idx}
-            onDelete={() => onDeleteHandler(idx)}
-          ></Chip>
+          <Grid item key={idx}>
+            <Chip
+              variant="outlined"
+              label={keyword}
+              onDelete={() => onDeleteHandler(idx)}
+            ></Chip>
+          </Grid>
         ))}
-      </Stack>
+      </Grid>
     </div>
   );
 }

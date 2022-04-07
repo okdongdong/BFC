@@ -20,5 +20,4 @@ from django.urls import include,path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v2/recommend/', include('recommendation.urls')), # 추천 알고리즘
-    path('train/', include('train.urls')) # 머신러닝 용
 ]

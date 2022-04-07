@@ -1,4 +1,5 @@
 export interface PlaceCardProps {
+  scheduleId?: number;
   placeId: number;
   lat?: number;
   lng?: number;
@@ -7,7 +8,8 @@ export interface PlaceCardProps {
   address?: string;
   averageScore: number;
   category?: number; // 음식점인지 관광지인지 구별 => 1: 음식점, 0: 관광지라 가정
-  keywords: string[];
+  keywords?: string[];
+  label?: string;
 }
 
 export interface CustomPlaceCardProps {
@@ -52,14 +54,28 @@ export interface FullCourseDetailProps {
   dayPlaceList: MyFullCourseContentDayProps[];
 }
 
+export interface ScheduleDetail {
+  address: string;
+  customPlaceId: number | null;
+  day: number;
+  lat: number;
+  lon: number;
+  memo: string;
+  name: string;
+  placeId: number | null;
+  scheduleId: number;
+  sequence: number;
+}
+
 export interface FullCourseContentProps {
   fullCourseId?: number;
   title: string;
   startOn: string;
   finishedOn: string;
-  dayPlaceList: MyFullCourseContentDayProps[];
+  thumbnailList: string[];
+  scheduleDetailList?: Array<ScheduleDetail | null>;
 }
 
 export interface FullCourseDetailListProps {
-  fullCourseDetailList: FullCourseDetailProps[];
+  fullCourseDetailList: FullCourseContentProps[];
 }

@@ -34,7 +34,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'recommendation', # 데이터 여기있음 / 추천알고리즘 짜는 곳
-    'train', # 머신러닝 용
 
     # 'django_crontab',
     'rest_framework',

@@ -3,12 +3,8 @@ import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
 import FullCourseModal from "./Modal/FullCourseModal";
 import { connect } from "react-redux";
-interface place {
-  fullcourse_id: number;
-  name: string;
-  thumbnail: string;
-  label: string;
-}
+import { Link } from "react-router-dom";
+
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
@@ -21,131 +17,50 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: "0",
   },
 }));
-function Like({ likeList }: Props) {
+function Like({ likeList, nickname }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-  const nickname = "나는 윈터야"; // props 받아 가져와야함
   const title = `${nickname}님이 좋아하는 코스`;
-  const placesList: Array<place> = [
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-    {
-      fullcourse_id: 2,
-      name: "광안리",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "나혼자여행",
-    },
-    {
-      fullcourse_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://www.visitbusan.net/uploadImgs/files/cntnts/20191229160530047_oen",
-      label: "가족여행",
-    },
-  ];
+  const type = 0;
   let baseCard = [];
   for (let i = 0; i < 6; i++) {
     if (i < likeList.length) {
       baseCard.push(
-        <div style={{ position: "relative" }}>
-          <img
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-            }}
-            src={likeList[i].thumbnail}
-            alt="fullCourseImg"
-          ></img>
-          <div
-            style={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-              position: "absolute",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              top: 0,
-              left: 0,
-            }}
-          >
-            <p style={{ color: "white" }}>#{likeList[i].label}</p>
+        <Link
+          to={`/place/${likeList[i].placeId}`}
+          style={{ textDecoration: "none" }}
+        >
+          <div style={{ position: "relative" }}>
+            <img
+              style={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+              }}
+              src={likeList[i].thumbnail}
+              alt="fullCourseImg"
+            ></img>
+            <div
+              style={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+                position: "absolute",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                top: 0,
+                left: 0,
+              }}
+            >
+              <p style={{ color: "white" }}>#{likeList[i].label}</p>
+            </div>
           </div>
-        </div>
+        </Link>
       );
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
@@ -183,8 +98,8 @@ function Like({ likeList }: Props) {
         <FullCourseModal
           open={open}
           setOpen={() => setOpen(false)}
-          contentList={likeList}
           title={title}
+          type={type}
         ></FullCourseModal>
       )}
     </div>
@@ -194,6 +109,7 @@ const mapStateToProps = ({ account, profile }: any) => {
   return {
     isLogin: account.isLogin,
     likeList: profile.likeList,
+    nickname: profile.nickname,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

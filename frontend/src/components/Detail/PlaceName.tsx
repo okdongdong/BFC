@@ -1,5 +1,13 @@
-function PlaceName() {
-  const placeTitle: string = "부산 목구멍"; //redux로 받아옴
-  return <p>{placeTitle}</p>;
+import { connect } from "react-redux";
+
+function PlaceName({ name }: Props) {
+  return <p>{name}</p>;
 }
-export default PlaceName;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    name: place.name,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceName);
