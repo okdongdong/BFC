@@ -24,16 +24,17 @@ public class ShareService {
     private final SharingRepository sharingRepository;
     private final FullCourseRepository fullCourseRepository;
 
-    public void shareFullCourse(Long fullCourseId, String email) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+    public void shareFullCourse(Long fullCourseId, String email) {
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         Optional<User> user = userRepository.findByUsername(email);
         if (user.isEmpty()) {
-            throw new NoSuchElementException(ExceptionUtil.NO_USER);
+            throw new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND);
         }
 
         Optional<Sharing> sharing = sharingRepository.findByFullCourseAndUser(fullCourse, user.get());
         if (sharing.isPresent()) {
-            throw new IllegalAccessException("이미 공유된 사용자입니다.");
+            throw new DuplicateFormatFlagsException(ExceptionUtil.SHARE_DUPLICATE);
         } else {
             sharingRepository.save(Sharing.builder()
                     .fullCourse(fullCourse)
@@ -43,18 +44,20 @@ public class ShareService {
     }
 
     public List<SharingRes> getShareMember(Long fullCourseId, String username) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         if (!fullCourse.getUser().getUsername().equals(username)) {
-            throw new IllegalAccessException("풀코스의 주인만 조회할 수 있습니다.");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
 
         return SharingRes.of(sharingRepository.findAllByFullCourseFullCourseId(fullCourseId));
     }
 
     public void deleteShareMember(Long fullCourseId, String username, Map<String, Long> map) throws IllegalAccessException {
-        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_FULL_COURSE));
+        FullCourse fullCourse = fullCourseRepository.findById(fullCourseId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.FULL_COURSE_NOT_FOUND));
         if (!fullCourse.getUser().getUsername().equals(username)) {
-            throw new IllegalAccessException("풀코스의 주인만 수정할 수 있습니다.");
+            throw new IllegalAccessException(ExceptionUtil.NOT_MYSELF);
         }
 
         sharingRepository.deleteById(sharingRepository.findByUserId(map.get("bannedMember")).getSharingId());

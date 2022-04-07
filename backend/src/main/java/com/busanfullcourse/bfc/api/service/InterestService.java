@@ -37,8 +37,10 @@ public class InterestService {
 
     public Map<String, Boolean> updatePlaceInterest(Long placeId, String username) {
         Optional<Interest> interest = interestRepository.findByPlacePlaceIdAndUserUsername(placeId, username);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_USER));
-        Place place = placeRepository.findById(placeId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.NO_PLACE));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.PLACE_NOT_FOUND));
         HashMap<String, Boolean> map = new HashMap<>();
         if (interest.isPresent()) {
             interestRepository.delete(interest.get());
