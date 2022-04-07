@@ -77,7 +77,7 @@ public class UserController {
     @GetMapping("/{userId}/interest")
     public ResponseEntity<Page<InterestListRes>>  getMoreInterestPlace(@PathVariable Long userId,
                                                                        @PageableDefault(size = 8, sort = "interestId", direction = Sort.Direction.DESC)Pageable pageable) {
-        return ResponseEntity.ok(InterestListRes.of(interestService.getMoreInterestPlace(userId, pageable)));
+        return ResponseEntity.ok(interestService.getMoreInterestPlace(userId, pageable));
     }
 
     @GetMapping("/{userId}/userFullCourse")

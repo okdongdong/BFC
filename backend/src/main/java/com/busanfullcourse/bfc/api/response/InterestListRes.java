@@ -26,6 +26,8 @@ public class InterestListRes {
 
     private String thumbnail;
 
+    private Boolean isClear;
+
     public static List<InterestListRes> of (List<Interest> list) {
         return list.stream().map(interest -> InterestListRes.builder()
                 .placeId(interest.getPlace().getPlaceId())
