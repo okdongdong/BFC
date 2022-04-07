@@ -257,6 +257,8 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
         name: customPlaceInfo.name,
         address: customPlaceInfo.address,
         thumbnail: defaultImg,
+        lat: customPlaceInfo.lat,
+        lng: customPlaceInfo.lon,
       };
       const newSchedule = {
         id: `customPlace-${new Date().getTime()}`,

@@ -25,7 +25,6 @@ function PlaceKakaoMapMarkers({
   placeCardList,
   setCenter,
 }: PlaceKakaoMapMarkersProps & Props) {
-  console.log(placeCardList);
   return (
     <div>
       {placeCardList.map((placeCard: PlaceCard, idx: number) => (

@@ -91,8 +91,8 @@ function AddCustomPlaceModal({
       address: address,
       lat: location.lat,
       lon: location.lng,
-      day: day,
-      sequence: fullCourseList[day - 1].length,
+      day: day - 1,
+      sequence: fullCourseList[day - 1].length + 1,
       fullCourseId: fullCourseId,
     };
 
