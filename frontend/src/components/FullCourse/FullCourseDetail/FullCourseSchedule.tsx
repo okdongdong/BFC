@@ -7,6 +7,7 @@ import StepContent from "@mui/material/StepContent";
 import Typography from "@mui/material/Typography";
 import { connect } from "react-redux";
 import { ScheduleData } from "../../../types/detail";
+import { Link } from "react-router-dom";
 type dayProps = {
   idx: number;
   days: number;
@@ -32,27 +33,32 @@ function FullCourseSchedule({ idx, steps }: dayProps & Props) {
             <StepLabel></StepLabel>
             <StepContent>
               <Typography style={{ display: "flex", alignItems: "center" }}>
-                {step.thumbnail ? (
-                  <img
-                    src={step.thumbnail}
-                    style={{
-                      width: "300px",
-                      height: "180px",
-                      marginRight: "20px",
-                    }}
-                    alt=""
-                  />
-                ) : (
-                  <img
-                    src="https://www.chanchao.com.tw/images/default.jpg"
-                    style={{
-                      width: "300px",
-                      height: "180px",
-                      marginRight: "20px",
-                    }}
-                    alt=""
-                  />
-                )}
+                <Link
+                  to={`/place/${step.placeId}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  {step.thumbnail ? (
+                    <img
+                      src={step.thumbnail}
+                      style={{
+                        width: "300px",
+                        height: "180px",
+                        marginRight: "20px",
+                      }}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      src="https://www.chanchao.com.tw/images/default.jpg"
+                      style={{
+                        width: "300px",
+                        height: "180px",
+                        marginRight: "20px",
+                      }}
+                      alt=""
+                    />
+                  )}
+                </Link>
 
                 <div>
                   <div>{step.name}</div>

@@ -2,13 +2,15 @@ import axios from "axios";
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import { LoginUserInfo, NavUserInfo, SetUserInfo } from "../../types/account";
+import { errorControl, loadingControl } from "../baseInfo/actions";
+import { resetFullCourse } from "../createFullCourse/actions";
 import {
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAILURE,
   SET_PROFILE_IMG,
   SET_USER_INFO,
-  USER_LOGOUT,
+  RESET_USER_INFO,
 } from "./types";
 
 const userLoginRequest = () => {
@@ -29,11 +31,7 @@ const userLoginFailure = (err: any) => {
     payload: err,
   };
 };
-export const userLogout = () => {
-  return {
-    type: USER_LOGOUT,
-  };
-};
+
 export const setProfileImg = (imgUrl: string) => {
   return {
     type: SET_PROFILE_IMG,
@@ -41,6 +39,11 @@ export const setProfileImg = (imgUrl: string) => {
   };
 };
 
+export const resetUserInfo = () => {
+  return {
+    type: RESET_USER_INFO,
+  };
+};
 export const setUserInfo = (userInfo: SetUserInfo) => {
   return {
     type: SET_USER_INFO,
@@ -106,5 +109,29 @@ export const userLogin = (userInfo: LoginUserInfo) => {
       console.log(err);
       dispatch(userLoginFailure(err));
     }
+  };
+};
+
+export const userLogout = () => {
+  return async (dispatch: Dispatch) => {
+    loadingControl(dispatch, true);
+    try {
+      const res = await customAxios({
+        method: "post",
+        url: `/auth/logout`,
+        headers: {
+          RefreshToken: localStorage.getItem("refreshToken") || "",
+        },
+      });
+      console.log(res);
+      localStorage.clear();
+      dispatch(resetUserInfo());
+      dispatch(resetFullCourse());
+    } catch (e) {
+      console.log(e);
+      errorControl(dispatch, "로그아웃에 실패했습니다.");
+    }
+
+    loadingControl(dispatch, false);
   };
 };
