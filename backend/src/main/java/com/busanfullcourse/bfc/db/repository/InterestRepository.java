@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface InterestRepository extends JpaRepository<Interest,Long> {
         Optional<Interest> findByPlacePlaceIdAndUserUsername(Long placeId, String username);
 
-        List<Interest> findTop4ByUserIdOrderByInterestIdDesc(Long userId);
+        List<Interest> findTop6ByUserIdOrderByInterestIdDesc(Long userId);
 
         Page<Interest> findAllByUserId(Long userId, Pageable pageable);
 }

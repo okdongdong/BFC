@@ -5,6 +5,6 @@ import com.busanfullcourse.bfc.db.entity.User;
 
 import java.util.List;
 
-public interface RecommendQueryRepository {
-    List<Place> findTop8ByRecommendPlaceAndCategoryIs(User user, Boolean category);
+public interface MainRecommendQueryRepository {
+    List<Place> findTop8ByMainRecommendPlaceAndCategoryIs(User user, Boolean category);
 }

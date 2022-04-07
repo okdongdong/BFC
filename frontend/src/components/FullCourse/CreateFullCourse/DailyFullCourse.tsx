@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { PlaceCardListProps } from "../../../types/main";
+import DailyFullCourseCard from "./DailyFullCourseCard";
 import { getItemStyle, getListStyle } from "./dndFunction";
-import PlaceCard from "./PlaceCard";
 
 interface PlaceCardListDnd extends PlaceCardListProps {
   droppableId?: string;
@@ -17,8 +17,6 @@ function DailyFullCourse({
   droppableId = "droppablePlaceList",
   idx = 0,
   pickedDay = -1,
-  nowScrollPosition = 0,
-  setDayChange,
 }: PlaceCardListDnd) {
   const dayText = useRef<HTMLDivElement>(null);
 
@@ -55,7 +53,10 @@ function DailyFullCourse({
                         provided.draggableProps.style
                       )}
                     >
-                      <PlaceCard
+                      <DailyFullCourseCard
+                        day={idx}
+                        seq={index}
+                        scheduleId={item.content.scheduleId}
                         placeId={item.content.placeId}
                         category={item.content.category}
                         name={item.content.name}
@@ -63,7 +64,7 @@ function DailyFullCourse({
                         address={item.content.address}
                         averageScore={item.content.averageScore}
                         keywords={item.content.keywords}
-                      ></PlaceCard>
+                      ></DailyFullCourseCard>
                     </div>
                   )}
                 </Draggable>

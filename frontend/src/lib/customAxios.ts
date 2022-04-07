@@ -11,8 +11,23 @@ export const customAxios: AxiosInstance = axios.create({
   },
 });
 
+export const customAxiosDjango: AxiosInstance = axios.create({
+  // baseURL이 작성되어있으므로 뒷부분만 작성해서 사용하면 됨
+  baseURL: `${process.env.REACT_APP_BASE_URL_DJANGO}/api/v2`,
+  headers: {
+    Authorization: token,
+  },
+});
+
 // 요청 보내기 전 실행할 함수
 const successRequest = async (config: any) => {
+  const token = localStorage.getItem("accessToken") || "";
+  console.log("요청보내기전:", config);
+  config.headers.Authorization = token;
+  if (config.url === "/auth/reissue") {
+    const refreshToken = localStorage.getItem("refreshToken") || "";
+    config.headers.RefreshToken = refreshToken;
+  }
   return config;
 };
 
@@ -90,12 +105,24 @@ const unauthorizedError = async (error: any) => {
 
 // 요청(request)) interceptor
 customAxios.interceptors.request.use(
-  (config) => successRequest(config), // 정상적인 응답을 반환한 경울
+  (config) => successRequest(config), // 정상적인 응답을 반환한 경우
   (error) => failureRequest(error) // 에러가 발생한 경우
 );
 
 // 응답(response) interceptor
 customAxios.interceptors.response.use(
-  (response) => successResponse(response), // 정상적인 응답을 반환한 경울
+  (response) => successResponse(response), // 정상적인 응답을 반환한 경우
+  (error) => failureResponse(error) // 에러가 발생한 경우
+);
+
+// 요청(request)) interceptor
+customAxiosDjango.interceptors.request.use(
+  (config) => successRequest(config), // 정상적인 응답을 반환한 경우
+  (error) => failureRequest(error) // 에러가 발생한 경우
+);
+
+// 응답(response) interceptor
+customAxiosDjango.interceptors.response.use(
+  (response) => successResponse(response), // 정상적인 응답을 반환한 경우
   (error) => failureResponse(error) // 에러가 발생한 경우
 );

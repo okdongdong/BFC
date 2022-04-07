@@ -3,7 +3,7 @@ import { styled } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
-import ScrollableBox from "../ScrollableBox";
+import { ScrollableBox } from "../../../lib/customTag";
 
 const useCollapseStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -58,25 +58,10 @@ function CollapseContainer({
   setExpanded,
   buttonPositionY = 0,
   children,
-  backgroundColor = "#efffff",
-  dayChange = false,
-  setNowScrollPosition,
 }: CollapseContainerProps) {
   useEffect(() => {
     setExpanded(false);
   }, []);
-
-  // useEffect(() => {
-  //   console.log(typeof setNowScrollPosition, ref.current !== null, dayChange);
-  //   if (
-  //     typeof setNowScrollPosition !== "undefined" &&
-  //     ref.current !== null &&
-  //     dayChange &&
-  //     ref.current.scrollTop > 0
-  //   ) {
-  //     setNowScrollPosition(ref.current.scrollTop);
-  //   }
-  // }, [dayChange]);
 
   const ExpandButton = styled("div")(() => ({
     width: 15,
@@ -110,13 +95,7 @@ function CollapseContainer({
         orientation="horizontal"
         classes={useCollapseStyles()}
       >
-        <ScrollableBox
-          height={"calc(100vh - 80px)"}
-          width={400}
-          backgroundColor={backgroundColor}
-        >
-          {children}
-        </ScrollableBox>
+        <ScrollableBox>{children}</ScrollableBox>
       </Collapse>
       <div style={{}}>
         <ExpandButton onClick={() => setExpanded(!expanded)}>
