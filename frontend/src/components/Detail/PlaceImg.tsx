@@ -1,12 +1,19 @@
-function PlaceImg() {
-  const thumbnail: string =
-    "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg";
+import { connect } from "react-redux";
+
+function PlaceImg({ thumbnail }: Props) {
   return (
     <img
       src={thumbnail}
       alt=""
-      style={{ display: "flex", width: "200px", height: "200px" }}
+      style={{ display: "flex", width: "220px", height: "220px" }}
     />
   );
 }
-export default PlaceImg;
+const mapStateToProps = ({ place }: any) => {
+  return {
+    thumbnail: place.thumbnail,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceImg);

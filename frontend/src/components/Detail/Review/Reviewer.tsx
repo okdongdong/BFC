@@ -8,11 +8,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: theme.spacing(5),
   },
 }));
-const Reviewer = ({ nickname, profile }: ReviewProps) => {
+const Reviewer = ({ nickname, profileImg }: ReviewProps) => {
   const classes = useStyles();
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <img src={profile} className={classes.myImg} alt="" />
+      <img src={profileImg} className={classes.myImg} alt="" />
       <p style={{ marginLeft: "7px" }}>{nickname}</p>
     </div>
   );

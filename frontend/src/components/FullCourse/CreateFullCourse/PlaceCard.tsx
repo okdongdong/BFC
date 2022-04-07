@@ -7,16 +7,23 @@ import {
   Stack,
   Paper,
 } from "@mui/material";
+import { connect } from "react-redux";
 import { PlaceCardProps } from "../../../types/main";
+import noImage from "../../../assets/img/place_img.png";
 import StarScore from "../../Main/StarScore";
 
 const CardStyle = styled(Card)(() => ({
   textAlign: "left",
   display: "flex",
   justifyContent: "start",
+  height: 132,
   zIndex: 100,
   width: 350,
   position: "relative",
+
+  "&:hover": {
+    backgroundColor: "#FFEFB5",
+  },
 }));
 
 const CardMediaStyle = styled(CardMedia)(() => ({
@@ -42,27 +49,32 @@ const PlaceAddressNameStyle = styled("p")(() => ({
 
 function PlaceCard({
   placeId,
-  category,
   name,
   thumbnail,
   address,
   averageScore,
-  keywords,
-}: PlaceCardProps) {
+  keywords = [],
+  selectedPlaceId,
+}: PlaceCardProps & Props) {
   const newKeywords: Array<string> = keywords.slice(0, 3);
-
+  console.log(placeId, selectedPlaceId);
   return (
     // 카테고리 별로 이동경로가 달라야 함
-    <CardStyle onClick={() => {}}>
+    <CardStyle
+      sx={{ backgroundColor: placeId === selectedPlaceId ? "#FFE793" : "" }}
+    >
       <div style={{ display: "flex", alignItems: "center" }}>
         <Paper
-          sx={{ margin: 1, minHeight: 100, minWidth: 100, padding: 0.5 }}
+          sx={{ margin: 1, minHeight: 100, width: "100%", padding: 0.5 }}
           square
         >
-          <CardMediaStyle image={thumbnail} title={name} />
+          <CardMediaStyle
+            image={thumbnail === " " ? noImage : thumbnail}
+            title={name}
+          />
         </Paper>
       </div>
-      <CardContent>
+      <CardContent sx={{ width: "100%" }}>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <PlaceNameStyle>{name}</PlaceNameStyle>
@@ -84,4 +96,9 @@ function PlaceCard({
   );
 }
 
-export default PlaceCard;
+const mapStateToProps = ({ placeDetailReducer }: any) => ({
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
+});
+
+type Props = ReturnType<typeof mapStateToProps>;
+export default connect(mapStateToProps)(PlaceCard);

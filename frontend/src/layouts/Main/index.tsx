@@ -21,6 +21,7 @@ const MainLayout = () => {
   return (
     <RootStyle>
       <Navbar />
+
       <MainStyle>
         <Outlet />
       </MainStyle>

@@ -5,15 +5,12 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import { Theme, Paper } from "@mui/material";
-import MoreModal from "./Modal/PlaceModal";
+import PlaceModal from "./Modal/PlaceModal";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import StarScore from "../../Main/StarScore";
+import PlaceCard from "../../Main/PlaceCard";
 
-interface place {
-  place_id: number;
-  name: string;
-  thumbnail: string;
-  average_score: number;
-}
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
@@ -27,127 +24,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function LikePlace({ interestList }: Props) {
+function LikePlace({ interestList, profileUserId }: Props) {
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   const title = "관심 장소";
-  const placesList: Array<place> = [
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-    {
-      place_id: 2,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.5,
-    },
-    {
-      place_id: 3,
-      name: "목구멍",
-      thumbnail:
-        "https://media-cdn.tripadvisor.com/media/photo-s/1c/7a/0b/0d/caption.jpg",
-      average_score: 4.2,
-    },
-  ];
   let baseCard = [];
   for (let i = 0; i < 6; i++) {
-    if (i < placesList.length) {
+    if (i < interestList.length) {
       baseCard.push(
         <div
           key={i}
@@ -156,33 +39,53 @@ function LikePlace({ interestList }: Props) {
             alignItems: "flex-end",
           }}
         >
-          <Card
-            sx={{
-              width: "200px",
-              height: "200px",
-              marginRight: "10px",
-              marginLeft: "10px",
-              borderRadius: "10px",
-            }}
+          <Link
+            to={`/place/${interestList[i].placeId}`}
+            style={{ textDecoration: "none" }}
           >
-            <CardMedia
-              component="img"
-              height="140"
-              image={placesList[i].thumbnail}
-              alt="green iguana"
-            />
-            <CardContent>
-              <Typography
-                gutterBottom
-                variant="h5"
-                component="div"
-                style={{ fontSize: "15px" }}
+            <Card
+              sx={{
+                width: "200px",
+                height: "200px",
+                marginRight: "10px",
+                marginLeft: "10px",
+                borderRadius: "10px",
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="140"
+                image={interestList[i].thumbnail}
+                alt="green iguana"
+              />
+              <CardContent
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                {placesList[i].name}
-                {placesList[i].average_score}
-              </Typography>
-            </CardContent>
-          </Card>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{ fontSize: "15px", fontWeight: "bold" }}
+                >
+                  {interestList[i].name}
+                </Typography>
+                <Typography
+                  gutterBottom
+                  variant="h5"
+                  component="div"
+                  style={{ fontSize: "15px" }}
+                >
+                  <StarScore
+                    starScore={interestList[i].averageScore}
+                  ></StarScore>
+                </Typography>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       );
     } else {
@@ -218,12 +121,11 @@ function LikePlace({ interestList }: Props) {
         {baseCard}
       </div>
       {open && (
-        <MoreModal
+        <PlaceModal
           open={open}
           setOpen={() => setOpen(false)}
-          contentList={placesList}
           title={title}
-        ></MoreModal>
+        ></PlaceModal>
       )}
     </div>
   );
@@ -232,6 +134,7 @@ const mapStateToProps = ({ account, profile }: any) => {
   return {
     isLogin: account.isLogin,
     interestList: profile.interestList,
+    profileUserId: profile.userId,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;
