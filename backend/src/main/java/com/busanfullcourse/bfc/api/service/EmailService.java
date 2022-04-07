@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class EmailService {
 
     public String sendCode(String email) throws Exception {
         String code;
-        Random random = new Random();
+        Random random = SecureRandom.getInstanceStrong();
         code = IntStream.range(0, 8).mapToObj(i -> String.valueOf((random.nextInt(10)))).collect(Collectors.joining());
 
         MimeMessage message = createNewMessage(email, code, "가입 확인 코드",
@@ -54,7 +55,6 @@ public class EmailService {
         try {
             javaMailSender.send(message);
         } catch (MailException mailException) {
-            mailException.printStackTrace();
             throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
         }
         return code;
@@ -71,7 +71,6 @@ public class EmailService {
         try {
             javaMailSender.send(message);
         } catch (MailException mailException) {
-            mailException.printStackTrace();
             throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
         }
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -98,24 +97,21 @@ public class EmailService {
         return mimeMessage;
     }
 
-    public static String createPassword() {
+    public static String createPassword() throws Exception {
         StringBuffer temp = new StringBuffer();
-        Random rnd = new Random();
+        Random rnd = SecureRandom.getInstanceStrong();
         for (int i = 0; i < 16; i++) {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
-                case 0:
-                    // a-z
-                    temp.append((char) ((int) (rnd.nextInt(26)) + 97));
-                    break;
-                case 1:
-                    // A-Z
-                    temp.append((char) ((int) (rnd.nextInt(26)) + 65));
-                    break;
-                case 2:
-                    // 0-9
-                    temp.append((rnd.nextInt(10)));
-                    break;
+                case 0 ->
+                        // a-z
+                        temp.append((char) ((int) (rnd.nextInt(26)) + 97));
+                case 1 ->
+                        // A-Z
+                        temp.append((char) ((int) (rnd.nextInt(26)) + 65));
+                case 2 ->
+                        // 0-9
+                        temp.append((rnd.nextInt(10)));
             }
         }
         return temp.toString();
@@ -141,7 +137,6 @@ public class EmailService {
             try {
                 javaMailSender.send(message);
             } catch (MailException mailException) {
-                mailException.printStackTrace();
                 throw new NoSuchElementException(ExceptionUtil.EMAIL_NOT_FOUND);
             }
         }
