@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.busanfullcourse.bfc.common.jwt.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
@@ -51,12 +49,15 @@ public class UserService {
     private final ConvertUtil convertUtil;
     private final FullCourseRepository fullCourseRepository;
 
-    public void signup(SignUpReq signUpReq) {
+    public Map<String,Long> signup(SignUpReq signUpReq) {
         if (!signUpReq.getPassword().equals(signUpReq.getPasswordCheck())){
             throw new IllegalArgumentException(ExceptionUtil.USER_PW_INVALID);
         }
         signUpReq.setPassword(passwordEncoder.encode(signUpReq.getPassword()));
-        userRepository.save(User.ofUser(signUpReq));
+        User user = userRepository.save(User.ofUser(signUpReq));
+        Map<String, Long> map = new HashMap<>();
+        map.put("userId", user.getId());
+        return map;
     }
 
     public void signupAdmin(SignUpReq signUpReq) {
