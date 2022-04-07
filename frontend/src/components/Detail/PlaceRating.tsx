@@ -107,7 +107,11 @@ function PlaceRating({ placeId }: Props) {
         </div>
       </Box>
       <div style={{ display: "flex" }}>
-        <Button variant="outlined" onClick={onChange} style={{ width: "60px" }}>
+        <Button
+          variant="contained"
+          onClick={onChange}
+          style={{ width: "60px", marginRight: "10px" }}
+        >
           {btnName}
         </Button>
         {method === "put" ? (

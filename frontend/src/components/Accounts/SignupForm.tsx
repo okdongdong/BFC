@@ -14,6 +14,9 @@ import {
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { SignupUserInfo } from "../../types/account";
+import { customAxios, customAxiosDjango } from "../../lib/customAxios";
+import { errorControl, loadingControl } from "../../redux/baseInfo/actions";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -37,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-function SignupForm() {
+function SignupForm({ errorControl, loadingControl }: Props) {
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -75,25 +78,46 @@ function SignupForm() {
     useState<string>("");
 
   // 회원가입 요청전송
-  function requestSignup(): void {
-    axios({
-      method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
-      data: {
-        username: userInfo.username,
-        password: userInfo.password,
-        passwordCheck: userInfo.passwordConfirmation,
-        nickname: userInfo.nickname,
-        birthday: userInfo.birthday,
-        gender: userInfo.gender,
-        // agreement: userInfo.agreement,
-      },
-    })
-      .then((res) => {
-        navigate("login");
-      }) // redux로 저장해서 사용해야할듯
-      .catch((err) => console.log(err));
-  }
+  const requestSignup = async () => {
+    loadingControl(true);
+
+    try {
+      const res = await customAxios({
+        method: "post",
+        url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/signup`,
+        data: {
+          username: userInfo.username,
+          password: userInfo.password,
+          passwordCheck: userInfo.passwordConfirmation,
+          nickname: userInfo.nickname,
+          birthday: userInfo.birthday,
+          gender: userInfo.gender,
+        },
+      });
+
+      console.log(res);
+      if (res.status !== 200) {
+        throw new Error("SinupFailed");
+      }
+
+      const userId = res.data.userId;
+
+      navigate("/login");
+      const res2 = await customAxiosDjango({
+        method: "get",
+        url: `recommend/new_user/${userId}`,
+      });
+    } catch (e: any) {
+      console.log(e);
+      if (e.message === "SinupFailed") {
+        errorControl("회원가입에 실패했습니다.");
+      } else {
+        errorControl("알수없는 에러가 발생했습니다.");
+      }
+    }
+
+    loadingControl(false);
+  };
 
   // 이메일 인증요청
   function requsetEmailConfirmation(): void {
@@ -388,4 +412,19 @@ function SignupForm() {
   );
 }
 
-export default SignupForm;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    errorControl: (errorMessage: string) => {
+      errorControl(dispatch, errorMessage);
+    },
+    loadingControl: (state: boolean) => {
+      loadingControl(dispatch, state);
+    },
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupForm);

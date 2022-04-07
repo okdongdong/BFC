@@ -1,9 +1,18 @@
-import { Modal } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  Modal,
+  styled,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { customAxios } from "../../../../lib/customAxios";
+import { useNavigate } from "react-router-dom";
+import FullCouresThumbnail from "../../../Main/FullCourseThumbnail";
+import LikeCount from "../../../Main/LikeCount";
+import DateCounter from "../../../Main/DateCounter";
 
 //모달 스타일
 const style = {
@@ -34,10 +43,32 @@ const style = {
     backgroundColor: " rgba(33,133,133,0.33)",
   },
 };
+const CardStyle = styled(Card)(() => ({
+  width: 220,
+  borderRadius: "25px",
+  textAlign: "left",
+  marginRight: 15,
+  marginLeft: 15,
+}));
+
+const CardContentStyle = styled(CardContent)(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+}));
+
+const FullCourseNameStyle = styled("h2")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  margin: 0,
+}));
 interface content {
-  label: string;
-  thumbnail: string;
-  placeId: number; //풀코스 id 변수명 확인 후 바꿔야함
+  fullCourseId: string;
+  thumbnailList: Array<string>;
+  title: string;
+  startedOn: string;
+  finishedOn: string;
+  likeCnt: number;
 }
 interface ModalProps {
   open: boolean;
@@ -58,6 +89,7 @@ function FullCourseModal({
   const [totalPage, setTotalPage] = React.useState(9999);
   const [page, setPage] = React.useState(0);
   const [url, setUrl] = React.useState("");
+  const navigate = useNavigate();
   // useEffect
   useEffect(() => {
     getInfo(page);
@@ -67,30 +99,43 @@ function FullCourseModal({
     observerRef.current = new IntersectionObserver(intersectionObserver);
     boxRef.current && observerRef.current.observe(boxRef.current);
   }, [contentList]);
-  function getUrl() {
-    if (type) {
-      setUrl(`/users/${profileUserId}/userFullCourse`);
-    } else {
-      setUrl(`/users/${profileUserId}/likeFullCourse`);
-    }
-  }
+
   const getInfo = async (page: number) => {
-    const res = await customAxios({
-      method: "get",
-      url: `/users/${profileUserId}/like`,
-      params: {
-        page: page,
-        size: 8,
-      },
-    });
-    // 서버에서 데이터 가져오기
-    console.log("더보기가져옴", res);
-    setTotalPage(res.data.totalPages);
-    setPage(page + 1);
-    setContentList((curContentList) => [
-      ...curContentList,
-      ...res.data.content,
-    ]); // state에 추가
+    if (type) {
+      const res = await customAxios({
+        method: "get",
+        url: `/users/${profileUserId}/userFullCourse`,
+        params: {
+          page: page,
+          size: 8,
+        },
+      });
+      // 서버에서 데이터 가져오기
+      console.log("더보기가져옴", res);
+      setTotalPage(res.data.totalPages);
+      setPage(page + 1);
+      setContentList((curContentList) => [
+        ...curContentList,
+        ...res.data.content,
+      ]); // state에 추가
+    } else {
+      const res = await customAxios({
+        method: "get",
+        url: `/users/${profileUserId}/likedFullCourse`,
+        params: {
+          page: page,
+          size: 8,
+        },
+      });
+      // 서버에서 데이터 가져오기
+      console.log("더보기가져옴", res);
+      setTotalPage(res.data.totalPages);
+      setPage(page + 1);
+      setContentList((curContentList) => [
+        ...curContentList,
+        ...res.data.content,
+      ]); // state에 추가
+    }
   };
   const intersectionObserver = (
     entries: IntersectionObserverEntry[],
@@ -152,96 +197,62 @@ function FullCourseModal({
               if (contentList.length - 4 === index) {
                 // 관찰되는 요소가 있는 html, 아래에서 5번째에 해당하는 박스를 관찰
                 return (
-                  <Link
-                    to={`/place/${item.placeId}`} //풀코스 디테일로 바꿔야함!
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div style={Box2} ref={boxRef} key={index}>
-                      <div
-                        key={index}
-                        style={{
-                          position: "relative",
-                        }}
-                      >
-                        <img
-                          style={{
-                            width: "200px",
-                            height: "200px",
-                            margin: "10px",
-                            // marginRight: "10px",
-                            // marginLeft: "10px",
-                            borderRadius: "10px",
-                          }}
-                          src={item.thumbnail}
-                          alt="fullCourseImg"
-                        ></img>
-                        <div
-                          style={{
-                            width: "200px",
-                            height: "200px",
-                            marginRight: "10px",
-                            marginLeft: "10px",
-                            borderRadius: "10px",
-                            position: "absolute",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            top: 0,
-                            left: 0,
-                          }}
-                        >
-                          <p style={{ color: "white" }}>#{item.label}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
+                  <div style={Box2} ref={boxRef} key={index}>
+                    <CardStyle
+                      onClick={() =>
+                        navigate(`/fullcourseDetail/${item.fullCourseId}`)
+                      }
+                    >
+                      <CardActionArea>
+                        <FullCouresThumbnail
+                          thumbnailList={item.thumbnailList}
+                        ></FullCouresThumbnail>
+                        <CardContentStyle>
+                          <Box sx={{ alignItems: "center" }}>
+                            <LikeCount likeCount={item.likeCnt}></LikeCount>
+                            <FullCourseNameStyle>
+                              {item.title}
+                            </FullCourseNameStyle>
+                          </Box>
+                          <Box sx={{ flexGrow: 1 }} />
+                          <DateCounter
+                            startedOn={new Date(item.startedOn)}
+                            finishedOn={new Date(item.finishedOn)}
+                          ></DateCounter>
+                        </CardContentStyle>
+                      </CardActionArea>
+                    </CardStyle>
+                  </div>
                 );
               } else {
                 // 관찰되는 요소가 없는 html
                 return (
-                  <Link
-                    to={`/place/${item.placeId}`}
-                    style={{ textDecoration: "none" }}
-                  >
-                    <div style={Box2} key={index}>
-                      <div
-                        key={index}
-                        style={{
-                          position: "relative",
-                        }}
-                      >
-                        <img
-                          style={{
-                            width: "200px",
-                            height: "200px",
-                            margin: "10px",
-                            // marginRight: "10px",
-                            // marginLeft: "10px",
-                            borderRadius: "10px",
-                          }}
-                          src={item.thumbnail}
-                          alt="fullCourseImg"
-                        ></img>
-                        <div
-                          style={{
-                            width: "200px",
-                            height: "200px",
-                            marginRight: "10px",
-                            marginLeft: "10px",
-                            borderRadius: "10px",
-                            position: "absolute",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            top: 0,
-                            left: 0,
-                          }}
-                        >
-                          <p style={{ color: "white" }}>#{item.label}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
+                  <div style={Box2} ref={boxRef} key={index}>
+                    <CardStyle
+                      onClick={() =>
+                        navigate(`/fullcourse/${item.fullCourseId}`)
+                      }
+                    >
+                      <CardActionArea>
+                        <FullCouresThumbnail
+                          thumbnailList={item.thumbnailList}
+                        ></FullCouresThumbnail>
+                        <CardContentStyle>
+                          <Box sx={{ alignItems: "center" }}>
+                            <LikeCount likeCount={item.likeCnt}></LikeCount>
+                            <FullCourseNameStyle>
+                              {item.title}
+                            </FullCourseNameStyle>
+                          </Box>
+                          <Box sx={{ flexGrow: 1 }} />
+                          <DateCounter
+                            startedOn={new Date(item.startedOn)}
+                            finishedOn={new Date(item.finishedOn)}
+                          ></DateCounter>
+                        </CardContentStyle>
+                      </CardActionArea>
+                    </CardStyle>
+                  </div>
                 );
               }
             })}
