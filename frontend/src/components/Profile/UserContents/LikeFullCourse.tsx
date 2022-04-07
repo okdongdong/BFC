@@ -1,6 +1,6 @@
 import * as React from "react";
 import { makeStyles } from "@mui/styles";
-import { Theme, Paper } from "@mui/material";
+import { Theme, Paper, Button } from "@mui/material";
 import FullCourseModal from "./Modal/FullCourseModal";
 import { connect } from "react-redux";
 import { Box, Card, CardActionArea, CardContent, styled } from "@mui/material";
@@ -88,12 +88,14 @@ function Like({ likeList, nickname }: Props) {
         }}
       >
         {title}
-        <button
+        <Button
+          variant="outlined"
+          size="small"
           style={{ float: "right", marginRight: "300px" }}
           onClick={() => setOpen(true)}
         >
           더보기
-        </button>
+        </Button>
       </p>
       <div
         style={{

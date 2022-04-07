@@ -1,4 +1,4 @@
-import { Theme } from "@mui/material";
+import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { connect } from "react-redux";
@@ -52,19 +52,30 @@ function ProfileInfo({
     <div>
       <span style={{ fontWeight: "bold", fontSize: 20 }}>{nickname}</span>
       {currentNickname === nickname ? (
-        <Link to="/changeUser">
-          <button className={classes.btn}>회원정보관리</button>
+        <Link to="/changeUser" style={{ textDecoration: "none" }}>
+          <Button variant="contained" className={classes.btn}>
+            회원정보관리
+          </Button>
         </Link>
       ) : (
         <>
           {btnNane ? (
-            <button className={classes.btn} onClick={unFollow}>
+            <Button
+              variant="outlined"
+              color="error"
+              className={classes.btn}
+              onClick={unFollow}
+            >
               팔로우 취소
-            </button>
+            </Button>
           ) : (
-            <button className={classes.btn} onClick={follow}>
+            <Button
+              variant="contained"
+              className={classes.btn}
+              onClick={follow}
+            >
               팔로우
-            </button>
+            </Button>
           )}
         </>
       )}

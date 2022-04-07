@@ -1,6 +1,6 @@
 import * as React from "react";
 import { makeStyles } from "@mui/styles";
-import { Theme, Paper } from "@mui/material";
+import { Theme, Paper, Button } from "@mui/material";
 import FullCourseModal from "./Modal/FullCourseModal";
 import { connect } from "react-redux";
 import { Box, Card, CardActionArea, CardContent, styled } from "@mui/material";
@@ -52,31 +52,6 @@ function MyFullCourse({ myList, nickname }: Props) {
   const navigate = useNavigate();
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
-<<<<<<< HEAD
-      baseCard
-        .push
-        // <CardStyle
-        //   onClick={() => navigate(`/fullcourse/${myList[i].fullCourseId}`)}
-        // >
-        //   <CardActionArea>
-        //     <FullCouresThumbnail
-        //       thumbnailList={myList[i].thumbnailLlist}
-        //     ></FullCouresThumbnail>
-        //     <CardContentStyle>
-        //       <Box sx={{ alignItems: "center" }}>
-        //         <LikeCount likeCount={0}></LikeCount>
-        //         <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
-        //       </Box>
-        //       <Box sx={{ flexGrow: 1 }} />
-        //       <DateCounter
-        //         startedOn={new Date(myList[i].startOn)}
-        //         finishedOn={new Date(myList[i].finishedOn)}
-        //       ></DateCounter>
-        //     </CardContentStyle>
-        //   </CardActionArea>
-        // </CardStyle>
-        ();
-=======
       console.log("내풀코스다!!!", myList[i]);
       baseCard.push(
         <CardStyle
@@ -102,7 +77,6 @@ function MyFullCourse({ myList, nickname }: Props) {
           </CardActionArea>
         </CardStyle>
       );
->>>>>>> d7bd2c46b9b53bac75b7ed7c1e2388404cdf4629
     } else {
       baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
     }
@@ -119,12 +93,14 @@ function MyFullCourse({ myList, nickname }: Props) {
         }}
       >
         {title}
-        <button
+        <Button
+          variant="outlined"
+          size="small"
           style={{ float: "right", marginRight: "300px" }}
           onClick={() => setOpen(true)}
         >
           더보기
-        </button>
+        </Button>
       </p>
       <div
         style={{

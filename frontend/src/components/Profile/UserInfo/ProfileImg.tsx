@@ -1,4 +1,4 @@
-import { dividerClasses, Theme } from "@mui/material";
+import { Button, dividerClasses, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useRef } from "react";
 import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
@@ -103,14 +103,16 @@ function ProfileImg({
           id="inputFile"
         />
         {currentUserId === userId ? (
-          <button
+          <Button
+            variant="contained"
+            size="small"
             style={{ cursor: "pointer" }}
             onClick={() => {
               onClickFileBtn();
             }}
           >
             프사수정
-          </button>
+          </Button>
         ) : (
           <div></div>
         )}
