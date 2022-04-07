@@ -25,7 +25,7 @@ function Footer() {
         <Stack spacing={3}>
           <div>
             <div style={{ fontSize: 48, fontWeight: "bolder" }}>
-              Busan Full Cousrse
+              Busan Full Course
             </div>
             <div style={{ color: "#999999" }}>
               ⓒ 2022. 강알리 등킨드나쓰 All rights reserved.

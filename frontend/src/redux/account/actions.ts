@@ -5,30 +5,16 @@ import { LoginUserInfo, NavUserInfo, SetUserInfo } from "../../types/account";
 import { errorControl, loadingControl } from "../baseInfo/actions";
 import { resetFullCourse } from "../createFullCourse/actions";
 import {
-  USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
-  USER_LOGIN_FAILURE,
   SET_PROFILE_IMG,
   SET_USER_INFO,
   RESET_USER_INFO,
 } from "./types";
 
-const userLoginRequest = () => {
-  return {
-    type: USER_LOGIN_REQUEST,
-    payload: 1,
-  };
-};
 const userLoginSuccess = (navUserInfo: NavUserInfo) => {
   return {
     type: USER_LOGIN_SUCCESS,
     payload: navUserInfo,
-  };
-};
-const userLoginFailure = (err: any) => {
-  return {
-    type: USER_LOGIN_FAILURE,
-    payload: err,
   };
 };
 
@@ -52,8 +38,7 @@ export const setUserInfo = (userInfo: SetUserInfo) => {
 };
 export const getUserInfo = (userId: number) => {
   return async (dispatch: Dispatch) => {
-    dispatch(userLoginRequest()); //로딩 중
-
+    loadingControl(dispatch, true);
     try {
       const res = await customAxios({
         method: "get",
@@ -63,12 +48,15 @@ export const getUserInfo = (userId: number) => {
     } catch (err) {
       console.log(err);
     }
+    errorControl(dispatch, "유저정보를 받아오는데 실패했습니다.");
+
+    loadingControl(dispatch, false);
   };
 };
 
 export const userLogin = (userInfo: LoginUserInfo) => {
   return async (dispatch: Dispatch) => {
-    dispatch(userLoginRequest());
+    loadingControl(dispatch, true);
 
     const data = {
       username: userInfo.username,
@@ -107,8 +95,9 @@ export const userLogin = (userInfo: LoginUserInfo) => {
       // 로그인 성공시 메인페이지로 이동
     } catch (err) {
       console.log(err);
-      dispatch(userLoginFailure(err));
+      errorControl(dispatch, "유저정보가 일치하지 않습니다.");
     }
+    loadingControl(dispatch, false);
   };
 };
 
