@@ -7,7 +7,12 @@ import { customAxios } from "../../../lib/customAxios";
 import { connect } from "react-redux";
 import { SetFullCourseData } from "../../../types/detail";
 import { setFullCourseData } from "../../../redux/detail/action";
-function FullCourseLike({ fullCourseId, likeCnt, fullCourse }: Props) {
+function FullCourseLike({
+  fullCourseId,
+  likeCnt,
+  fullCourse,
+  setFullCourseData,
+}: Props) {
   const [checked, setChecked] = React.useState(false);
 
   const fetchData = async () => {

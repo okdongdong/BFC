@@ -2,7 +2,7 @@ import { connect } from "react-redux";
 import PlaceShedule from "./PlaceSchedule";
 function PlaceInfo({ info, address, station }: Props) {
   return (
-    <div style={{ width: "500px", textAlign: "left" }}>
+    <div style={{ width: "600px", textAlign: "left" }}>
       <p style={{ marginTop: "8px", marginBottom: "8PX", fontWeight: "bold" }}>
         {info}
       </p>

@@ -5,6 +5,7 @@ import { useParams } from "react-router";
 import { customAxios } from "../../../lib/customAxios";
 import { setFullCourseData } from "../../../redux/detail/action";
 import { SetFullCourseData } from "../../../types/detail";
+import FullCourseDetailKakaoMap from "./FullCourseDetailKakaoMap";
 import FullCourseHeader from "./FullCourseHeader";
 import FullCourseMain from "./FullCourseMain";
 
@@ -33,6 +34,7 @@ function FullCourseDetail({ setFullCourseData }: Props) {
       </Backdrop>
       {isLoading ? (
         <>
+          <FullCourseDetailKakaoMap></FullCourseDetailKakaoMap>
           <FullCourseHeader></FullCourseHeader>
           <FullCourseMain></FullCourseMain>
         </>

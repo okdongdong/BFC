@@ -5,7 +5,7 @@ function PlaceImg({ thumbnail }: Props) {
     <img
       src={thumbnail}
       alt=""
-      style={{ display: "flex", width: "220px", height: "220px" }}
+      style={{ display: "flex", width: "300px", height: "300px" }}
     />
   );
 }

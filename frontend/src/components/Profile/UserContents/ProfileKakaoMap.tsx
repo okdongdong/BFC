@@ -1,17 +1,15 @@
 import { styled } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomOverlayMap, Map, MapMarker, useMap } from "react-kakao-maps-sdk";
+import { connect } from "react-redux";
 import placeMarkerGreen from "../../../assets/img/place_marker_green.png";
+import { customAxios } from "../../../lib/customAxios";
 
 interface PlaceLocationInfo {
-  title: string;
+  name: string;
   placeId: number;
   lat: number;
   lng: number;
-}
-
-interface ProfileKakaoMapProps {
-  placeLocationInfoList: PlaceLocationInfo[];
 }
 
 const Overlay = styled("div")({
@@ -21,7 +19,35 @@ const Overlay = styled("div")({
   boxShadow: "2px 2px 2px 1px rgba(0, 0, 0, 0.2)",
 });
 
-function ProfileKakaoMap({ placeLocationInfoList }: ProfileKakaoMapProps) {
+function ProfileKakaoMap({ profileUserId }: Props) {
+  const [placeLocationInfoList, setPlaceLocationInfoList] = useState([]);
+  const getInfo = async () => {
+    const temp: any = [];
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `/users/${profileUserId}/interest`,
+        params: {
+          page: 0,
+          size: 100,
+        },
+      });
+      res.data.content.map((item: any) => {
+        temp.push({
+          name: item.name,
+          plcaeId: item.placeId,
+          lat: item.lat,
+          lng: item.lon,
+        });
+      });
+      setPlaceLocationInfoList(temp);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    getInfo();
+  }, []);
   const EventMarkerContainer = ({
     placeLocationInfo,
   }: {
@@ -41,7 +67,7 @@ function ProfileKakaoMap({ placeLocationInfoList }: ProfileKakaoMapProps) {
           yAnchor={1.8}
         >
           <Overlay style={{ opacity: isVisible ? 1 : 0 }}>
-            <h3 className="title">{placeLocationInfo.title}</h3>
+            <h3 className="title">{placeLocationInfo.name}</h3>
           </Overlay>
         </CustomOverlayMap>
         <MapMarker
@@ -62,7 +88,7 @@ function ProfileKakaoMap({ placeLocationInfoList }: ProfileKakaoMapProps) {
             lat: placeLocationInfo.lat,
             lng: placeLocationInfo.lng,
           }} // 마커를 표시할 위치
-          title={placeLocationInfo.title} // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+          title={placeLocationInfo.name} // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
           onClick={(marker) => map.panTo(marker.getPosition())}
           onMouseOver={() => setIsVisible(true)}
           onMouseOut={() => setIsVisible(false)}
@@ -83,7 +109,7 @@ function ProfileKakaoMap({ placeLocationInfoList }: ProfileKakaoMapProps) {
         width: "100%",
         height: "100%",
       }}
-      level={3} // 지도의 확대 레벨
+      level={8} // 지도의 확대 레벨
     >
       {placeLocationInfoList.map((placeLocationInfo, idx) => (
         <EventMarkerContainer placeLocationInfo={placeLocationInfo} key={idx} />
@@ -92,4 +118,11 @@ function ProfileKakaoMap({ placeLocationInfoList }: ProfileKakaoMapProps) {
   );
 }
 
-export default ProfileKakaoMap;
+const mapStateToProps = ({ profile }: any) => {
+  return {
+    profileUserId: profile.userId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(ProfileKakaoMap);

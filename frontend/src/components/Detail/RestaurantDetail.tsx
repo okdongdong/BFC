@@ -17,8 +17,8 @@ const PlaceNameStyle = styled("h2")(() => ({
   alignItems: "center",
   margin: 0,
   justifyContent: "space-between",
-  fontSize: "18px",
-  width: "220px",
+  fontSize: "20px",
+  width: "300px",
 }));
 function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
   return (
@@ -31,7 +31,7 @@ function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={3}>
+        <Grid xs={4}>
           <PlaceNameStyle>
             {name}
             <StarScore starScore={averageScore.toFixed(2)}></StarScore>
@@ -40,12 +40,9 @@ function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
           <PlaceLike></PlaceLike>
           <Menu></Menu>
         </Grid>
-        <Grid xs={6}>
+        <Grid xs={8}>
           <PlaceRating></PlaceRating>
           <PlaceInfo></PlaceInfo>
-        </Grid>
-        <Grid xs={3}>
-          <AnotherPlatform></AnotherPlatform>
         </Grid>
       </Grid>
       <div

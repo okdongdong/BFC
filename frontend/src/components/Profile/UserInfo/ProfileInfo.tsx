@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { customAxios } from "../../../lib/customAxios";
+import { setProfileData } from "../../../redux/profile/actions";
 import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
+import { SetProfileData } from "../../../types/profile";
 
 const useStyles = makeStyles((theme: Theme) => ({
   btn: {
@@ -19,6 +21,8 @@ function ProfileInfo({
   nickname,
   isFollowing,
   profileUserId,
+  setProfileData,
+  profile,
 }: Props) {
   const classes = useStyles();
   const [btnNane, setBtnName] = useState(isFollowing);
@@ -29,6 +33,10 @@ function ProfileInfo({
     })
       .then((res) => {
         console.log("팔로우성공");
+        const newProfileData = profile;
+        const newFollowerCnt = profile.followerCnt + 1;
+        newProfileData.followerCnt = newFollowerCnt;
+        setProfileData(newProfileData);
         setBtnName(true);
       })
       .catch((err) => {
@@ -42,6 +50,10 @@ function ProfileInfo({
     })
       .then((res) => {
         console.log("팔로우 취소 성공");
+        const newProfileData = profile;
+        const newFollowerCnt = profile.followerCnt - 1;
+        newProfileData.followerCnt = newFollowerCnt;
+        setProfileData(newProfileData);
         setBtnName(false);
       })
       .catch((err) => {
@@ -89,8 +101,16 @@ const mapStateToProps = ({ account, profile }: any) => {
     nickname: profile.nickname,
     isFollowing: profile.isFollowing,
     profileUserId: profile.userId,
+    profile: profile,
   };
 };
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setProfileData: (profileData: SetProfileData) =>
+      dispatch(setProfileData(profileData)),
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps)(ProfileInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileInfo);
