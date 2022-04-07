@@ -3,9 +3,18 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { styled } from "@mui/material/styles";
 import { connect } from "react-redux";
+import { customAxios } from "../../../lib/customAxios";
+import { useNavigate } from "react-router";
+import { createFullCourseSuccess } from "../../../redux/createFullCourse/actions";
 
-function FullCourseInfo({ title, isPublic }: Props) {
-  const isMine = true;
+function FullCourseInfo({
+  title,
+  isPublic,
+  userId,
+  currentUserId,
+  fullCourseId,
+  createFullCourseSuccess,
+}: Props) {
   //내가 쓴글 확인
   const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -51,39 +60,94 @@ function FullCourseInfo({ title, isPublic }: Props) {
       boxSizing: "border-box",
     },
   }));
+  const navigate = useNavigate();
+  function updateFullCourse() {
+    createFullCourseSuccess(fullCourseId);
+  }
+  function deleteFullCourse() {
+    customAxios({
+      method: "delete",
+      url: `/fullCourse/${fullCourseId}`,
+    })
+      .then(() => {
+        navigate("/"); //삭제하고 메인페이지
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
-        marginTop: "40px",
+        // justifyContent: "center",
       }}
     >
-      <Box sx={{ fontSize: "h4.fontSize" }}>{title}</Box>
-      {isMine && (
-        <Button
-          variant="contained"
-          style={{
-            marginLeft: "10px",
-            marginRight: "40px",
-            width: "80px",
-            height: "30px",
-            padding: "0",
-            fontSize: "h8.fontSize",
-          }}
-        >
-          수정하기
-        </Button>
-      )}
-      {isMine && (
-        <FormGroup>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>비공개</Typography>
-            <AntSwitch inputProps={{ "aria-label": "ant design" }} />
-            <Typography>공개</Typography>
-          </Stack>
-        </FormGroup>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "40px",
+          marginLeft: "45%",
+        }}
+      >
+        <Box sx={{ fontSize: "h4.fontSize" }}>{title}</Box>
+      </div>
+      {userId === currentUserId && (
+        <>
+          <FormGroup style={{ marginLeft: "250px", marginTop: "40px" }}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>비공개</Typography>
+              {isPublic ? (
+                <AntSwitch
+                  disabled
+                  defaultChecked
+                  inputProps={{ "aria-label": "ant design" }}
+                />
+              ) : (
+                <AntSwitch
+                  disabled
+                  inputProps={{ "aria-label": "ant design" }}
+                />
+              )}
+
+              <Typography>공개</Typography>
+            </Stack>
+          </FormGroup>
+          <Button
+            variant="contained"
+            onClick={updateFullCourse}
+            style={{
+              marginLeft: "20px",
+              marginRight: "10px",
+              width: "80px",
+              height: "30px",
+              padding: "0",
+              fontSize: "h8.fontSize",
+              marginTop: "40px",
+            }}
+          >
+            수정하기
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={deleteFullCourse}
+            style={{
+              marginLeft: "10px",
+              marginRight: "40px",
+              width: "80px",
+              height: "30px",
+              padding: "0",
+              fontSize: "h8.fontSize",
+              marginTop: "40px",
+            }}
+          >
+            삭제하기
+          </Button>
+        </>
       )}
     </div>
   );
@@ -93,8 +157,17 @@ const mapStateToProps = ({ fullCourse, account }: any) => {
     title: fullCourse.title,
     currentUserId: account.userId,
     isPublic: fullCourse.isPublic,
+    userId: fullCourse.userId,
+    fullCourseId: fullCourse.fullCourseId,
   };
 };
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    createFullCourseSuccess: (fullCourseId: number) =>
+      dispatch(createFullCourseSuccess(fullCourseId)),
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps)(FullCourseInfo);
+export default connect(mapStateToProps, mapDispatchToProps)(FullCourseInfo);

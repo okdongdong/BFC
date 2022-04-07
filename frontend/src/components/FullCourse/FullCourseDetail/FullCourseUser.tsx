@@ -10,12 +10,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: "5px",
   },
 }));
-function FullCourseUser({ view, likeCnt, start, end }: Props) {
+function FullCourseUser({
+  view,
+  likeCnt,
+  start,
+  end,
+  nickname,
+  profileImg,
+}: Props) {
   const classes = useStyles();
-
-  const username: string = "꽃가루를날려";
-  const profileImg: string =
-    "https://cdn.gukjenews.com/news/photo/202110/2328684_2319618_5032.png";
   return (
     <div
       style={{
@@ -49,7 +52,7 @@ function FullCourseUser({ view, likeCnt, start, end }: Props) {
           marginRight: "25rem",
         }}
       >
-        {username}
+        {nickname}
         <img src={profileImg} className={classes.myImg} alt="" />
       </div>
     </div>
@@ -61,6 +64,8 @@ const mapStateToProps = ({ fullCourse }: any) => {
     likeCnt: fullCourse.likeCnt,
     start: fullCourse.startedOn,
     end: fullCourse.finishedOn,
+    nickname: fullCourse.nickname,
+    profileImg: fullCourse.profileImg,
   };
 };
 type Props = ReturnType<typeof mapStateToProps>;

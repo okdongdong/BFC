@@ -100,7 +100,10 @@ function FullCourseStepper({ schedule }: Props) {
               <Typography sx={{ mt: 2, mb: 1 }}>
                 Day {activeStep + 1}
               </Typography>
-              <FullCourseSchedule idx={activeStep}></FullCourseSchedule>
+              <FullCourseSchedule
+                idx={activeStep}
+                days={days}
+              ></FullCourseSchedule>
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Button
                   color="inherit"
