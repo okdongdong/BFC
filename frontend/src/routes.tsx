@@ -14,6 +14,7 @@ import CreateFullCourseLayout from "./layouts/CreateFullCourse";
 import FullCourseDetail from "./components/FullCourse/FullCourseDetail/FullCourseDetail";
 import PreSurvey from "./pages/FullCourse/PreSurvey";
 import PageNotFound from "./pages/PageNotFound";
+import RecommendList from "./pages/Recommend/RecommendList";
 function Router() {
   return useRoutes([
     {
@@ -31,12 +32,12 @@ function Router() {
         },
         {
           path: "fullcourse/detail/:fullCourseId",
-          element: <Signup />,
+          element: <FullCourseDetail />,
         },
         {
           path: "attraction",
           children: [
-            { path: "", element: <Login /> },
+            { path: "", element: <RecommendList category={false} /> },
             {
               path: ":placeId",
               element: <Signup />,
@@ -46,7 +47,7 @@ function Router() {
         {
           path: "restaurant",
           children: [
-            { path: "", element: <Login /> },
+            { path: "", element: <RecommendList category={true} /> },
             {
               path: ":placeId",
               element: <Signup />,

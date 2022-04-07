@@ -4,7 +4,7 @@ import { PlaceCardProps } from "../../types/main";
 export const MOVE_CARD = "MOVE_CARD";
 
 // 새 스케줄 생성
-export const CREATE_CARD = "CREATE_CARD";
+export const SET_FULL_COURSE_INFO = "SET_FULL_COURSE_INFO";
 export const DELETE_CARD = "DELETE_CARD";
 
 // 풀코스 초기화
@@ -79,6 +79,19 @@ export interface AddCustomPlaceProps {
       scheduleId: number;
     };
   };
+}
+
+export interface ScheduleDetail {
+  address: string;
+  customPlaceId: number | null;
+  day: number;
+  lat: number;
+  lng: number;
+  memo: string;
+  name: string;
+  placeId: number | null;
+  scheduleId: number;
+  sequence: number;
 }
 
 export interface CustomPlaceInfoProps extends ScheduleProps {

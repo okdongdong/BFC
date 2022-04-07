@@ -7,7 +7,6 @@ import {
   CreateFullCourseRequestData,
   CreateNewScheduleProps,
   CreateScheduleRequestDataProps,
-  CREATE_CARD,
   CREATE_FULL_COURSE_SUCCESS,
   CustomPlaceInfoProps,
   DeleteScheduleProps,
@@ -15,7 +14,9 @@ import {
   FullCourseListProps,
   MOVE_CARD,
   RESET_FULL_COURSE,
+  ScheduleDetail,
   SET_FULL_COURSE_DATE,
+  SET_FULL_COURSE_INFO,
   UpdateScheduleProps,
   UpdateScheduleRequestDataProps,
 } from "./types";
@@ -27,6 +28,7 @@ import {
   setNowError,
   setNowLoading,
 } from "../baseInfo/actions";
+import { CreateFullCourseDnd } from "./createFullCourseReducer";
 
 export const moveCard = (newState: FullCourseListProps) => {
   return {
@@ -35,9 +37,9 @@ export const moveCard = (newState: FullCourseListProps) => {
   };
 };
 
-export const createCard = (newState: FullCourseListProps) => {
+export const setFullCourseInfo = (newState: CreateFullCourseDnd) => {
   return {
-    type: CREATE_CARD,
+    type: SET_FULL_COURSE_INFO,
     payload: newState,
   };
 };
@@ -257,17 +259,82 @@ export const createCustomPlace = (customPlaceInfo: CustomPlaceInfoProps) => {
         name: customPlaceInfo.name,
         address: customPlaceInfo.address,
         thumbnail: defaultImg,
+        lat: customPlaceInfo.lat,
+        lng: customPlaceInfo.lon,
       };
       const newSchedule = {
         id: `customPlace-${new Date().getTime()}`,
         content: newContent,
       };
 
-      const newState = { day: customPlaceInfo.day, schedule: newSchedule };
+      const newState = { day: customPlaceInfo.day - 1, schedule: newSchedule };
       dispatch(addCustomPlace(newState));
     } catch (e) {
       console.log(e);
       errorControl(dispatch, "나만의 장소 추가 실패");
+    }
+    loadingControl(dispatch, false);
+  };
+};
+
+// 풀코스 정보조회
+export const getFullCourseInfo = (fullCourseId: number) => {
+  return async (dispatch: Dispatch) => {
+    loadingControl(dispatch, true);
+
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `/fullCourse/${fullCourseId}`,
+      });
+
+      const newState: CreateFullCourseDnd = {
+        fullCourseTitle: res.data.title,
+        fullCourseId: res.data.fullCourseId,
+        fullCourseDate: [res.data.startedOn, res.data.finishedOn],
+        fullCourseList: [],
+      };
+
+      const diffDate =
+        new Date(res.data.startedOn).getTime() -
+        new Date(res.data.finishedOn).getTime();
+      const dayLength = Math.abs(diffDate / (1000 * 3600 * 24)) + 1;
+
+      console.log(res);
+      console.log(newState);
+
+      while (dayLength > newState.fullCourseList.length) {
+        newState.fullCourseList.push([]);
+      }
+      if (res.data.scheduleDetailList.length > 0) {
+        res.data.scheduleDetailList.map((scheduleDetail: any, idx: number) => {
+          console.log(scheduleDetail.day);
+          console.log(newState.fullCourseList);
+
+          newState.fullCourseList[scheduleDetail.day - 1].push({
+            scheduleId: scheduleDetail.scheduleId,
+            id: `shedule-${new Date().getTime()}`,
+            content: {
+              scheduleId: scheduleDetail.scheduleId,
+              thumbnail: scheduleDetail.thumbnail,
+              averageScore: scheduleDetail.averageScore,
+              category:
+                scheduleDetail.customPlaceId === null ? undefined : true, // 인지 관광지인지 구별 => 1: 음식점, 0: 관광지라 가정
+              placeId: scheduleDetail.placeId,
+              name: scheduleDetail.name,
+              address: scheduleDetail.address,
+              lat: scheduleDetail.lat,
+              lng: scheduleDetail.lon,
+            },
+          });
+        });
+      }
+      console.log(newState);
+
+      dispatch(setFullCourseInfo(newState));
+    } catch (e) {
+      console.log(e);
+      errorControl(dispatch, "풀코스 정보조회 실패");
     }
     loadingControl(dispatch, false);
   };

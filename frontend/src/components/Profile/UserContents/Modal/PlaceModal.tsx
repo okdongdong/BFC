@@ -159,12 +159,22 @@ function PlaceModal({
                           borderRadius: "10px",
                         }}
                       >
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={item.thumbnail}
-                          alt="green iguana"
-                        />
+                        {item.thumbnail ? (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={item.thumbnail}
+                            alt="green iguana"
+                          />
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image="https://www.chanchao.com.tw/images/default.jpg"
+                            alt="green iguana"
+                          />
+                        )}
+
                         <CardContent
                           style={{
                             display: "flex",
@@ -212,12 +222,21 @@ function PlaceModal({
                           borderRadius: "10px",
                         }}
                       >
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={item.thumbnail}
-                          alt="green iguana"
-                        />
+                        {item.thumbnail ? (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={item.thumbnail}
+                            alt="green iguana"
+                          />
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image="https://www.chanchao.com.tw/images/default.jpg"
+                            alt="green iguana"
+                          />
+                        )}
                         <CardContent
                           style={{
                             display: "flex",
