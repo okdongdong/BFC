@@ -82,7 +82,7 @@ export const getPlaceListWithDistance = (
       console.log(placeListInfoForGet.page);
       console.log(res.data.totalPages);
 
-      if (placeListInfoForGet.page + 1 === res.data.totalPages) {
+      if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
         console.log("조회끝");
       }
@@ -144,7 +144,7 @@ export const getPlaceListWithSurvey = (
       console.log(placeListInfoForGet.page);
       console.log(res.data.totalPages);
 
-      if (placeListInfoForGet.page + 1 === res.data.totalPages) {
+      if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
         console.log("조회끝");
       }
@@ -198,6 +198,11 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
       });
       const placeListData: PlaceCard[] = [];
       console.log("검색된 장소", res);
+
+      if (placeSearchInfo.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
 
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
