@@ -3,6 +3,7 @@ import { styled } from "@mui/styles";
 import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router";
 import AddCustomPlaceModal from "../../components/FullCourse/CreateFullCourse/AddCustomPlaceModal";
 import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
@@ -82,6 +83,7 @@ function CreateFullCourse({
   selectedPlaceId,
   lat,
   lng,
+  isLogin,
   getPlaceDetail,
   setFinished,
   resetPlaceListWithDistance,
@@ -91,6 +93,7 @@ function CreateFullCourse({
   getFullCourseInfo,
   setPage,
 }: Props) {
+  const navigate = useNavigate();
   const [pickedDay, setPickedDay] = useState<number>(1);
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
@@ -224,6 +227,12 @@ function CreateFullCourse({
     }
   }, []);
 
+  useEffect(() => {
+    if (!isLogin) {
+      navigate(-1);
+    }
+  }, [isLogin]);
+
   return (
     <>
       <Notice></Notice>
@@ -244,6 +253,7 @@ function CreateFullCourse({
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
               <FullCourseKakaoMap
+                recommendDistance={recommendDistance}
                 nowCenter={nowCenter}
                 setNowCenter={setNowCenter}
                 nowFilterTypeIdx={nowFilterTypeIdx}
@@ -342,6 +352,7 @@ const mapStateToProps = ({
   baseInfo,
   schedule,
   placeDetailReducer,
+  account,
 }: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
@@ -354,6 +365,7 @@ const mapStateToProps = ({
   lat: placeDetailReducer.lat,
   lng: placeDetailReducer.lng,
   finished: schedule.finished,
+  isLogin: account.isLogin,
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
