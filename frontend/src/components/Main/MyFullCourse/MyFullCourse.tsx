@@ -57,7 +57,7 @@ function MyFullCourse({ fullCourseDetailList }: FullCourseDetailListProps) {
               <CardStyle
                 key={idx}
                 onClick={() =>
-                  navigate(`fullcourse/${fullCourseDetail.fullCourseId}`)
+                  navigate(`fullcourseDetail/${fullCourseDetail.fullCourseId}`)
                 }
               >
                 <CardActionArea>
