@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Tuple;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,6 +99,13 @@ public class UserService {
         User reqUser = userRepository.findByUsername(reqUsername)
                 .orElseThrow(() -> new NoSuchElementException(ExceptionUtil.USER_NOT_FOUND));
         List<Interest> interestList = interestRepository.findTop6ByUserIdOrderByInterestIdDesc(user.getId());
+        List<InterestListRes> resList = InterestListRes.of(interestList);
+        List<Object[]> clearList = interestRepository.checkInterestStageClear(user.getId());
+        Map<String, Boolean> map = new HashMap<>();
+        for (Object[] objects : clearList) {
+            map.put(String.valueOf(objects[0]), Boolean.valueOf(objects[1].toString()));
+        }
+        resList.forEach(interestListRes -> interestListRes.setIsClear(map.get(String.valueOf(interestListRes.getPlaceId()))));
 
         List<FullCourse> fullCourseList;
         List<Like> likeList;
@@ -141,7 +150,7 @@ public class UserService {
                 .followingCnt(user.getFollowings().size())
                 .isFollowing(isFollowing)
                 .profileImg(convertUtil.convertByteArrayToString(user.getProfileImg()))
-                .interestList(InterestListRes.of(interestList))
+                .interestList(resList)
                 .myList(myFullCourseListRes)
                 .likeList(fullCourseListRes)
                 .build();
