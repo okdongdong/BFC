@@ -12,7 +12,7 @@ export const setSelectedPlaceId = (placeId: number) => {
   };
 };
 
-const setPlaceDetail = (placeDetailData: PlaceDetailState) => {
+export const setPlaceDetail = (placeDetailData: PlaceDetailState) => {
   return {
     type: SET_PLACE_DETAIL,
     payload: placeDetailData,
@@ -46,6 +46,7 @@ export const getPlaceDetail = (placeId: number) => {
         averageScore: res.data.averageScore,
         thumbnail: res.data.thumbnail,
         menus: res.data.menus,
+        scoreCount: res.data.scoreCount,
       };
       dispatch(setPlaceDetail(placeDetail));
 

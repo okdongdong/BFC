@@ -60,8 +60,12 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
         <Logo />
         <NavbarText to="attraction" text="여행지"></NavbarText>
         <NavbarText to="restaurant" text="맛집"></NavbarText>
-        <NavbarText to="info" text="이용방법"></NavbarText>
-        <NavbarText to="/fullcourse/presurvey" text="풀코스만들기"></NavbarText>
+        {!isLogin || (
+          <NavbarText
+            to="/fullcourse/presurvey"
+            text="풀코스만들기"
+          ></NavbarText>
+        )}
         <Box sx={{ flexGrow: 2 }} />
 
         {isLogin ? (

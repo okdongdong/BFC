@@ -22,6 +22,7 @@ const initPlaceData: SetPlaceData = {
   averageScore: 0,
   thumbnail: "",
   menus: [],
+  scoreCount: 0,
 };
 const initReviewData: SetReview = {
   reviewId: 0,

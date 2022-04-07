@@ -3,7 +3,9 @@ import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { connect, connectAdvanced } from "react-redux";
 import { customAxios } from "../../../lib/customAxios";
+import { setProfileData } from "../../../redux/profile/actions";
 import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
+import { SetProfileData } from "../../../types/profile";
 import FollowModal from "./FollowModal";
 interface person {
   id: number;
@@ -19,13 +21,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 20,
   },
 }));
-function FollowFollower({ followingCnt, followerCnt, userId }: Props) {
+function FollowFollower({
+  followingCnt,
+  followerCnt,
+  userId,
+  setProfileData,
+}: Props) {
   const [open, setOpen] = useState(false);
   const [option, setOption] = useState(0);
-
   const classes = useStyles();
-  const [follower, setFollower] = useState(followerCnt);
-  const [following, setFollowing] = useState(followingCnt);
   const [followingList, setFollowingList] = useState([]);
   const [followerList, setFollowerList] = useState([]);
 
@@ -66,7 +70,7 @@ function FollowFollower({ followingCnt, followerCnt, userId }: Props) {
                 setOption(0);
               }}
             >
-              {follower}
+              {followerCnt}
             </td>
             <td></td>
             <td
@@ -75,7 +79,7 @@ function FollowFollower({ followingCnt, followerCnt, userId }: Props) {
                 setOption(1);
               }}
             >
-              {following}
+              {followingCnt}
             </td>
           </tr>
         </tbody>
@@ -106,6 +110,13 @@ const mapStateToProps = ({ account, profile }: any) => {
     followerCnt: profile.followerCnt,
   };
 };
-type Props = ReturnType<typeof mapStateToProps>;
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setProfileData: (profileData: SetProfileData) =>
+      dispatch(setProfileData(profileData)),
+  };
+};
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps)(FollowFollower);
+export default connect(mapStateToProps, mapDispatchToProps)(FollowFollower);
