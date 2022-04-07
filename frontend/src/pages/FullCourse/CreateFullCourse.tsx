@@ -3,6 +3,7 @@ import { styled } from "@mui/styles";
 import { useEffect, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { connect } from "react-redux";
+import { useNavigate } from "react-router";
 import AddCustomPlaceModal from "../../components/FullCourse/CreateFullCourse/AddCustomPlaceModal";
 import CollapseContainer from "../../components/FullCourse/CreateFullCourse/CollapseContainer";
 import DailyFullCourse from "../../components/FullCourse/CreateFullCourse/DailyFullCourse";
@@ -32,6 +33,7 @@ import { getPlaceDetail } from "../../redux/placeDetail/actions";
 
 import {
   resetPlaceListWithDistance,
+  resetPlaceListWithSurvey,
   resetSearchPlaceList,
 } from "../../redux/placeList/actions";
 import { setFinished, setPage } from "../../redux/schedule/actions";
@@ -75,22 +77,24 @@ function CreateFullCourse({
   fullCourseId,
   placeList,
   placeListWithDistance,
+  placeListWithSurvey,
   searchPlaceList,
   nowLoading,
   finished,
   selectedScheduleId,
   selectedPlaceId,
-  lat,
-  lng,
+  isLogin,
   getPlaceDetail,
   setFinished,
   resetPlaceListWithDistance,
   resetSearchPlaceList,
+  resetPlaceListWithSurvey,
   createNewSchedule,
   updateSchedule,
   getFullCourseInfo,
   setPage,
 }: Props) {
+  const navigate = useNavigate();
   const [pickedDay, setPickedDay] = useState<number>(1);
   const [nowScrollPosition, setNowScrollPosition] = useState<number>(0);
   const [dayChange, setDayChange] = useState<boolean>(false);
@@ -99,10 +103,7 @@ function CreateFullCourse({
   const [nowFilterTypeIdx, setNowFilterTypeIdx] = useState<number>(0);
   const [recommendDistance, setRecommendDistance] = useState<number>(500);
 
-  // 인피니티 스크롤 관련 변수
-  const [nowPage, setNowPage] = useState<number>(0);
   const [placeName, setPlaceName] = useState<string>("");
-  const SIZE = 8;
 
   // 탭을 여닫는 변수
   const [expandedFullCourse, setExpandedFullCourse] = useState(true);
@@ -122,7 +123,7 @@ function CreateFullCourse({
       : nowFilterTypeIdx === 1
       ? placeListWithDistance
       : nowFilterTypeIdx === 2
-      ? placeList
+      ? placeListWithSurvey
       : searchPlaceList;
 
   const onDragEnd = (result: any) => {
@@ -208,6 +209,7 @@ function CreateFullCourse({
     setFinished(false);
     resetPlaceListWithDistance();
     resetSearchPlaceList();
+    resetPlaceListWithSurvey();
   }, [nowFilterTypeIdx, recommendDistance, selectedScheduleId]);
 
   useEffect(() => {
@@ -223,6 +225,12 @@ function CreateFullCourse({
       getFullCourseInfo(fullCourseId);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate(-1);
+    }
+  }, [isLogin]);
 
   return (
     <>
@@ -244,6 +252,7 @@ function CreateFullCourse({
           <div style={{ display: "flex", position: "relative" }}>
             <MapContainer>
               <FullCourseKakaoMap
+                recommendDistance={recommendDistance}
                 nowCenter={nowCenter}
                 setNowCenter={setNowCenter}
                 nowFilterTypeIdx={nowFilterTypeIdx}
@@ -342,10 +351,12 @@ const mapStateToProps = ({
   baseInfo,
   schedule,
   placeDetailReducer,
+  account,
 }: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
+  placeListWithSurvey: placeListReducer.placeListWithSurvey,
   searchPlaceList: placeListReducer.searchPlaceList,
   fullCourseId: createFullCourse.fullCourseId,
   nowLoading: baseInfo.nowLoading,
@@ -354,6 +365,7 @@ const mapStateToProps = ({
   lat: placeDetailReducer.lat,
   lng: placeDetailReducer.lng,
   finished: schedule.finished,
+  isLogin: account.isLogin,
 });
 const mapDispatchToProps = (dispatch: any) => {
   return {
@@ -363,6 +375,7 @@ const mapDispatchToProps = (dispatch: any) => {
     updateSchedule: (newState: UpdateScheduleProps) =>
       dispatch(updateSchedule(newState)),
     resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
+    resetPlaceListWithSurvey: () => dispatch(resetPlaceListWithSurvey()),
     resetSearchPlaceList: () => {
       dispatch(resetSearchPlaceList());
     },
