@@ -222,6 +222,8 @@ function PreSuveyContainer({
                 onChange={onChangeHandler}
               ></TextField>
               <br />
+              <DatePicker></DatePicker>
+
               <WishBox>
                 <div>가고싶어요</div>
                 <Button
@@ -239,7 +241,6 @@ function PreSuveyContainer({
                 setWishKeywordList={setGaBoJa}
               ></WishKeywordList>
               <br />
-              <DatePicker></DatePicker>
               <WishBox>
                 <div>먹고싶어요</div>
                 <Button
@@ -275,7 +276,7 @@ function PreSuveyContainer({
             <div className={classes.paper}>
               {nowKeyword === "food" ? (
                 <div style={{ width: "100%" }}>
-                  <SelectKeywordTitle>가고싶어요</SelectKeywordTitle>
+                  <SelectKeywordTitle>먹고싶어요</SelectKeywordTitle>
                   <hr />
                   <SelectWishKeyword
                     keywordList={selectWishFoodList}
@@ -284,7 +285,7 @@ function PreSuveyContainer({
                 </div>
               ) : nowKeyword === "place" ? (
                 <div style={{ width: "100%" }}>
-                  <SelectKeywordTitle>먹고싶어요</SelectKeywordTitle>
+                  <SelectKeywordTitle>가고싶어요</SelectKeywordTitle>
                   <hr />
                   <SelectWishKeyword
                     keywordList={selectWishPlaceList}

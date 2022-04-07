@@ -62,6 +62,6 @@ export type PlaceCardList = PlaceCard[] | null[];
 // 장소 검색시 사용할 데이터
 export interface PlaceSearchInfo {
   name: string; // placeName
-  page?: number;
+  page: number;
   size?: number;
 }
