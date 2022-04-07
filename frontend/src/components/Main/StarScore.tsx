@@ -2,7 +2,7 @@ import { Box, Icon, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 interface StarScorePorps {
-  starScore: number;
+  starScore: number | string;
   fontSize?: number | string;
   starSize?: number | string;
 }

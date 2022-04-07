@@ -15,13 +15,14 @@ import noImage from "../../../assets/img/logo_with_text.png";
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2),
-    width: "200px",
+    width: "220px",
     height: "200px",
-    margin: "10px",
+    margin: "15px",
     paddingRight: "0",
     paddingBottom: "0",
     paddingTop: "0",
     paddingLeft: "0",
+    backgroundColor: " rgba(133,133,133,0.5)",
   },
 }));
 
@@ -46,11 +47,11 @@ function LikePlace({ interestList, profileUserId }: Props) {
           >
             <Card
               sx={{
-                width: "200px",
-                height: "200px",
-                marginRight: "10px",
-                marginLeft: "10px",
-                borderRadius: "10px",
+                width: "220px",
+                height: "220px",
+                marginRight: "15px",
+                marginLeft: "15px",
+                borderRadius: "25px",
               }}
             >
               {interestList[i].thumbnail ? (
@@ -91,7 +92,7 @@ function LikePlace({ interestList, profileUserId }: Props) {
                   style={{ fontSize: "15px" }}
                 >
                   <StarScore
-                    starScore={interestList[i].averageScore}
+                    starScore={interestList[i].averageScore.toFixed(2)}
                   ></StarScore>
                 </Typography>
               </CardContent>

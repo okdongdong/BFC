@@ -44,7 +44,7 @@ const style = {
   },
 };
 const CardStyle = styled(Card)(() => ({
-  width: 220,
+  width: 200,
   borderRadius: "25px",
   textAlign: "left",
   marginRight: 15,
@@ -53,10 +53,17 @@ const CardStyle = styled(Card)(() => ({
 
 const CardContentStyle = styled(CardContent)(() => ({
   display: "flex",
+  width: "100%",
+
   justifyContent: "space-between",
+  color: "white",
+  position: "absolute",
+  marginTop: "-100px",
+  // backgroundColor: "white",
+  backgroundColor: " rgba(0,0,0,0.5)",
 }));
 
-const FullCourseNameStyle = styled("h2")(() => ({
+const FullCourseNameStyle = styled("h3")(() => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -111,7 +118,7 @@ function FullCourseModal({
         },
       });
       // 서버에서 데이터 가져오기
-      console.log("더보기가져옴", res);
+
       setTotalPage(res.data.totalPages);
       setPage(page + 1);
       setContentList((curContentList) => [
@@ -128,7 +135,7 @@ function FullCourseModal({
         },
       });
       // 서버에서 데이터 가져오기
-      console.log("더보기가져옴", res);
+
       setTotalPage(res.data.totalPages);
       setPage(page + 1);
       setContentList((curContentList) => [
@@ -142,7 +149,6 @@ function FullCourseModal({
     io: IntersectionObserver
   ) => {
     entries.forEach((entry) => {
-      console.log(totalPage, page);
       if (entry.isIntersecting && page < totalPage) {
         // 관찰하고 있는 entry가 화면에 보여지는 경우
         io.unobserve(entry.target); // entry 관찰 해제
@@ -180,7 +186,7 @@ function FullCourseModal({
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
 
               flexWrap: "wrap",
               position: "fixed",
@@ -203,24 +209,33 @@ function FullCourseModal({
                         navigate(`/fullcourseDetail/${item.fullCourseId}`)
                       }
                     >
-                      <CardActionArea>
-                        <FullCouresThumbnail
-                          thumbnailList={item.thumbnailList}
-                        ></FullCouresThumbnail>
-                        <CardContentStyle>
-                          <Box sx={{ alignItems: "center" }}>
-                            <LikeCount likeCount={item.likeCnt}></LikeCount>
-                            <FullCourseNameStyle>
-                              {item.title}
-                            </FullCourseNameStyle>
-                          </Box>
-                          <Box sx={{ flexGrow: 1 }} />
-                          <DateCounter
-                            startedOn={new Date(item.startedOn)}
-                            finishedOn={new Date(item.finishedOn)}
-                          ></DateCounter>
-                        </CardContentStyle>
-                      </CardActionArea>
+                      <div style={{ position: "relative" }}>
+                        <CardActionArea>
+                          <div
+                            style={{
+                              backgroundColor: " rgba(133,133,133,0.5)",
+                            }}
+                          >
+                            <FullCouresThumbnail
+                              thumbnailList={item.thumbnailList}
+                            ></FullCouresThumbnail>
+                            <CardContentStyle>
+                              <Box sx={{ alignItems: "center" }}>
+                                <LikeCount likeCount={item.likeCnt}></LikeCount>
+                                <FullCourseNameStyle>
+                                  {item.title}
+                                </FullCourseNameStyle>
+                              </Box>
+                              <Box sx={{ flexGrow: 1 }} />
+                              <DateCounter
+                                startedOn={new Date(item.startedOn)}
+                                finishedOn={new Date(item.finishedOn)}
+                              ></DateCounter>
+                              <Box sx={{ flexGrow: 2 }} />
+                            </CardContentStyle>
+                          </div>
+                        </CardActionArea>
+                      </div>
                     </CardStyle>
                   </div>
                 );
@@ -230,27 +245,36 @@ function FullCourseModal({
                   <div style={Box2} ref={boxRef} key={index}>
                     <CardStyle
                       onClick={() =>
-                        navigate(`/fullcourse/${item.fullCourseId}`)
+                        navigate(`/fullcourseDetail/${item.fullCourseId}`)
                       }
                     >
-                      <CardActionArea>
-                        <FullCouresThumbnail
-                          thumbnailList={item.thumbnailList}
-                        ></FullCouresThumbnail>
-                        <CardContentStyle>
-                          <Box sx={{ alignItems: "center" }}>
-                            <LikeCount likeCount={item.likeCnt}></LikeCount>
-                            <FullCourseNameStyle>
-                              {item.title}
-                            </FullCourseNameStyle>
-                          </Box>
-                          <Box sx={{ flexGrow: 1 }} />
-                          <DateCounter
-                            startedOn={new Date(item.startedOn)}
-                            finishedOn={new Date(item.finishedOn)}
-                          ></DateCounter>
-                        </CardContentStyle>
-                      </CardActionArea>
+                      <div style={{ position: "relative" }}>
+                        <CardActionArea>
+                          <div
+                            style={{
+                              backgroundColor: " rgba(133,133,133,0.5)",
+                            }}
+                          >
+                            <FullCouresThumbnail
+                              thumbnailList={item.thumbnailList}
+                            ></FullCouresThumbnail>
+                            <CardContentStyle>
+                              <Box sx={{ alignItems: "center" }}>
+                                <LikeCount likeCount={item.likeCnt}></LikeCount>
+                                <FullCourseNameStyle>
+                                  {item.title}
+                                </FullCourseNameStyle>
+                              </Box>
+                              <Box sx={{ flexGrow: 1 }} />
+                              <DateCounter
+                                startedOn={new Date(item.startedOn)}
+                                finishedOn={new Date(item.finishedOn)}
+                              ></DateCounter>
+                              <Box sx={{ flexGrow: 3 }} />
+                            </CardContentStyle>
+                          </div>
+                        </CardActionArea>
+                      </div>
                     </CardStyle>
                   </div>
                 );

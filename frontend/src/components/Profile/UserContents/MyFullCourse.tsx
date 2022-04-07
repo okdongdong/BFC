@@ -13,15 +13,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(2),
     width: "220px",
     height: "200px",
-    margin: "10px",
+    margin: "15px",
     paddingRight: "0",
     paddingBottom: "0",
     paddingTop: "0",
     paddingLeft: "0",
+    backgroundColor: " rgba(133,133,133,0.5)",
   },
   text: {
     position: "absolute",
     textAlign: "center",
+  },
+  bg: {
+    backgroundColor: " rgba(133,133,133,0.5)",
   },
 }));
 const CardStyle = styled(Card)(() => ({
@@ -34,10 +38,17 @@ const CardStyle = styled(Card)(() => ({
 
 const CardContentStyle = styled(CardContent)(() => ({
   display: "flex",
+  width: "100%",
+
   justifyContent: "space-between",
+  color: "white",
+  position: "absolute",
+  marginTop: "-100px",
+  // backgroundColor: "white",
+  backgroundColor: " rgba(0,0,0,0.5)",
 }));
 
-const FullCourseNameStyle = styled("h2")(() => ({
+const FullCourseNameStyle = styled("h3")(() => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
@@ -52,33 +63,41 @@ function MyFullCourse({ myList, nickname }: Props) {
   const navigate = useNavigate();
   for (let i = 0; i < 6; i++) {
     if (i < myList.length) {
-      console.log("내풀코스다!!!", myList[i]);
       baseCard.push(
         <CardStyle
           onClick={() =>
             navigate(`/fullcourseDetail/${myList[i].fullCourseId}`)
           }
         >
-          <CardActionArea>
-            <FullCouresThumbnail
-              thumbnailList={myList[i].thumbnailList}
-            ></FullCouresThumbnail>
-            <CardContentStyle>
-              <Box sx={{ alignItems: "center" }}>
-                <LikeCount likeCount={myList[i].likeCnt}></LikeCount>
-                <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
-              </Box>
-              <Box sx={{ flexGrow: 1 }} />
-              <DateCounter
-                startedOn={new Date(myList[i].startedOn)}
-                finishedOn={new Date(myList[i].finishedOn)}
-              ></DateCounter>
-            </CardContentStyle>
-          </CardActionArea>
+          <div style={{ position: "relative" }}>
+            <CardActionArea>
+              <div className={classes.bg}>
+                <FullCouresThumbnail
+                  thumbnailList={myList[i].thumbnailList}
+                ></FullCouresThumbnail>
+                <CardContentStyle>
+                  <Box sx={{ alignItems: "center" }}>
+                    <LikeCount likeCount={myList[i].likeCnt}></LikeCount>
+                    <FullCourseNameStyle>{myList[i].title}</FullCourseNameStyle>
+                  </Box>
+
+                  <DateCounter
+                    startedOn={new Date(myList[i].startedOn)}
+                    finishedOn={new Date(myList[i].finishedOn)}
+                  ></DateCounter>
+                  <div></div>
+                </CardContentStyle>
+              </div>
+            </CardActionArea>
+          </div>
         </CardStyle>
       );
     } else {
-      baseCard.push(<Paper elevation={3} className={classes.paper}></Paper>);
+      baseCard.push(
+        <Paper elevation={3} className={classes.paper}>
+          <div style={{ marginTop: "auto", marginBottom: "auto" }}></div>
+        </Paper>
+      );
     }
   }
 

@@ -90,7 +90,6 @@ function PlaceModal({
     io: IntersectionObserver
   ) => {
     entries.forEach((entry) => {
-      console.log(totalPage, page);
       if (entry.isIntersecting && page < totalPage) {
         // 관찰하고 있는 entry가 화면에 보여지는 경우
         io.unobserve(entry.target); // entry 관찰 해제
@@ -197,7 +196,7 @@ function PlaceModal({
                             style={{ fontSize: "15px" }}
                           >
                             <StarScore
-                              starScore={item.averageScore}
+                              starScore={item.averageScore.toFixed(2)}
                             ></StarScore>
                           </Typography>
                         </CardContent>
@@ -259,7 +258,7 @@ function PlaceModal({
                             style={{ fontSize: "15px" }}
                           >
                             <StarScore
-                              starScore={item.averageScore}
+                              starScore={item.averageScore.toFixed(2)}
                             ></StarScore>
                           </Typography>
                         </CardContent>
