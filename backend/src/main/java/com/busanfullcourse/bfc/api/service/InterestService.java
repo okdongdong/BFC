@@ -1,5 +1,6 @@
 package com.busanfullcourse.bfc.api.service;
 
+import com.busanfullcourse.bfc.api.response.InterestListRes;
 import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.Interest;
 import com.busanfullcourse.bfc.db.entity.Place;
@@ -13,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +53,14 @@ public class InterestService {
         return map;
     }
 
-    public Page<Interest> getMoreInterestPlace(Long userId, Pageable pageable) {
-        return interestRepository.findAllByUserId(userId, pageable);
+    public Page<InterestListRes> getMoreInterestPlace(Long userId, Pageable pageable) {
+        Page<InterestListRes> resList = InterestListRes.of(interestRepository.findAllByUserId(userId, pageable));
+        List<Object[]> clearList = interestRepository.checkInterestStageClear(userId);
+        Map<String, Boolean> map = new HashMap<>();
+        for (Object[] objects : clearList) {
+            map.put(String.valueOf(objects[0]), Boolean.valueOf(objects[1].toString()));
+        }
+        resList.forEach(interestListRes -> interestListRes.setIsClear(map.get(String.valueOf(interestListRes.getPlaceId()))));
+        return resList;
     }
 }
