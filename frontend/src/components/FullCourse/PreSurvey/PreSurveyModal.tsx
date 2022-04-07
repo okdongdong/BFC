@@ -62,7 +62,7 @@ const PreSurveyModal = ({
                 marginTop: 32,
               }}
             >
-              <Button onClick={handleClose} color="error">
+              <Button onClick={() => handleClose()} color="error">
                 새로 작성하기
               </Button>
               <Button onClick={() => navigate("/fullcourse/create")}>
