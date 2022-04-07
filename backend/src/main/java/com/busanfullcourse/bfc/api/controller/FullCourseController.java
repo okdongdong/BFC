@@ -60,14 +60,14 @@ public class FullCourseController {
     public ResponseEntity<String> changeFullCoursePublic(@PathVariable Long fullCourseId,
                                                        @RequestBody Map<String, Boolean> isPublic) {
         fullCourseService.changeFullCoursePublic(fullCourseId, isPublic);
-        return ResponseEntity.ok("풀코스가 변경되었습니다.");
+        return ResponseEntity.ok("풀코스 공유상태가 변경되었습니다.");
     }
 
     @PutMapping("/{fullCourseId}/review")
     public ResponseEntity<String> changeFullCourseReview(@PathVariable Long fullCourseId,
                                                        @RequestBody Map<String, String> review) {
         fullCourseService.changeFullCourseReview(fullCourseId, review);
-        return ResponseEntity.ok("풀코스가 변경되었습니다.");
+        return ResponseEntity.ok("풀코스 후기가 변경되었습니다.");
     }
 
     @DeleteMapping("/{fullCourseId}")
