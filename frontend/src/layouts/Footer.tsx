@@ -32,7 +32,10 @@ function Footer() {
             </div>
           </div>
           <div></div>
-          <div style={{ fontSize: 32, fontWeight: "bolder" }}>Contact</div>
+          <div>
+            <div style={{ fontSize: 32, fontWeight: "bolder" }}>Contact</div>
+            <div style={{ color: "#999999" }}>busanfullcourse@gmail.com</div>
+          </div>
         </Stack>
         <Stack spacing={3}>
           <div>
@@ -43,7 +46,7 @@ function Footer() {
 
           <div></div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: "bold" }}>
+            <div style={{ fontSize: 20, fontWeight: "bold" }}>
               부울경 2반 1조
             </div>
             <Stack direction="row" spacing={4}>
