@@ -58,6 +58,11 @@ public class FullCourse {
     @Builder.Default
     private List<WishPlace> wishPlaces = new ArrayList<>();
 
+    @ToString.Exclude
+    @OneToMany(mappedBy = "fullCourse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Like> likeList = new ArrayList<>();
+
     @Column(name = "like_count")
     private Integer likeCnt;
 }
