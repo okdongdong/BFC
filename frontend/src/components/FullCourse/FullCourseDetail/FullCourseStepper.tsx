@@ -82,7 +82,7 @@ function FullCourseStepper({ schedule }: Props) {
           ))}
         </Stepper>
         <div style={{ marginTop: "20px" }}>
-          <FullCourseMap></FullCourseMap>
+          <FullCourseMap activeStep={activeStep}></FullCourseMap>
         </div>
         <div>
           {allStepsCompleted() ? (
