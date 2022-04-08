@@ -40,7 +40,7 @@ function Router() {
             { path: "", element: <RecommendList category={false} /> },
             {
               path: ":placeId",
-              element: <Signup />,
+              element: <Detail />,
             },
           ],
         },
@@ -50,7 +50,7 @@ function Router() {
             { path: "", element: <RecommendList category={true} /> },
             {
               path: ":placeId",
-              element: <Signup />,
+              element: <Detail />,
             },
           ],
         },
