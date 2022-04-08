@@ -50,10 +50,8 @@ export const getPlaceDetail = (placeId: number) => {
       };
       dispatch(setPlaceDetail(placeDetail));
 
-      console.log("-----------", res);
     } catch (e) {
       errorControl(dispatch, "장소 상세 조회 실패");
-      console.log(e);
     }
 
     loadingControl(dispatch, false);

@@ -47,12 +47,9 @@ function FindPasswordForm({ userId }: Props) {
       method: "post",
       url: `${process.env.REACT_APP_BASE_URL}/api/v1/auth/verification/reset`,
       data: { email: email },
-    })
-      .then((res) => {
-        console.log(res);
-        alert("임시비밀번호가 발급되었습니다.");
-      })
-      .catch((err) => console.log(err));
+    }).then((res) => {
+      alert("임시비밀번호가 발급되었습니다.");
+    });
   }
 
   // 이메일 인증요청
@@ -63,8 +60,6 @@ function FindPasswordForm({ userId }: Props) {
       setEmailConfirmation(() => false);
     } else {
       // 인증
-      console.log("이메일 인증요청");
-      console.log(email);
       setSendEmailConfirmation(() => true);
       axios({
         method: "POST",
@@ -72,11 +67,9 @@ function FindPasswordForm({ userId }: Props) {
         data: { email: email },
       })
         .then((res) => {
-          console.log(`인증번호 수신 : ${res.data.code}`);
           setResponseCertificationNumber(() => res.data.code);
         })
         .catch((err) => {
-          console.log("이메일 인증 실패", err);
           setSendEmailConfirmation(() => false);
         });
     }

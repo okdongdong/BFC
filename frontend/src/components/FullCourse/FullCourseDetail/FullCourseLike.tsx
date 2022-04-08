@@ -32,7 +32,6 @@ function FullCourseLike({
       url: `/fullCourse/${fullCourseId}/like`,
     }).then((res) => {
       setChecked(res.data.isLiked);
-      console.log("기존 풀코스", fullCourse);
       const newFullCourse = fullCourse;
       if (res.data.isLiked) {
         const newLikeCnt = likeCnt + 1;

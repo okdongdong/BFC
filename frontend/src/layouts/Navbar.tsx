@@ -48,9 +48,7 @@ const Navbar = ({ isLogin, nickname, profileImg, userLogout }: Props) => {
     try {
       await userLogout();
       navigate("/");
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   return (

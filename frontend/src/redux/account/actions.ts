@@ -45,9 +45,7 @@ export const getUserInfo = (userId: number) => {
         url: `users/${userId}`,
       });
       dispatch(setUserInfo(res.data));
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
     errorControl(dispatch, "유저정보를 받아오는데 실패했습니다.");
 
     loadingControl(dispatch, false);
@@ -80,8 +78,6 @@ export const userLogin = (userInfo: LoginUserInfo) => {
         `${res.data.grantType}${res.data.refreshToken}`
       );
 
-      console.log(res);
-
       const newUserInfo = {
         nickname: res.data.nickname,
         userId: res.data.userId,
@@ -94,7 +90,6 @@ export const userLogin = (userInfo: LoginUserInfo) => {
 
       // 로그인 성공시 메인페이지로 이동
     } catch (err) {
-      console.log(err);
       errorControl(dispatch, "유저정보가 일치하지 않습니다.");
     }
     loadingControl(dispatch, false);
@@ -112,12 +107,10 @@ export const userLogout = () => {
           RefreshToken: localStorage.getItem("refreshToken") || "",
         },
       });
-      console.log(res);
       localStorage.clear();
       dispatch(resetUserInfo());
       dispatch(resetFullCourse());
     } catch (e) {
-      console.log(e);
       errorControl(dispatch, "로그아웃에 실패했습니다.");
     }
 

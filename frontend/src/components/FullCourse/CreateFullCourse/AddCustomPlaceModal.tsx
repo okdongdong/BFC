@@ -5,7 +5,6 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  listItemSecondaryActionClasses,
   MenuItem,
   Modal,
   Stack,
@@ -114,7 +113,6 @@ function AddCustomPlaceModal({
       lat: customSearch.y,
       lng: customSearch.x,
     });
-    console.log(customSearch);
     if (customPlaceName === "") {
       setCustomPlaceName(customSearch.place_name);
     }

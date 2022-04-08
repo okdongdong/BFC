@@ -71,12 +71,8 @@ function FullCourseInfo({
       url: `/fullCourse/${fullCourseId}/public`,
       data: { isPublic: !isPublic },
     })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      .then((res) => {})
+      .catch((err) => {});
   }
   function updateFullCourse() {
     createFullCourseSuccess(fullCourseId);
@@ -90,9 +86,7 @@ function FullCourseInfo({
       .then(() => {
         navigate("/"); //삭제하고 메인페이지
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
   return (
     <div
