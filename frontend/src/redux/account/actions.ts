@@ -87,7 +87,7 @@ export const userLogin = (userInfo: LoginUserInfo) => {
         userId: res.data.userId,
         profileImg:
           res.data.profileImg ||
-          "https://post-phinf.pstatic.net/MjAxODEyMjZfMjY5/MDAxNTQ1ODA5OTg2MjU5.fB8mb5wDo84uztMAGYGrOHfcTxL8-NcmqaoomM7BmSgg.o-wdtnhWUzDIkJCQsPzCT5ZWrTPYdhlIcOeXVE2SJsIg.JPEG/2.jpg?type=w1200",
+          "https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg",
       };
 
       dispatch(userLoginSuccess(newUserInfo));

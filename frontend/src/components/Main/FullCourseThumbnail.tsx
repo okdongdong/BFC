@@ -23,7 +23,12 @@ function FullCouresThumbnail({ thumbnailList }: FullCouresThumbnailProps) {
           xs={isThumbnail3 && idx === 2 ? 12 : 6}
           alignItems="stretch"
         >
-          <CardMediaStyle image={thumbnail} title={`코스-${idx}`} />
+          <CardMediaStyle
+            image={
+              thumbnail || "https://www.chanchao.com.tw/images/default.jpg"
+            }
+            title={`코스-${idx}`}
+          />
         </Grid>
       ))}
     </FullCouresThumbnailGridStyle>

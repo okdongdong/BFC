@@ -32,6 +32,7 @@ import {
 import { getPlaceDetail } from "../../redux/placeDetail/actions";
 
 import {
+  resetPlaceList,
   resetPlaceListWithDistance,
   resetPlaceListWithSurvey,
   resetSearchPlaceList,
@@ -86,6 +87,7 @@ function CreateFullCourse({
   isLogin,
   getPlaceDetail,
   setFinished,
+  resetPlaceList,
   resetPlaceListWithDistance,
   resetSearchPlaceList,
   resetPlaceListWithSurvey,
@@ -207,6 +209,7 @@ function CreateFullCourse({
     console.log("선택지 변경");
     setPage(0);
     setFinished(false);
+    resetPlaceList();
     resetPlaceListWithDistance();
     resetSearchPlaceList();
     resetPlaceListWithSurvey();
@@ -374,6 +377,7 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(createNewSchedule(newState)),
     updateSchedule: (newState: UpdateScheduleProps) =>
       dispatch(updateSchedule(newState)),
+    resetPlaceList: () => dispatch(resetPlaceList()),
     resetPlaceListWithDistance: () => dispatch(resetPlaceListWithDistance()),
     resetPlaceListWithSurvey: () => dispatch(resetPlaceListWithSurvey()),
     resetSearchPlaceList: () => {

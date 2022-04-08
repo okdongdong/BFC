@@ -1,7 +1,8 @@
 import { AnyAction } from "redux";
-import { placeCardList } from "../../assets/dummyData/dummyData";
+import { placeCardList, placeList } from "../../assets/dummyData/dummyData";
 import {
   PlaceCardList,
+  RESET_PLACE_LIST,
   RESET_PLACE_LIST_WITH_DISTANCE,
   RESET_PLACE_LIST_WITH_SURVEY,
   RESET_SEARCH_PLACE_LIST,
@@ -33,7 +34,13 @@ const placeListReducer = (
     case SET_PLACE_LIST:
       return {
         ...state,
-        placeList: [...action.payload],
+        placeList: [...state.placeList, ...action.payload],
+      };
+
+    case RESET_PLACE_LIST:
+      return {
+        ...state,
+        placeList: [],
       };
 
     case SET_PLACE_LIST_WITH_DISTANCE:
