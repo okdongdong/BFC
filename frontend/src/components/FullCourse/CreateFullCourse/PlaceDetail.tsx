@@ -51,6 +51,12 @@ const PlaceItemTextStyle = styled("p")(() => ({
   marginTop: 8,
   marginBottom: 8,
 }));
+const PlaceMenuItemTextStyle = styled("p")(() => ({
+  fontSize: 14,
+  color: "grey",
+  marginTop: 0,
+  marginBottom: 0,
+}));
 
 function PlaceDetail({
   placeId,
@@ -78,7 +84,7 @@ function PlaceDetail({
       <CardStyle>
         <CardTitle>
           <h1>{name}</h1>
-          <StarScore starScore={averageScore}></StarScore>
+          <StarScore starScore={averageScore.toFixed(2)}></StarScore>
         </CardTitle>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Paper
@@ -98,7 +104,7 @@ function PlaceDetail({
 
         <CardContent>
           <Stack spacing={1}>
-            <PlaceContentTextStyle>{info}</PlaceContentTextStyle>
+            {!info || <PlaceContentTextStyle>{info}</PlaceContentTextStyle>}
 
             {!address || (
               <>
@@ -116,7 +122,6 @@ function PlaceDetail({
 
             {!station || (
               <>
-                <PlaceTextStyle>교통</PlaceTextStyle>
                 <PlaceContentTextStyle>{station}</PlaceContentTextStyle>
               </>
             )}
@@ -132,9 +137,27 @@ function PlaceDetail({
             {menus.length === 0 || (
               <>
                 <PlaceTextStyle>메뉴</PlaceTextStyle>
-                {menus.map((menu: string, idx: number) => (
-                  <PlaceItemTextStyle key={idx}>{menu}</PlaceItemTextStyle>
-                ))}
+                {menus.map(
+                  (
+                    menu: { menuId: number; name: string; price: number },
+                    idx: number
+                  ) => (
+                    <div
+                      key={`menu-${idx}`}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <PlaceMenuItemTextStyle>
+                        {menu.name}
+                      </PlaceMenuItemTextStyle>
+                      <PlaceMenuItemTextStyle>
+                        {menu.price.toLocaleString()} 원
+                      </PlaceMenuItemTextStyle>
+                    </div>
+                  )
+                )}
               </>
             )}
           </Stack>

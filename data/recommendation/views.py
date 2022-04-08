@@ -53,7 +53,7 @@ def get_wish_list(request, full_course_id, user_id):
 
   else : # 가고싶은 관광지가 없는 경우
     cursor = connection.cursor()
-    strSql = "SELECT I.place_id, P.name, P.category FROM interest I INNER JOIN Place P ON I.place_id = P.place_id  WHERE I.user_id = "+ str(user_id) +" and P.category=0"
+    strSql = "SELECT I.place_id, P.name, P.category FROM interest I INNER JOIN place P ON I.place_id = P.place_id  WHERE I.user_id = "+ str(user_id) +" and P.category=0"
     result = cursor.execute(strSql)
     Interest_place = cursor.fetchall()
     connection.close()
