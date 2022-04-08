@@ -13,7 +13,6 @@ function FullCourseStepper({ schedule }: Props) {
   const len = schedule.length - 1;
   const days = schedule[len].day; //여행일수
 
-  console.log(days);
   var steps = new Array<string>();
   for (let i = 0; i < days; i++) {
     steps.push("Day");

@@ -74,8 +74,6 @@ export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
     // 서버에 요청 => 로딩중 표시
     loadingControl(dispatch, true);
 
-    console.log("PlaceListInfoForGet", placeInfoForGet);
-
     try {
       const res = await customAxios({
         method: "get",
@@ -83,16 +81,11 @@ export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
         params: placeInfoForGet,
       });
 
-      console.log(placeInfoForGet.page);
-      console.log(res.data.totalPages);
-
       if (placeInfoForGet.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
-        console.log("조회끝");
       }
 
       const placeListData: PlaceCard[] = [];
-      console.log(res);
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
@@ -114,12 +107,9 @@ export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
         placeListData.push(placeCard);
       });
       dispatch(setPlaceList(placeListData));
-
-      console.log(res);
     } catch (e) {
       dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
-      console.log(e);
     }
 
     loadingControl(dispatch, false);
@@ -134,8 +124,6 @@ export const getPlaceListWithDistance = (
     // 서버에 요청 => 로딩중 표시
     loadingControl(dispatch, true);
 
-    console.log("PlaceListInfoForGet", placeListInfoForGet);
-
     try {
       const res = await customAxios({
         method: "get",
@@ -143,16 +131,11 @@ export const getPlaceListWithDistance = (
         params: placeListInfoForGet,
       });
 
-      console.log(placeListInfoForGet.page);
-      console.log(res.data.totalPages);
-
       if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
-        console.log("조회끝");
       }
 
       const placeListData: PlaceCard[] = [];
-      console.log(res);
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
@@ -174,12 +157,9 @@ export const getPlaceListWithDistance = (
         placeListData.push(placeCard);
       });
       dispatch(setPlaceListWithDistance(placeListData));
-
-      console.log(res);
     } catch (e) {
       dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
-      console.log(e);
     }
 
     loadingControl(dispatch, false);
@@ -206,16 +186,11 @@ export const getPlaceListWithSurvey = (
         },
       });
 
-      console.log(placeListInfoForGet.page);
-      console.log(res.data.totalPages);
-
       if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
-        console.log("조회끝");
       }
 
       const placeListData: PlaceCard[] = [];
-      console.log(res);
       res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
@@ -237,12 +212,9 @@ export const getPlaceListWithSurvey = (
         placeListData.push(placeCard);
       });
       dispatch(setPlaceListWithSurvey(placeListData));
-
-      console.log(res);
     } catch (e) {
       dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
-      console.log(e);
     }
 
     loadingControl(dispatch, false);
@@ -254,8 +226,6 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
     // 서버에 요청 => 로딩중 표시
     loadingControl(dispatch, true);
 
-    console.log("PlaceSearchInfo", placeSearchInfo);
-
     try {
       const res = await customAxios({
         method: "get",
@@ -263,11 +233,9 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
         params: placeSearchInfo,
       });
       const placeListData: PlaceCard[] = [];
-      console.log("검색된 장소", res);
 
       if (placeSearchInfo.page + 1 >= res.data.totalPages) {
         dispatch(setFinished(true));
-        console.log("조회끝");
       }
 
       res.data.content.map((place: PlaceInfoData, idx: number) => {
@@ -293,7 +261,6 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
     } catch (e) {
       dispatch(setFinished(true));
       errorControl(dispatch, "장소 검색 실패");
-      console.log(e);
     }
 
     loadingControl(dispatch, false);

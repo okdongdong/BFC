@@ -6,7 +6,6 @@ import React from "react";
 
 function FullCourseDateRangeInput() {
   const [value, setValue] = React.useState<RangeInput<Date>>([null, null]);
-  console.log(value);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>

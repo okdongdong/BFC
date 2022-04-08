@@ -1,10 +1,8 @@
-import { Button, dividerClasses, Theme } from "@mui/material";
+import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useRef } from "react";
-import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
 import { setProfileImg } from "../../../redux/account/actions";
-import { customAxios } from "../../../lib/customAxios";
 import axios from "axios";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -57,9 +55,7 @@ function ProfileImg({
           //   data: formData,
         })
           .then((res) => {})
-          .catch((err) => {
-            console.log(err);
-          });
+          .catch((err) => {});
       };
     }
   };
@@ -72,14 +68,15 @@ function ProfileImg({
       {profileImg ? (
         <div>
           {currentUserId === userId ? (
-            <img src={myProfileImg} className={classes.myImg}></img>
+            <img src={myProfileImg} alt="img" className={classes.myImg}></img>
           ) : (
-            <img src={profileImg} className={classes.myImg}></img>
+            <img src={profileImg} alt="img" className={classes.myImg}></img>
           )}
         </div>
       ) : (
         <img
           src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+          alt="img"
           className={classes.myImg}
         ></img>
       )}

@@ -76,7 +76,6 @@ function LoginForm({ userLogin, isLogin }: Props) {
   };
   const onEmailHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.currentTarget.value);
-    console.log(event.currentTarget.value);
   };
   const onPasswordHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.currentTarget.value);

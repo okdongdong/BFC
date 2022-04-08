@@ -1,5 +1,4 @@
 import RestaurantDetail from "../../components/Detail/RestaurantDetail";
-import AttractionDetail from "../../components/Detail/AttractionDetail";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { customAxios } from "../../lib/customAxios";
