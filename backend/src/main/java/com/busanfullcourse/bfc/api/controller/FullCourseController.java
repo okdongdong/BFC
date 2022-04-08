@@ -114,8 +114,8 @@ public class FullCourseController {
             @PathVariable Long fullCourseId,
             @PageableDefault(size = 8)
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
-                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                    @SortDefault(sort = "place.category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "place.scoreCount", direction = Sort.Direction.DESC)
             })Pageable pageable
     ) {
         return ResponseEntity.ok(placeService.getSurveyRecommendPlaceList(fullCourseId, pageable));

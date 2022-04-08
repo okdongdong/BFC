@@ -6,6 +6,8 @@ import { connect } from "react-redux";
 import { customAxios } from "../../../lib/customAxios";
 import { useNavigate } from "react-router";
 import { createFullCourseSuccess } from "../../../redux/createFullCourse/actions";
+import { setFullCourseData } from "../../../redux/detail/action";
+import { SetFullCourseData } from "../../../types/detail";
 
 function FullCourseInfo({
   title,
@@ -13,6 +15,8 @@ function FullCourseInfo({
   userId,
   currentUserId,
   fullCourseId,
+  fullCourse,
+  setFullCourseData,
   createFullCourseSuccess,
 }: Props) {
   //내가 쓴글 확인
@@ -61,6 +65,19 @@ function FullCourseInfo({
     },
   }));
   const navigate = useNavigate();
+  function updatePublic() {
+    customAxios({
+      method: "put",
+      url: `/fullCourse/${fullCourseId}/public`,
+      data: { isPublic: !isPublic },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   function updateFullCourse() {
     createFullCourseSuccess(fullCourseId);
     navigate("/fullCourse/create");
@@ -103,14 +120,14 @@ function FullCourseInfo({
               <Typography>비공개</Typography>
               {isPublic ? (
                 <AntSwitch
-                  disabled
                   defaultChecked
                   inputProps={{ "aria-label": "ant design" }}
+                  onClick={updatePublic}
                 />
               ) : (
                 <AntSwitch
-                  disabled
                   inputProps={{ "aria-label": "ant design" }}
+                  onClick={updatePublic}
                 />
               )}
 
@@ -160,12 +177,15 @@ const mapStateToProps = ({ fullCourse, account }: any) => {
     isPublic: fullCourse.isPublic,
     userId: fullCourse.userId,
     fullCourseId: fullCourse.fullCourseId,
+    fullCourse: fullCourse,
   };
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
     createFullCourseSuccess: (fullCourseId: number) =>
       dispatch(createFullCourseSuccess(fullCourseId)),
+    setFullCourseData: (fullCourseData: SetFullCourseData) =>
+      dispatch(setFullCourseData(fullCourseData)),
   };
 };
 type Props = ReturnType<typeof mapStateToProps> &
