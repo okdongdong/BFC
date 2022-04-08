@@ -83,7 +83,7 @@ function PlaceCard({
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <PlaceNameStyle>{name}</PlaceNameStyle>
             <StarScore
-              starScore={averageScore}
+              starScore={averageScore.toFixed(2)}
               fontSize={16}
               starSize={20}
             ></StarScore>
