@@ -1,6 +1,7 @@
 // 장소목록 불러오기
 export const GET_PLACE_LIST = "GET_PLACE_LIST";
 export const SET_PLACE_LIST = "GET_PLACE_LIST";
+export const RESET_PLACE_LIST = "RESET_PLACE_LIST";
 
 // 거리기반 장소목록 불러오기
 export const SET_PLACE_LIST_WITH_DISTANCE = "SET_PLACE_LIST_WITH_DISTANCE";
@@ -15,6 +16,10 @@ export const SET_SEARCH_PLACE_LIST = "SET_SEARCH_PLACE_LIST";
 export const RESET_SEARCH_PLACE_LIST = "RESET_SEARCH_PLACE_LIST";
 
 // 장소리스트 요청시 필요한 데이터
+export interface PlaceInfoForGet {
+  page: number;
+  size: number;
+}
 export interface PlaceListInfoForGet {
   distance: number; // 미터 단위
   scheduleId: number;
