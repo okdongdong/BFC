@@ -84,7 +84,7 @@ function PlaceDetail({
       <CardStyle>
         <CardTitle>
           <h1>{name}</h1>
-          <StarScore starScore={averageScore}></StarScore>
+          <StarScore starScore={averageScore.toFixed(2)}></StarScore>
         </CardTitle>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Paper
