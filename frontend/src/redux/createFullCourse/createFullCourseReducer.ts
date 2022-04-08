@@ -34,9 +34,6 @@ const createFullCourseReducer = (
   switch (action.type) {
     // 스케줄 DND에서 카드 옮길 때
     case MOVE_CARD:
-      console.log(action.payload);
-      console.log("실행이 안되나?");
-
       const newFullCourseList = deepcopy(action.payload);
       return {
         ...newState,
@@ -55,7 +52,6 @@ const createFullCourseReducer = (
       return { ...newState };
 
     case RESET_FULL_COURSE:
-      console.log("리셋");
       return { ...initialState };
 
     // 풀코스 날짜 설정

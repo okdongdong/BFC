@@ -8,7 +8,6 @@ import { PlaceCard } from "../../../redux/placeList/types";
 import { useState } from "react";
 import FullCourseKakaoMapMarkers from "./FullCourseKakaoMapMarkers";
 import PlaceKakaoMapMarkers from "./PlaceKakaoMapMarkers";
-import placeMarkerBlue from "../../../assets/img/place_marker_blue.png";
 
 const { kakao } = window;
 

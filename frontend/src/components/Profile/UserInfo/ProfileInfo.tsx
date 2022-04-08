@@ -1,11 +1,10 @@
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useState } from "react";
+import { useState } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { customAxios } from "../../../lib/customAxios";
 import { setProfileData } from "../../../redux/profile/actions";
-import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
 import { SetProfileData } from "../../../types/profile";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -32,16 +31,13 @@ function ProfileInfo({
       url: `/users/${profileUserId}/follow`,
     })
       .then((res) => {
-        console.log("팔로우성공");
         const newProfileData = profile;
         const newFollowerCnt = profile.followerCnt + 1;
         newProfileData.followerCnt = newFollowerCnt;
         setProfileData(newProfileData);
         setBtnName(true);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
   function unFollow() {
     customAxios({
@@ -49,16 +45,13 @@ function ProfileInfo({
       url: `/users/${profileUserId}/follow`,
     })
       .then((res) => {
-        console.log("팔로우 취소 성공");
         const newProfileData = profile;
         const newFollowerCnt = profile.followerCnt - 1;
         newProfileData.followerCnt = newFollowerCnt;
         setProfileData(newProfileData);
         setBtnName(false);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
   return (
     <div>

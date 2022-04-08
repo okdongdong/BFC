@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { connect } from "react-redux";
 import { PlaceCardProps } from "../../../types/main";
-import noImage from "../../../assets/img/logo_with_text.png";
 import StarScore from "../../Main/StarScore";
 
 const CardStyle = styled(Card)(() => ({

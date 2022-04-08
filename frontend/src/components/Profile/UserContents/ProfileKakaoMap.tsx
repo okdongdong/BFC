@@ -41,9 +41,7 @@ function ProfileKakaoMap({ profileUserId }: Props) {
         });
       });
       setPlaceLocationInfoList(temp);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
   useEffect(() => {
     getInfo();

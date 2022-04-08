@@ -50,7 +50,6 @@ function DatePicker({
   const onChangeHandler = (newValue: DateRange<Date>) => {
     const startedOn = toStringByFormatting(newValue[0]);
     const finishedOn = toStringByFormatting(newValue[1]);
-    console.log("------", fullCourseDate);
 
     setFullCourseDate([startedOn, finishedOn]);
   };

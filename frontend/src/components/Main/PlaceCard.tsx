@@ -4,9 +4,7 @@ import {
   CardContent,
   CardMedia,
   Chip,
-  Fade,
   styled,
-  Theme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StarScore from "./StarScore";
@@ -63,7 +61,6 @@ function PlaceCard({
   const handleObserver = async (entries: any) => {
     const target = entries[0];
     if (target.isIntersecting && !isVisible) {
-      console.log("is InterSecting");
       setVisible(true);
     }
   };
