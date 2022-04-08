@@ -27,7 +27,7 @@ def get_wish_list(request, full_course_id, user_id):
   if len(wish_place_labels) > 0 : # 가고싶은 관광지 선택했을 경우
     wish_place_random =[]
     for wish_place_keyword in wish_place_labels :
-      wish_place_random.append(random.choice(list(Place.objects.filter(label=wish_place_keyword['keyword']).values('name'))))
+      wish_place_random.append(random.choice(list(Place.objects.filter(Q(category = 0) & Q(label=wish_place_keyword['keyword'])).values('name'))))
 
     # 추천
     place_id_list = set()
