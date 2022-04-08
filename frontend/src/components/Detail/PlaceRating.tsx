@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import StarIcon from "@mui/icons-material/Star";
 import { customAxios } from "../../lib/customAxios";
 import { connect } from "react-redux";
-import Detail from "../../pages/Main/Detail";
 import { Button } from "@mui/material";
 import { setPlaceData } from "../../redux/detail/action";
 import { SetPlaceData } from "../../types/detail";
@@ -41,7 +40,6 @@ function PlaceRating({
       url: `/place/${placeId}/score`,
     });
     setValue(result.data.score);
-    console.log("데이터 가져옴", result.data.score);
     if (result.data.score) {
       setMethod("put");
       setBtnName("변경");
@@ -67,7 +65,6 @@ function PlaceRating({
       setValue(0);
       setMethod("post");
       setBtnName("등록");
-      console.log(res);
     });
   }
   function onChange() {
@@ -88,7 +85,6 @@ function PlaceRating({
         setMethod("put");
         setBtnName("변경");
         setIsClick(true);
-        console.log(res);
       });
     } else if (method === "put") {
       customAxios({
@@ -96,7 +92,6 @@ function PlaceRating({
         url: `/place/${placeId}/score`,
         data: { score: value },
       }).then((res) => {
-        console.log(res);
         if (value) {
           const newPlace = place;
           const newAverageScore =

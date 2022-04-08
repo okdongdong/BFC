@@ -26,9 +26,7 @@ const ReviewContent = ({
     }).then((res) => {
       const newReviewList = [...reviewList];
       newReviewList.splice(index, 1);
-      console.log(newReviewList);
       setReviewList(newReviewList);
-      console.log(res);
     });
   }
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -43,9 +41,7 @@ const ReviewContent = ({
       setBtnName("수정");
       const newReviewList = [...reviewList];
       newReviewList[index].content = newContent;
-      console.log(newReviewList);
       setReviewList(newReviewList);
-      console.log(res);
     });
   };
   const updateReview = () => {

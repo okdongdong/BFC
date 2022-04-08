@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ReviewInput from "./ReviewInput";
@@ -6,7 +6,7 @@ import ReviewList from "./ReviewList";
 import { customAxios } from "../../../lib/customAxios";
 import { connect } from "react-redux";
 import { setReviewList } from "../../../redux/detail/action";
-import { SetReview, SetReviewList } from "../../../types/detail";
+import { SetReview } from "../../../types/detail";
 
 const useStyles = makeStyles((theme: Theme) => ({
   review: {
@@ -21,8 +21,6 @@ function PlaceReview({ placeId, setReviewList, reviewList }: Props) {
       url: `/review/place/${placeId}`,
     });
     setReviewList(result.data.content);
-    console.log(result.data);
-    console.log("리뷰!!!", reviewList);
   };
   React.useEffect(() => {
     fetchData();

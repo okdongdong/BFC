@@ -2,7 +2,7 @@ import { Icon, Theme } from "@mui/material";
 import { styled } from "@mui/material";
 import { Collapse } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ScrollableBox } from "../../../lib/customTag";
 
 const useCollapseStyles = makeStyles((theme: Theme) => ({

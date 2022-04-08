@@ -59,12 +59,9 @@ function ChangePassword({ username, userId }: Props) {
       },
     })
       .then((res) => {
-        console.log(res);
-        console.log("바뀜바뀜");
         alert("비밀번호가 성공적으로 변경되었습니다.");
       })
       .catch((err) => {
-        console.log(err);
         alert("기존비밀번호가 틀렸습니다.");
       });
   }

@@ -33,13 +33,10 @@ const ReviewInput = ({
       url: `/review/place/${placeId}`,
       data: { content: content },
     }).then((res) => {
-      console.log("리뷰작성완료", res);
       const newReviewList = [...reviewList];
       newReviewList.push(review);
-      console.log(newReviewList);
       setReviewList(newReviewList);
     });
-    console.log(review);
     setContent(""); //내용 초기화
   };
   const onKeyPress = (e: KeyboardEvent<HTMLImageElement>) => {
