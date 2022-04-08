@@ -29,7 +29,6 @@ export const errorControl = (dispatch: Dispatch, error: string | boolean) => {
     clearTimeout(noticeId);
     noticeId = setTimeout(() => dispatch(setNowError(false)), 2000);
     sessionStorage.setItem("noticeId", noticeId);
-    console.log("noticeID", noticeId);
   } else {
     dispatch(setNowError(error));
   }

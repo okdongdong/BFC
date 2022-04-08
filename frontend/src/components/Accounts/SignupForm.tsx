@@ -95,7 +95,6 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         },
       });
 
-      console.log(res);
       if (res.status !== 200) {
         throw new Error("SinupFailed");
       }
@@ -107,11 +106,7 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         method: "get",
         url: `recommend/new_user/${userId}`,
       });
-      console.log(res2)
-
     } catch (e: any) {
-      console.log(e);
-      console.log(e.data);
       if (e.message === "SinupFailed") {
         errorControl("회원가입에 실패했습니다.");
       } else {
@@ -130,7 +125,6 @@ function SignupForm({ errorControl, loadingControl }: Props) {
       setEmailConfirmation(() => false);
     } else {
       // 인증
-      console.log("이메일 인증요청");
       setSendEmailConfirmation(() => true);
       axios({
         method: "POST",
@@ -138,11 +132,9 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         data: { email: userInfo.username },
       })
         .then((res) => {
-          console.log(`인증번호 수신 : ${res.data.code}`);
           setResponseCertificationNumber(() => res.data.code);
         })
         .catch((err) => {
-          console.log("이메일 인증 실패", err);
           setSendEmailConfirmation(() => false);
         });
     }
@@ -156,7 +148,6 @@ function SignupForm({ errorControl, loadingControl }: Props) {
       setNicknameConfirmation(() => false);
     } else {
       // 닉네임 인증
-      console.log("닉네임 중복검사 요청");
       setSendCheckNickname(() => true);
       axios({
         method: "get",
@@ -168,7 +159,6 @@ function SignupForm({ errorControl, loadingControl }: Props) {
         })
         .catch((err) => {
           setSendCheckNickname(() => false);
-          console.log(err);
         });
     }
   }

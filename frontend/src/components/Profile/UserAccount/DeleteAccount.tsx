@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { TextField } from "@mui/material";
 import axios from "axios";
-import { Alert } from "@mui/material";
 import { AccountReducer } from "../../../redux/rootReducer";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router";
@@ -47,11 +46,8 @@ function DeleteAccount({ userId, username }: Props) {
       .then((res) => {
         alert("탈퇴되었습니다");
         navigate("/");
-        console.log(res);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
   return (
     <div>
