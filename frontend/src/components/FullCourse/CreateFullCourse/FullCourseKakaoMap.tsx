@@ -133,7 +133,7 @@ function FullCourseKakaoMap({
           width: "100%",
           height: "100%",
         }}
-        level={3} // 지도의 확대 레벨
+        level={8} // 지도의 확대 레벨
         onCreate={(map) => setMap(map)}
       >
         <PlaceKakaoMapMarkers
