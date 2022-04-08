@@ -65,7 +65,6 @@ const CreateFullCourseNavbar = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log(typeof handleClose);
 
   const dateRangeToString = (dateRange: DateRange<Date>) => {
     const [startDate, endDate]: DateRange<Date> = dateRange;

@@ -22,10 +22,8 @@ function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
         method: "get",
         url: `place/restaurant/${isLogin ? "mainRecommend" : "popular"}`,
       });
-      console.log("음식데이터", res);
       setRestaurantList(res.data);
     } catch (e) {
-      console.log(e);
       errorControl("음식점 정보를 불러오는데 실패했습니다.");
     }
     loadingControl(false);
@@ -38,10 +36,8 @@ function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
         method: "get",
         url: `place/attraction/${isLogin ? "mainRecommend" : "popular"}`,
       });
-      console.log("관광데이터", res);
       setAttrationList(res.data);
     } catch (e) {
-      console.log(e);
       errorControl("관광지 정보를 불러오는데 실패했습니다.");
     }
     loadingControl(false);
@@ -54,10 +50,8 @@ function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
         method: "get",
         url: "fullCourse/popular",
       });
-      console.log("추천풀코스데이터", res);
       setPopularFullCourseList(res.data);
     } catch (e) {
-      console.log(e);
       errorControl("풀코스 정보를 불러오는데 실패했습니다.");
     }
     loadingControl(false);
@@ -74,11 +68,8 @@ function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
           size: 4,
         },
       });
-      console.log("내풀코스데이터", res);
       setMyFullCourseList(res.data.content);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
     loadingControl(false);
   };
 
@@ -87,13 +78,11 @@ function Main({ isLogin, userId, errorControl, loadingControl }: Props) {
     getAttrationRecommend();
     getPopularFullCourse();
     if (isLogin) {
-      console.log("내풀코스 내놔라");
       getMyFullCourse();
     }
   };
 
   useEffect(() => {
-    console.log("-----");
     getInfo();
   }, []);
 

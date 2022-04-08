@@ -1,8 +1,7 @@
 import ProfileHeader from "../../components/Profile/UserInfo/ProfileHeader";
 import ProfileMain from "../../components/Profile/UserContents/ProfileMain";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-import React, { Dispatch, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { setProfileData } from "../../redux/profile/actions";
 import { SetProfileData } from "../../types/profile";
@@ -18,8 +17,6 @@ function Profile({ setProfileData, profile }: Props) {
       url: `/users/${nickname}/profile`,
     });
     setProfileData(result.data);
-    console.log("가져옴");
-    console.log(profile);
     setIsLoading(true);
   };
   React.useEffect(() => {

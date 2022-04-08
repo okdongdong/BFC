@@ -1,5 +1,4 @@
 import { AnyAction } from "redux";
-import { placeCardList, placeList } from "../../assets/dummyData/dummyData";
 import {
   PlaceCardList,
   RESET_PLACE_LIST,
