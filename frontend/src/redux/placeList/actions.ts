@@ -117,6 +117,7 @@ export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
 
       console.log(res);
     } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
       console.log(e);
     }
@@ -176,6 +177,7 @@ export const getPlaceListWithDistance = (
 
       console.log(res);
     } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
       console.log(e);
     }
@@ -238,6 +240,7 @@ export const getPlaceListWithSurvey = (
 
       console.log(res);
     } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
       console.log(e);
     }
@@ -288,6 +291,7 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
       });
       dispatch(setSearchPlaceList(placeListData));
     } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 검색 실패");
       console.log(e);
     }
