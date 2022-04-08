@@ -91,7 +91,7 @@ function PlaceCard({
         <CardActionArea>
           <CardMediaStyle
             image={
-              thumbnail && "https://www.chanchao.com.tw/images/default.jpg"
+              thumbnail || "https://www.chanchao.com.tw/images/default.jpg"
             }
             title={name}
           />
