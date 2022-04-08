@@ -98,7 +98,7 @@ function PlaceCard({
           <CardContent>
             <PlaceNameStyle>
               {name}
-              <StarScore starScore={averageScore}></StarScore>
+              <StarScore starScore={averageScore.toFixed(2)}></StarScore>
             </PlaceNameStyle>
             <PlaceAddressNameStyle>{address}</PlaceAddressNameStyle>
             <Chip label={`#${label}`} />
