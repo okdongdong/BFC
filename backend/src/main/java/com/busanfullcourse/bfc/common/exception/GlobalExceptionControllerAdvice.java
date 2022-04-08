@@ -37,9 +37,11 @@ public class GlobalExceptionControllerAdvice {
         return new ErrorResult(e.getMessage());
     }
 
+    /*
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResult serverExHandler(RuntimeException e) {
         return new ErrorResult(e.getMessage());
     }
+    */
 }
