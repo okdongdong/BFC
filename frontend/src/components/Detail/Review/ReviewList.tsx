@@ -1,11 +1,8 @@
 import ReviewListItem from "./ReviewListItem";
-import { ReviewListProps } from "../../../types/review";
 import { connect } from "react-redux";
-import { SetReview, SetReviewList } from "../../../types/detail";
+import { SetReview } from "../../../types/detail";
 
 function ReviewList({ reviewList }: Props) {
-  console.log("리뷰리스트", reviewList);
-
   return (
     <div className="ReviewList" style={{ marginTop: "10px" }}>
       {reviewList.length > 0 ? (

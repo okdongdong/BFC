@@ -48,7 +48,6 @@ function FullCourseCard({
   const handleObserver = async (entries: any) => {
     const target = entries[0];
     if (target.isIntersecting && !isVisible) {
-      console.log("is InterSecting");
       setVisible(true);
     }
   };

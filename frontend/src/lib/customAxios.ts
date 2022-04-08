@@ -22,7 +22,6 @@ export const customAxiosDjango: AxiosInstance = axios.create({
 // 요청 보내기 전 실행할 함수
 const successRequest = async (config: any) => {
   const token = localStorage.getItem("accessToken") || "";
-  console.log("요청보내기전:", config);
   config.headers.Authorization = token;
   if (config.url === "/auth/reissue") {
     const refreshToken = localStorage.getItem("refreshToken") || "";
@@ -47,7 +46,6 @@ const failureResponse = async (error: any) => {
 
   if (originalRequest.url === "/auth/reissue") {
     // 401에러가 발생하는 요청이 토큰갱신요청이면 무한재귀
-    console.log("토큰 갱신 실패");
     return Promise.reject(error);
   }
 
@@ -65,7 +63,6 @@ const unauthorizedError = async (error: any) => {
   const token = localStorage.getItem("accessToken") || "";
 
   // 토큰 refresh요청
-  console.log("401에러 발생", error.config);
 
   try {
     const res = await customAxios({
@@ -97,9 +94,7 @@ const unauthorizedError = async (error: any) => {
 
     //실패했던 요청 재요청
     return customAxios(originalRequest);
-  } catch (e) {
-    console.log("reissue fail");
-  }
+  } catch (e) {}
   return Promise.reject(error);
 };
 

@@ -77,13 +77,7 @@ function ChangeUserInfo({ userId }: Props) {
 
   // 유효성 검사 처리
   const [nickNameMessage, setNickNameMessage] = useState<string>("");
-  console.log(
-    "호호호호호",
-    userInfo.username,
-    userInfo.nickname,
-    userInfo.birthday,
-    userInfo.gender
-  );
+
   // 회원정보수정요청
   function requestChangeUser() {
     const userData = {
@@ -99,9 +93,7 @@ function ChangeUserInfo({ userId }: Props) {
       headers: {
         Authorization: token,
       },
-    })
-      .then((res) => console.log(res)) // redux로 저장해서 사용해야할듯
-      .catch((err) => console.log(err));
+    });
   }
 
   // 닉네임 중복검사요청
@@ -112,7 +104,6 @@ function ChangeUserInfo({ userId }: Props) {
       setNicknameConfirmation(() => false);
     } else {
       // 닉네임 인증
-      console.log("닉네임 중복검사 요청");
       setSendCheckNickname(() => true);
       axios({
         method: "get",
@@ -124,11 +115,9 @@ function ChangeUserInfo({ userId }: Props) {
       })
         .then((res) => {
           setNicknameConfirmation(() => true);
-          console.log(res);
         })
         .catch((err) => {
           // setSendCheckNickname(() => false);
-          console.log(err);
         });
     }
   }
@@ -169,7 +158,6 @@ function ChangeUserInfo({ userId }: Props) {
       default:
         return;
     }
-    console.log(newUserInfo);
   }
 
   return (

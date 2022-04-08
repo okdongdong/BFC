@@ -30,20 +30,13 @@ export const move = (
   const destClone = Array.from(destination); // 이동할 리스트
 
   const [removed] = sourceClone.splice(droppableSource.index, 1); // 원래리스트에서 삭제해줌
-  destClone.splice(droppableDestination.index, 0, removed); // 이동할 리스트의 목적 위치에 삽입해줌
-
-  // console.log("source: ", source);
-  // console.log("destination: ", destination);
-  // console.log("droppableSource: ", droppableSource);
-  // console.log("droppableDestination: ", droppableDestination);
-
   const result: any = {};
   result[droppableSource.droppableId] = sourceClone;
   result[droppableDestination.droppableId] = destClone;
   // droppableId : 놓여질 공간의 id
 
   return result;
-};
+};;
 
 // 리스트 요소의 스타일
 export const getItemStyle = (

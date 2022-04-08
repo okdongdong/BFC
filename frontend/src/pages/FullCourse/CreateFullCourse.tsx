@@ -206,7 +206,6 @@ function CreateFullCourse({
     }
   };
   useEffect(() => {
-    console.log("선택지 변경");
     setPage(0);
     setFinished(false);
     resetPlaceList();
@@ -217,7 +216,6 @@ function CreateFullCourse({
 
   useEffect(() => {
     if (selectedPlaceId !== 0) {
-      console.log("장소 상세 조회");
       setExpandedPlaceDetail(true);
       getPlaceDetail(selectedPlaceId);
     }

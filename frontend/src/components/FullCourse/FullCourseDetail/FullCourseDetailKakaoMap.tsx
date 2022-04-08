@@ -1,11 +1,7 @@
 // import { Map, MapMarker } from "react-kakao-maps-sdk";
 
-import { Button, Icon, Stack } from "@mui/material";
-import { useEffect } from "react";
-
-import { Map, Polyline } from "react-kakao-maps-sdk";
 import { connect } from "react-redux";
-import { PlaceCard, PlaceCardList } from "../../../redux/placeList/types";
+import { PlaceCard } from "../../../redux/placeList/types";
 import { useState } from "react";
 import { ScheduleData } from "../../../types/detail";
 
@@ -39,7 +35,6 @@ function FullCourseDetailKakaoMap({ steps, activeStep }: StepProps & Props) {
       }
     }
   }
-  //   console.log("데이터 확인!!!!!!!!!!!!!!!", test);
 
   const [map, setMap] = useState<any>();
 
