@@ -1,6 +1,7 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   myImg: {
@@ -45,16 +46,26 @@ function FullCourseUser({
           {start}~{end}
         </p>
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginRight: "25rem",
-        }}
-      >
-        {nickname}
-        <img src={profileImg} className={classes.myImg} alt="" />
-      </div>
+      <Link to={`/profile/${nickname}`} style={{ textDecoration: "none" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginRight: "25rem",
+          }}
+        >
+          {nickname}
+          {profileImg ? (
+            <img src={profileImg} className={classes.myImg} alt="" />
+          ) : (
+            <img
+              src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+              className={classes.myImg}
+              alt=""
+            />
+          )}
+        </div>
+      </Link>
     </div>
   );
 }
