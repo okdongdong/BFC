@@ -32,6 +32,7 @@ import {
 import { getPlaceDetail } from "../../redux/placeDetail/actions";
 
 import {
+  resetPlaceList,
   resetPlaceListWithDistance,
   resetPlaceListWithSurvey,
   resetSearchPlaceList,
