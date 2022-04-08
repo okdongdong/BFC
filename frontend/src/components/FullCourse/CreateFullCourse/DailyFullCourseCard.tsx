@@ -86,7 +86,13 @@ function DailyFullCourseCard({
           square
         >
           <CardMediaStyle
-            image={thumbnail === " " ? noImage : thumbnail}
+            image={
+              thumbnail === " "
+                ? "https://www.chanchao.com.tw/images/default.jpg"
+                : thumbnail === ""
+                ? "https://www.chanchao.com.tw/images/default.jpg"
+                : thumbnail
+            }
             title={name}
           />
         </Paper>

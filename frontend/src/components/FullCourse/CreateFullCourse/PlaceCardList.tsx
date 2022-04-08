@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import {
+  getPlaceList,
   getPlaceListWithDistance,
   getPlaceListWithSurvey,
   getSearchPlaceList,
 } from "../../../redux/placeList/actions";
 import {
+  PlaceInfoForGet,
   PlaceListInfoForGet,
   PlaceSearchInfo,
   SurveyPlaceListInfoForGet,
@@ -32,6 +34,7 @@ function PlaceCardList({
   getPlaceListWithDistance,
   getPlaceListWithSurvey,
   getSearchPlaceList,
+  getPlaceList,
   placeList,
   page,
   userId,
@@ -40,7 +43,16 @@ function PlaceCardList({
 }: Props & PlaceCardListProps) {
   const infiniteHandler = () => {
     // 추천창 인피니티
-    if (nowFilterTypeIdx === 1) {
+    if (nowFilterTypeIdx === 0) {
+      console.log("[fetch recommend]");
+      const data: PlaceInfoForGet = {
+        page: page,
+        size: 8,
+      };
+      getPlaceList(data);
+    }
+    // 추천창 인피니티
+    else if (nowFilterTypeIdx === 1) {
       console.log("[fetch recommend]");
       const data: PlaceListInfoForGet = {
         distance: recommendDistance,
@@ -151,6 +163,8 @@ const mapStateToProps = ({ schedule, baseInfo, account }: any) => ({
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    getPlaceList: (placeInfoForGet: PlaceInfoForGet) =>
+      dispatch(getPlaceList(placeInfoForGet)),
     getPlaceListWithDistance: (placeListInfoForGet: PlaceListInfoForGet) =>
       dispatch(getPlaceListWithDistance(placeListInfoForGet)),
     getPlaceListWithSurvey: (placeListInfoForGet: SurveyPlaceListInfoForGet) =>

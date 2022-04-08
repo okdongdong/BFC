@@ -30,7 +30,7 @@ function MyFullCourseBackground({ thumbnailList }: thumbnailListProps) {
       {thumbnailList.map((thumbnail, idx) => (
         <CardMediaStyle
           key={idx}
-          image={thumbnail}
+          image={thumbnail || "https://www.chanchao.com.tw/images/default.jpg"}
           title={`thumbnail-${idx}`}
         />
       ))}

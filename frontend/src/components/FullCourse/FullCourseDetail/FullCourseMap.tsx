@@ -1,6 +1,11 @@
 import KakaoMap from "../CreateFullCourse/KakaoMap";
+import FullCourseDetailKakaoMap from "./FullCourseDetailKakaoMap";
+import TempMap from "./TempMap";
 
-export default function FullCourseMap() {
+interface StepProps {
+  activeStep: number;
+}
+export default function FullCourseMap({ activeStep }: StepProps) {
   return (
     <div
       style={{
@@ -16,7 +21,8 @@ export default function FullCourseMap() {
           height: "500px",
         }}
       >
-        <KakaoMap></KakaoMap>
+        <TempMap></TempMap>
+        {/* <FullCourseDetailKakaoMap activeStep={activeStep}></FullCourseDetailKakaoMap> */}
       </div>
     </div>
   );

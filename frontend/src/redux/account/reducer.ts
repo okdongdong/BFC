@@ -20,7 +20,7 @@ interface AccountStateType extends NavUserInfo {
 const initialState: AccountStateType = {
   nickname: "",
   userId: 0,
-  profileImg: null,
+  profileImg: "https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg",
   loading: false,
   isLogin: false,
   gender: false,
