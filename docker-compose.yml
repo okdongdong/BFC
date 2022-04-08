@@ -8,9 +8,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80" 
+      - "443:443"
     volumes:
-      - /app/node_modules
-      - ./:/app
+      - /home/ubuntu/certbot:/var/www/html
     container_name: "frontend"
   
   backend:
@@ -21,5 +21,16 @@ services:
     ports:
       - "8443:8443"
     volumes:
-      - /home/ubuntu/docker-volume/ssl:/root
+      - /home/ubuntu/certbot:/root
     container_name: "backend"
+
+  data:
+    image: data
+    build:
+      context: data/
+      dockerfile: Dockerfile
+    ports:
+      - "8444:8444"
+    # volumes:
+      # - /home/ubuntu/certbot:/root
+    container_name: "data"

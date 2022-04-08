@@ -68,9 +68,10 @@ public class Place {
     @Column(name = "score_count")
     private Integer scoreCount = 0;
 
-
+    @Builder.Default
     private String thumbnail = "";
 
+    @Builder.Default
     @Transient
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus = new ArrayList<>();

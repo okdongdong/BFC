@@ -1,21 +1,14 @@
 // import { Map, MapMarker } from "react-kakao-maps-sdk";
 
-import { Box, Button, Icon, IconButton, Stack } from "@mui/material";
+import { Button, Icon, Stack } from "@mui/material";
 import { useEffect } from "react";
-import fullCourseCircle from "../../../assets/img/full_course_circle.png";
-import fullCourseCircleHover from "../../../assets/img/full_course_circle_hover.png";
-import fullCourseCircleClicked from "../../../assets/img/full_course_circle_clicked.png";
-import {
-  CustomOverlayMap,
-  Map,
-  MapMarker,
-  Polyline,
-} from "react-kakao-maps-sdk";
+import { Map, Polyline } from "react-kakao-maps-sdk";
 import { connect } from "react-redux";
-import { PlaceCard, PlaceCardList } from "../../../redux/placeList/types";
+import { PlaceCard } from "../../../redux/placeList/types";
 import { useState } from "react";
 import FullCourseKakaoMapMarkers from "./FullCourseKakaoMapMarkers";
 import PlaceKakaoMapMarkers from "./PlaceKakaoMapMarkers";
+import placeMarkerBlue from "../../../assets/img/place_marker_blue.png";
 
 const { kakao } = window;
 
@@ -31,9 +24,19 @@ interface FullCourseKakaoMapProps {
   expandedFullCourse: boolean;
   expandedPlace: boolean;
   expandedPlaceDetail: boolean;
+  nowFilterTypeIdx: number;
+  nowCenter: { lat: number; lng: number };
+  recommendDistance: number;
+  setNowCenter: React.Dispatch<
+    React.SetStateAction<{
+      lat: number;
+      lng: number;
+    }>
+  >;
 }
 
 function FullCourseKakaoMap({
+  nowFilterTypeIdx,
   expandedFullCourse,
   expandedPlace,
   expandedPlaceDetail,
@@ -43,17 +46,28 @@ function FullCourseKakaoMap({
   fullCourseList,
   placeList,
   placeListWithDistance,
+  placeListWithSurvey,
   searchPlaceList,
+  nowCenter,
+  selectedPlaceId,
+  recommendDistance,
+  setNowCenter,
 }: FullCourseKakaoMapProps & Props) {
   const [dailyFullCoursePath, setDailyFullCoursePath] = useState<Array<LatLng>>(
     []
   );
-  const [nowCenter, setNowCenter] = useState<{ lat: number; lng: number }>({
-    lat: lat,
-    lng: lng,
-  });
+
   const [map, setMap] = useState<any>();
   const [expandCnt, setExpandCnt] = useState<number>(0);
+
+  const nowSelectedPlaceList = () =>
+    nowFilterTypeIdx === 0
+      ? placeList
+      : nowFilterTypeIdx === 1
+      ? placeListWithDistance
+      : nowFilterTypeIdx === 2
+      ? placeListWithSurvey
+      : searchPlaceList;
 
   const setCenter = ({ lat, lng }: { lat: number; lng: number }) => {
     const newLng =
@@ -73,34 +87,6 @@ function FullCourseKakaoMap({
     if (!map) return;
     map.setLevel(map.getLevel() + 1);
   };
-
-  const positions = [
-    { title: "aaa", latlng: { lat: 35.1797913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1897913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1757913, lng: 129.074987 } },
-    { title: "aaa", latlng: { lat: 35.1797913, lng: 129.064987 } },
-    { title: "aaa", latlng: { lat: 35.1897913, lng: 129.075987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.054987 } },
-    { title: "aaa", latlng: { lat: 35.19797913, lng: 129.084987 } },
-    {
-      title: "카카오",
-      latlng: { lat: 33.450705, lng: 126.570677 },
-    },
-    {
-      title: "생태연못",
-      latlng: { lat: 33.450936, lng: 126.569477 },
-    },
-    {
-      title: "텃밭",
-      latlng: { lat: 33.450879, lng: 126.56994 },
-    },
-    {
-      title: "근린공원",
-      latlng: { lat: 33.451393, lng: 126.570738 },
-    },
-  ];
-
   const createDailyFullCoursePath = (placeCardList: PlaceCard[]) => {
     const tempPath: Array<LatLng> = [];
     placeCardList.map((placeCard) => {
@@ -147,11 +133,11 @@ function FullCourseKakaoMap({
           width: "100%",
           height: "100%",
         }}
-        level={3} // 지도의 확대 레벨
+        level={8} // 지도의 확대 레벨
         onCreate={(map) => setMap(map)}
       >
         <PlaceKakaoMapMarkers
-          placeCardList={placeList}
+          placeCardList={nowSelectedPlaceList()}
           setCenter={setCenter}
         ></PlaceKakaoMapMarkers>
         <Polyline
@@ -162,6 +148,7 @@ function FullCourseKakaoMap({
           strokeStyle={"dashed"} // 선의 스타일입니다
         />
         <FullCourseKakaoMapMarkers
+          selectedPlaceId={selectedPlaceId}
           placeCardList={fullCourseList[pickedDay]}
           setCenter={setCenter}
         ></FullCourseKakaoMapMarkers>
@@ -196,11 +183,17 @@ function FullCourseKakaoMap({
   );
 }
 
-const mapStateToProps = ({ createFullCourse, placeListReducer }: any) => ({
+const mapStateToProps = ({
+  createFullCourse,
+  placeListReducer,
+  placeDetailReducer,
+}: any) => ({
   fullCourseList: createFullCourse.fullCourseList,
   placeList: placeListReducer.placeList,
   placeListWithDistance: placeListReducer.placeListWithDistance,
+  placeListWithSurvey: placeListReducer.placeListWithSurvey,
   searchPlaceList: placeListReducer.searchPlaceList,
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
 });
 
 const mapDispatchToProps = (dispatch: any) => {

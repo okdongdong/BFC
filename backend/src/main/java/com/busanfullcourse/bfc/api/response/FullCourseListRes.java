@@ -2,6 +2,7 @@ package com.busanfullcourse.bfc.api.response;
 
 import com.busanfullcourse.bfc.db.entity.FullCourse;
 import com.busanfullcourse.bfc.db.entity.Schedule;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -31,6 +32,8 @@ public class FullCourseListRes {
 
     @JsonIgnore
     private List<Schedule> scheduleList;
+
+    private List<FullCourseRes.ScheduleDetail> scheduleDetailList;
 
     public static List<String> ofThumbnailList(List<Schedule> list) {
         List<String> res = new ArrayList<>();

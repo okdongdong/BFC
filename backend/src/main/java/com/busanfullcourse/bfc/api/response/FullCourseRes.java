@@ -32,13 +32,19 @@ public class FullCourseRes {
 
     private LocalDate finishedOn;
 
-    private List<String> WishFoodList;
+    private List<String> wishFoodList;
 
-    private List<String> WishPlaceList;
+    private List<String> wishPlaceList;
 
     private List<ScheduleDetail> scheduleDetailList;
 
-    private Integer LikeCnt;
+    private Integer likeCnt;
+
+    private Long userId;
+
+    private String nickname;
+
+    private String profileImg;
 
 
     public static List<String> ofWishFoodList(List<WishFood> list) {
@@ -64,6 +70,8 @@ public class FullCourseRes {
         private String address;
         private Double lat;
         private Double lon;
+        private String thumbnail;
+        private Float averageScore;
 
         public static List<ScheduleDetail> of(List<Schedule> list) {
             List<ScheduleDetail> res = new ArrayList<>();
@@ -91,6 +99,8 @@ public class FullCourseRes {
                             .address(schedule.getPlace().getAddress())
                             .lat(schedule.getPlace().getLat())
                             .lon(schedule.getPlace().getLon())
+                            .thumbnail(schedule.getPlace().getThumbnail())
+                            .averageScore(schedule.getPlace().getAverageScore())
                             .build());
                 }
             }

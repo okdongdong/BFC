@@ -7,14 +7,17 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import FullCourseMap from "./FullCourseMap";
 import FullCourseSchedule from "./FullCourseSchedule";
+import { connect } from "react-redux";
 
-const days: number = 3; //여행기간
-var steps = new Array<string>();
-for (let i = 0; i < days; i++) {
-  steps.push("Day");
-}
+function FullCourseStepper({ schedule }: Props) {
+  const len = schedule.length - 1;
+  const days = schedule[len].day; //여행일수
 
-export default function FullCourseStepper() {
+  console.log(days);
+  var steps = new Array<string>();
+  for (let i = 0; i < days; i++) {
+    steps.push("Day");
+  }
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState<{
     [k: number]: boolean;
@@ -79,7 +82,7 @@ export default function FullCourseStepper() {
           ))}
         </Stepper>
         <div style={{ marginTop: "20px" }}>
-          <FullCourseMap></FullCourseMap>
+          <FullCourseMap activeStep={activeStep}></FullCourseMap>
         </div>
         <div>
           {allStepsCompleted() ? (
@@ -97,7 +100,10 @@ export default function FullCourseStepper() {
               <Typography sx={{ mt: 2, mb: 1 }}>
                 Day {activeStep + 1}
               </Typography>
-              <FullCourseSchedule idx={activeStep}></FullCourseSchedule>
+              <FullCourseSchedule
+                idx={activeStep}
+                days={days}
+              ></FullCourseSchedule>
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Button
                   color="inherit"
@@ -134,3 +140,11 @@ export default function FullCourseStepper() {
     </div>
   );
 }
+const mapStateToProps = ({ fullCourse }: any) => {
+  return {
+    schedule: fullCourse.scheduleDetailList,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(FullCourseStepper);

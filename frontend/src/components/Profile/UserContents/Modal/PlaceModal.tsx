@@ -1,6 +1,11 @@
 import { Card, CardContent, CardMedia, Modal, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import { customAxios } from "../../../../lib/customAxios";
+import StarScore from "../../../Main/StarScore";
+import clearStage from "../../../../assets/img/clearStage.png";
 
 //모달 스타일
 const style = {
@@ -34,16 +39,75 @@ const style = {
 };
 interface content {
   name: string;
-  average_score: number;
+  averageScore: number;
   thumbnail: string;
+  placeId: number;
+  isClear: boolean;
 }
 interface ModalProps {
   open: boolean;
   title: string;
-  contentList: content[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-function PlaceModal({ open, setOpen, contentList, title }: ModalProps) {
+
+function PlaceModal({
+  open,
+  setOpen,
+  title,
+  profileUserId,
+}: ModalProps & Props) {
+  const [contentList, setContentList] = useState<content[]>([]);
+  const observerRef = React.useRef<IntersectionObserver>();
+  const boxRef = React.useRef<HTMLDivElement>(null);
+  const [totalPage, setTotalPage] = React.useState(9999);
+  const [page, setPage] = React.useState(0);
+  // useEffect
+  useEffect(() => {
+    getInfo(page);
+    setPage(page + 1);
+  }, []);
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(intersectionObserver);
+    boxRef.current && observerRef.current.observe(boxRef.current);
+  }, [contentList]);
+  const getInfo = async (page: number) => {
+    const res = await customAxios({
+      method: "get",
+      url: `/users/${profileUserId}/interest`,
+      params: {
+        page: page,
+        size: 8,
+      },
+    });
+    // 서버에서 데이터 가져오기
+    setTotalPage(res.data.totalPages);
+    setPage(page + 1);
+    setContentList((curContentList) => [
+      ...curContentList,
+      ...res.data.content,
+    ]); // state에 추가
+  };
+  const intersectionObserver = (
+    entries: IntersectionObserverEntry[],
+    io: IntersectionObserver
+  ) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && page < totalPage) {
+        // 관찰하고 있는 entry가 화면에 보여지는 경우
+        io.unobserve(entry.target); // entry 관찰 해제
+        getInfo(page); // 데이터 가져오기
+      }
+    });
+  };
+
+  const Box2 = {
+    border: "1px solid olive",
+    borderRadius: "8px",
+
+    boxShadow: "1px 1px 2px olive",
+
+    margin: "18px 0",
+  };
   return (
     <div>
       <Modal
@@ -78,39 +142,161 @@ function PlaceModal({ open, setOpen, contentList, title }: ModalProps) {
               marginLeft: "90px",
             }}
           >
-            {contentList.map((item, idx) => (
-              <Card
-                key={idx}
-                sx={{
-                  width: "200px",
-                  height: "200px",
-                  margin: "10px",
-                  borderRadius: "10px",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={item.thumbnail}
-                  alt="green iguana"
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    style={{ fontSize: "15px" }}
+            {contentList.map((item, index) => {
+              if (contentList.length - 4 === index) {
+                // 관찰되는 요소가 있는 html, 아래에서 5번째에 해당하는 박스를 관찰
+                return (
+                  <Link
+                    to={`/place/${item.placeId}`}
+                    style={{ textDecoration: "none" }}
                   >
-                    {item.name}
-                    {item.average_score}
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))}
+                    <div style={Box2} ref={boxRef} key={index}>
+                      {item.isClear ? (
+                        <img
+                          src={clearStage}
+                          style={{ position: "absolute" }}
+                        ></img>
+                      ) : (
+                        <></>
+                      )}
+                      <Card
+                        key={index}
+                        sx={{
+                          width: "200px",
+                          height: "200px",
+                          margin: "10px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        {item.thumbnail ? (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={item.thumbnail}
+                            alt="green iguana"
+                          />
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image="https://www.chanchao.com.tw/images/default.jpg"
+                            alt="green iguana"
+                          />
+                        )}
+
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px", fontWeight: "bold" }}
+                          >
+                            {item.name}
+                          </Typography>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <StarScore
+                              starScore={item.averageScore.toFixed(2)}
+                            ></StarScore>
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </Link>
+                );
+              } else {
+                // 관찰되는 요소가 없는 html
+                return (
+                  <Link
+                    to={`/place/${item.placeId}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {item.isClear ? (
+                      <img
+                        src={clearStage}
+                        style={{ position: "absolute" }}
+                      ></img>
+                    ) : (
+                      <></>
+                    )}
+                    <div style={Box2} key={index}>
+                      <Card
+                        key={index}
+                        sx={{
+                          width: "200px",
+                          height: "200px",
+                          margin: "10px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        {item.thumbnail ? (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={item.thumbnail}
+                            alt="green iguana"
+                          />
+                        ) : (
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image="https://www.chanchao.com.tw/images/default.jpg"
+                            alt="green iguana"
+                          />
+                        )}
+                        <CardContent
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px", fontWeight: "bold" }}
+                          >
+                            {item.name}
+                          </Typography>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="div"
+                            style={{ fontSize: "15px" }}
+                          >
+                            <StarScore
+                              starScore={item.averageScore.toFixed(2)}
+                            ></StarScore>
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </Link>
+                );
+              }
+            })}
           </div>
         </Box>
       </Modal>
     </div>
   );
 }
-export default PlaceModal;
+const mapStateToProps = ({ profile }: any) => {
+  return {
+    profileUserId: profile.userId,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(PlaceModal);

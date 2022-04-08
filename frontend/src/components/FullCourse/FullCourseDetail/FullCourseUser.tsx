@@ -1,5 +1,7 @@
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   myImg: {
@@ -9,13 +11,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: "5px",
   },
 }));
-export default function FullCourseUser() {
+function FullCourseUser({
+  view,
+  likeCnt,
+  start,
+  end,
+  nickname,
+  profileImg,
+}: Props) {
   const classes = useStyles();
-  const seeCount: number = 1000;
-  const likeCount: number = 93;
-  const username: string = "꽃가루를날려";
-  const profileImg: string =
-    "https://cdn.gukjenews.com/news/photo/202110/2328684_2319618_5032.png";
   return (
     <div
       style={{
@@ -28,20 +32,53 @@ export default function FullCourseUser() {
     >
       <div style={{ display: "flex", alignItems: "center" }}>
         <p style={{ margin: "5px" }}>조회수</p>
-        <p style={{ color: "blue" }}>{seeCount}</p>
+        <p style={{ color: "blue" }}>{view}</p>
         <p style={{ marginLeft: "20px", marginRight: "5px" }}>좋아요</p>
-        <p style={{ color: "blue" }}>{likeCount}</p>
+        {likeCnt === null ? (
+          <p style={{ color: "blue" }}>0</p>
+        ) : (
+          <>
+            <p style={{ color: "blue" }}>{likeCnt}</p>
+          </>
+        )}
+        <p style={{ marginLeft: "20px", marginRight: "5px" }}>여행기간</p>
+        <p style={{ color: "blue" }}>
+          {start}~{end}
+        </p>
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginRight: "25rem",
-        }}
-      >
-        {username}
-        <img src={profileImg} className={classes.myImg} alt="" />
-      </div>
+      <Link to={`/profile/${nickname}`} style={{ textDecoration: "none" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginRight: "25rem",
+          }}
+        >
+          {nickname}
+          {profileImg ? (
+            <img src={profileImg} className={classes.myImg} alt="" />
+          ) : (
+            <img
+              src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+              className={classes.myImg}
+              alt=""
+            />
+          )}
+        </div>
+      </Link>
     </div>
   );
 }
+const mapStateToProps = ({ fullCourse }: any) => {
+  return {
+    view: fullCourse.view,
+    likeCnt: fullCourse.likeCnt,
+    start: fullCourse.startedOn,
+    end: fullCourse.finishedOn,
+    nickname: fullCourse.nickname,
+    profileImg: fullCourse.profileImg,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(FullCourseUser);

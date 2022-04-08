@@ -4,11 +4,18 @@ import com.busanfullcourse.bfc.api.request.FullCourseReq;
 import com.busanfullcourse.bfc.api.request.FullCourseUpdateReq;
 import com.busanfullcourse.bfc.api.response.FullCourseListRes;
 import com.busanfullcourse.bfc.api.response.FullCourseRes;
+import com.busanfullcourse.bfc.api.response.PlaceListRes;
 import com.busanfullcourse.bfc.api.response.SharingRes;
 import com.busanfullcourse.bfc.api.service.FullCourseService;
+import com.busanfullcourse.bfc.api.service.PlaceService;
 import com.busanfullcourse.bfc.api.service.ShareService;
 import com.busanfullcourse.bfc.api.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +30,7 @@ public class FullCourseController {
     private final FullCourseService fullCourseService;
     private final ShareService shareService;
     private final UserService userService;
+    private final PlaceService placeService;
 
     @PostMapping
     public ResponseEntity<Map<String, Long>> createFullCourse(@RequestBody FullCourseReq req) {
@@ -37,7 +45,8 @@ public class FullCourseController {
 
     @GetMapping("/{fullCourseId}")
     public ResponseEntity<FullCourseRes> getFullCourse(@PathVariable Long fullCourseId) {
-        return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId));
+        String username = userService.getCurrentUsername();
+        return ResponseEntity.ok(fullCourseService.getFullCourse(fullCourseId, username));
     }
 
     @PutMapping("/{fullCourseId}/date")
@@ -51,14 +60,14 @@ public class FullCourseController {
     public ResponseEntity<String> changeFullCoursePublic(@PathVariable Long fullCourseId,
                                                        @RequestBody Map<String, Boolean> isPublic) {
         fullCourseService.changeFullCoursePublic(fullCourseId, isPublic);
-        return ResponseEntity.ok("풀코스가 변경되었습니다.");
+        return ResponseEntity.ok("풀코스 공유상태가 변경되었습니다.");
     }
 
     @PutMapping("/{fullCourseId}/review")
     public ResponseEntity<String> changeFullCourseReview(@PathVariable Long fullCourseId,
                                                        @RequestBody Map<String, String> review) {
         fullCourseService.changeFullCourseReview(fullCourseId, review);
-        return ResponseEntity.ok("풀코스가 변경되었습니다.");
+        return ResponseEntity.ok("풀코스 후기가 변경되었습니다.");
     }
 
     @DeleteMapping("/{fullCourseId}")
@@ -82,7 +91,7 @@ public class FullCourseController {
     @PostMapping("/{fullCourseId}/share")
     public ResponseEntity<String> shareFullCourse(
             @PathVariable Long fullCourseId,
-            @RequestParam String email) throws IllegalAccessException {
+            @RequestParam String email) {
         shareService.shareFullCourse(fullCourseId, email);
         return ResponseEntity.ok("풀코스가 공유되었습니다.");
     }
@@ -98,5 +107,17 @@ public class FullCourseController {
         String username = userService.getCurrentUsername();
         shareService.deleteShareMember(fullCourseId, username, map);
         return ResponseEntity.ok("멤버가 제외되었습니다.");
+    }
+
+    @GetMapping("/{fullCourseId}/surveyRecommend")
+    public ResponseEntity<Page<PlaceListRes>> getSurveyRecommendPlaceList(
+            @PathVariable Long fullCourseId,
+            @PageableDefault(size = 8)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "place.category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "place.scoreCount", direction = Sort.Direction.DESC)
+            })Pageable pageable
+    ) {
+        return ResponseEntity.ok(placeService.getSurveyRecommendPlaceList(fullCourseId, pageable));
     }
 }
