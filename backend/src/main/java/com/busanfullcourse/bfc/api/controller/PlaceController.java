@@ -161,8 +161,8 @@ public class PlaceController {
     public ResponseEntity<Page<PlaceListRes>> getRecommendPlaceList(
             @PageableDefault(size = 8)
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "category", direction = Sort.Direction.ASC),
-                    @SortDefault(sort = "scoreCount", direction = Sort.Direction.DESC)
+                    @SortDefault(sort = "place.category", direction = Sort.Direction.ASC),
+                    @SortDefault(sort = "place.scoreCount", direction = Sort.Direction.DESC)
             }) Pageable pageable
     ) {
         String username = userService.getCurrentUsername();
