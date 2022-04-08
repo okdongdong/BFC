@@ -4,7 +4,7 @@ import LikeFullCourse from "./LikeFullCourse";
 import MyFullCourse from "./MyFullCourse";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import KakaoMap from "../../FullCourse/CreateFullCourse/KakaoMap";
+import ProfileKakaoMap from "./ProfileKakaoMap";
 const useStyles = makeStyles((theme: Theme) => ({
   likePlace: {
     marginTop: theme.spacing(12),
@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 function ProfileMain() {
   const classes = useStyles();
+
   return (
     <div>
       <div className={classes.likePlace}>
@@ -25,7 +26,7 @@ function ProfileMain() {
           fontWeight: "bold",
           fontSize: 20,
           textAlign: "left",
-          marginLeft: "300px",
+          marginLeft: "200px",
         }}
       >
         관심 장소 위치
@@ -40,11 +41,11 @@ function ProfileMain() {
         <div
           style={{
             display: "flex",
-            width: "1300px",
+            width: "78%",
             height: "500px",
           }}
         >
-          <KakaoMap></KakaoMap>
+          <ProfileKakaoMap></ProfileKakaoMap>
         </div>
       </div>
       {/* <VisitedPlace></VisitedPlace> */}
@@ -52,4 +53,3 @@ function ProfileMain() {
   );
 }
 export default ProfileMain;
-export {};

@@ -1,10 +1,14 @@
 import { PlaceCardProps } from "../../types/main";
-
+/// 풀코스 관련
 // 스케줄 이동
 export const MOVE_CARD = "MOVE_CARD";
 
 // 새 스케줄 생성
-export const CREATE_CARD = "CREATE_CARD";
+export const SET_FULL_COURSE_INFO = "SET_FULL_COURSE_INFO";
+export const DELETE_CARD = "DELETE_CARD";
+
+// 풀코스 초기화
+export const RESET_FULL_COURSE = "RESET_FULL_COURSE";
 
 // 요청보낼때 로딩화면 띄워주기 위한 요청
 export const FULL_COURSE_REQUEST = "FULL_COURSE_REQUEST";
@@ -30,6 +34,7 @@ export interface CreateFullCourseRequestData {
   finishedOn: string | null;
   wishFoodKeywords: Array<string>;
   wishPlaceKeywords: Array<string>;
+  userId: number;
 }
 
 // 스케줄 생성시 보내줄 데이터
@@ -63,7 +68,7 @@ interface ScheduleProps {
   scheduleId?: number;
   day: number;
   sequence: number;
-  fullCourseId: number;
+  fullCourseId?: number;
 }
 
 export interface AddCustomPlaceProps {
@@ -76,12 +81,25 @@ export interface AddCustomPlaceProps {
   };
 }
 
+export interface ScheduleDetail {
+  address: string;
+  customPlaceId: number | null;
+  day: number;
+  lat: number;
+  lng: number;
+  memo: string;
+  name: string;
+  placeId: number | null;
+  scheduleId: number;
+  sequence: number;
+}
+
 export interface CustomPlaceInfoProps extends ScheduleProps {
   name: string;
   memo: string;
   address: string;
   lat: number;
-  lng: number;
+  lon: number;
 }
 
 // 스케줄 생성

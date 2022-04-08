@@ -1,4 +1,7 @@
 # from unicodedata import category
+from telnetlib import STATUS
+from unicodedata import category
+from django.http import HttpResponse
 from django.shortcuts import render
 # from numpy import full
 import pandas as pd
@@ -8,10 +11,11 @@ from django.db import connection
 from django.db.models import Q
 from recommendation.models import Place,SurveyRecommend, Interest, WishFood, WishPlace, Recommend, Score, User, MainRecommend
 
-from recommendation.recomm import fullCourseSurveyRecomm,fullcourse_survey_place_recommendations
+from recommendation.recomm import fullCourseSurveyRecomm,fullcourse_survey_place_recommendations,get_all_user_rating, food_recomm_byUser
 
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import mean_squared_error 
+from scipy.sparse.linalg import svds
 
 # Create your views here.
 
@@ -23,7 +27,7 @@ def get_wish_list(request, full_course_id, user_id):
   if len(wish_place_labels) > 0 : # 가고싶은 관광지 선택했을 경우
     wish_place_random =[]
     for wish_place_keyword in wish_place_labels :
-      wish_place_random.append(random.choice(list(Place.objects.filter(label=wish_place_keyword['keyword']).values('name'))))
+      wish_place_random.append(random.choice(list(Place.objects.filter(Q(category = 0) & Q(label=wish_place_keyword['keyword'])).values('name'))))
 
     # 추천
     place_id_list = set()
@@ -33,8 +37,11 @@ def get_wish_list(request, full_course_id, user_id):
         place_id_list.add(tmp_place_id)
     
     place_id_list = list(place_id_list)
-    print(place_id_list)
+    
+    if len(place_id_list) > 40 :
+      place_id_list = random.sample(place_id_list, 40)
 
+    print(place_id_list)
     bulk_list =[]
 
     for i in range(len(place_id_list)) :
@@ -46,7 +53,7 @@ def get_wish_list(request, full_course_id, user_id):
 
   else : # 가고싶은 관광지가 없는 경우
     cursor = connection.cursor()
-    strSql = "SELECT I.place_id, P.name, P.category FROM Interest I INNER JOIN Place P ON I.place_id = P.place_id  WHERE I.user_id = "+ str(user_id) +" and P.category=0"
+    strSql = "SELECT I.place_id, P.name, P.category FROM interest I INNER JOIN place P ON I.place_id = P.place_id  WHERE I.user_id = "+ str(user_id) +" and P.category=0"
     result = cursor.execute(strSql)
     Interest_place = cursor.fetchall()
     connection.close()
@@ -62,6 +69,9 @@ def get_wish_list(request, full_course_id, user_id):
 
       place_id_list = list(place_id_list)
 
+      if len(place_id_list) > 40 :
+        place_id_list = random.sample(place_id_list,40)
+
       bulk_list =[]
 
       for i in range(len(place_id_list)) :
@@ -71,8 +81,8 @@ def get_wish_list(request, full_course_id, user_id):
         ))
       SurveyRecommend.objects.bulk_create(bulk_list)
     else : # 관심 관광지가 없는 경우 ( 관광지 인기순 )
-      place_id_list = list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=30)).order_by('-average_score')[:10].values('place_id'))
-      print(place_id_list)
+      place_id_list = list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=30)).order_by('-average_score')[:8].values('place_id'))
+      # print(place_id_list)
       bulk_list =[]
 
       for i in range(len(place_id_list)) :
@@ -83,8 +93,143 @@ def get_wish_list(request, full_course_id, user_id):
       SurveyRecommend.objects.bulk_create(bulk_list)
 
   # 음식점
-  # wish_food_list = list(WishFood.objects.filter(full_course=full_course_id))
 
+  wish_food_labels = list(WishFood.objects.filter(full_course=full_course_id).values('keyword'))
+  # 해당 키워드를 가진 음식점 리뷰 좋은것 10 개 중 랜덤으로 한 가게 뽑기
+  if len(wish_food_labels) > 0 : # 좋아하는 음식점 라벨 선택한 경우
+    
+    # 최종 유의미한 리뷰어
+    all_user_rating = get_all_user_rating()
+    food_data = pd.DataFrame(list(Place.objects.filter(category=1).values('place_id','name')))
+
+    # 추천
+    user_food_data = pd.merge(all_user_rating, food_data, on ='place_id')
+    user_food_rating = user_food_data.pivot_table('score', index = 'user_id', columns = "place_id").fillna(0)
+    food_user_rating = user_food_rating.values.T
+
+    SVD = TruncatedSVD(n_components=12) # latent 값 12로 둠
+    matrix = SVD.fit_transform(food_user_rating)
+
+    corr = np.corrcoef(matrix)
+    food_id = user_food_rating.columns
+    food_id_list = list(food_id)
+
+    # 해당 라벨 가진 음식점
+    wish_food_random = []
+    for wish_food_keyword in wish_food_labels :
+      tmp = pd.DataFrame(Place.objects.filter(Q(label=wish_food_keyword['keyword']) & Q(score_count__gte=15)).order_by('-average_score')[:10].values('place_id'))
+      tmp = random.choice(list(tmp.loc[tmp['place_id'].isin(food_id_list)]['place_id']))
+      wish_food_random.append(tmp)
+    print(wish_food_random)
+
+    recomm_food_ls = set()
+    for wish_food in wish_food_random :
+      coffey_hands = food_id_list.index(wish_food)
+      corr_coffey_hands = corr[coffey_hands]
+      tmp_recomm_food_ls = list(food_id[(corr_coffey_hands) >= 0.9])[:8]
+      for tmp_recomm_food in tmp_recomm_food_ls :
+        recomm_food_ls.add(tmp_recomm_food)
+    recomm_food_ls = list(recomm_food_ls)
+
+    if len(recomm_food_ls) > 40 :
+      recomm_food_ls = random.sample(recomm_food_ls, 40)
+
+    bulk_food_list =[]
+
+    for i in range(len(recomm_food_ls)) :
+      bulk_food_list.append(SurveyRecommend(
+        full_course_id=full_course_id,
+        place_id=recomm_food_ls[i]
+      ))
+    SurveyRecommend.objects.bulk_create(bulk_food_list)
+
+  else : # 좋아하는 음식점 라벨 선택 X
+    
+    curr_user_ratings = pd.DataFrame(Score.objects.filter(user_id=user_id).values('user_id','place_id','score'))
+
+    if len(curr_user_ratings) >= 10 : # 10개 이상 리뷰를 남긴 경우에만 개인 추천
+      food_rating_data = get_all_user_rating()
+      food_data = pd.DataFrame(list(Place.objects.filter(category=1).values('place_id','name')))
+
+      user_food_data = pd.merge(food_rating_data, food_data, on = 'place_id')
+      df_user_food_ratings = food_rating_data.pivot_table(index='user_id',columns='place_id',values='score').fillna(0)
+      user_ls = list(df_user_food_ratings.index)
+      # 추천
+      matrix = df_user_food_ratings.to_numpy()
+      user_ratings_mean = np.mean(matrix, axis = 1)
+      matrix_user_mean = matrix - user_ratings_mean.reshape(-1, 1)
+
+      U, sigma, Vt = svds(matrix_user_mean, k = 12)
+      sigma = np.diag(sigma)
+      svd_user_predicted_ratings = np.dot(np.dot(U, sigma), Vt) + user_ratings_mean.reshape(-1, 1)
+
+      df_svd_preds = pd.DataFrame(svd_user_predicted_ratings, columns = df_user_food_ratings.columns)
+
+      for i in range(len(user_ls)) :
+        if user_ls[i] == user_id :
+          user_index = i
+          break
+
+      predictions = food_recomm_byUser(df_svd_preds, user_index, user_id, food_data, food_rating_data, 10)
+      food_id_list = list(predictions['place_id'])
+
+      bulk_food_list =[]
+
+      for i in range(len(food_id_list)) :
+        bulk_food_list.append(SurveyRecommend(
+          full_course_id=full_course_id,
+          place_id=food_id_list[i]
+        ))
+      SurveyRecommend.objects.bulk_create(bulk_food_list)
+
+    # 아무런 정보가 없을 시, 인기순
+    else :
+      food_id_list = list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=40)).order_by('-average_score')[:8].values('place_id'))
+      print(food_id_list)
+      bulk_list =[]
+
+      for i in range(len(food_id_list)) :
+        bulk_list.append(SurveyRecommend(
+          full_course_id=full_course_id,
+          place_id=food_id_list[i]['place_id']
+        ))
+      SurveyRecommend.objects.bulk_create(bulk_list)
+  
+  return HttpResponse(status = 200)
+
+
+
+def new_user(request, user_id) :
+	# 관광지 인기순
+	place_popular_list = list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=20)).order_by('-average_score')[:20].values('place_id'))
+	food_popular_list = list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:20].values('place_id'))
+
+
+	place_popular_list = random.sample(place_popular_list, 10)
+	food_popular_list = random.sample(food_popular_list, 10)
+	print(place_popular_list)
+	print(food_popular_list)
+
+	bulk_list = []
+
+	for i in range(len(place_popular_list)) :
+		bulk_list.append(Recommend(
+			user_id = user_id,
+			place_id = place_popular_list[i]['place_id'],
+			category = 0
+		))
+
+	for i in range(len(food_popular_list)) :
+		bulk_list.append(Recommend(
+			user_id = user_id,
+			place_id = food_popular_list[i]['place_id'],
+			category = 1
+		))
+
+	Recommend.objects.bulk_create(bulk_list)
+	MainRecommend.objects.bulk_create(bulk_list)
+
+	return HttpResponse(STATUS = 200)
 
 def rmse_function(R, P, Q, zero_matrix):
 	full_matrix = np.dot(P, Q.T)
@@ -159,8 +304,6 @@ def tour_user_matrix(our_list):
 	return UserUser, user
 
 
-
-
 # 메인페이지 회원 추천	
 def food_main_save(request):
 	# 추천 초기화
@@ -212,8 +355,13 @@ def food_main_save(request):
 		interest_df = df.loc[df['place_id'].isin(lst)]
 		
 		# 해당 장소들을 돌면서 
-		for i in range(len(interest_df)):
-			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+		if len(interest_df) <= 10:
+			place_id_list = random.sample(list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:30].values('place_id')),10)
+			for i in place_id_list:
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=i['place_id'], category=1))
+		else:
+			for i in range(len(interest_df)):
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
 
 	MainRecommend.objects.bulk_create(bulk)
 
@@ -265,9 +413,14 @@ def tour_main_save(request):
 		# 해당 유저가 좋아하는 장소들만 추출
 		interest_df = df.loc[df['place_id'].isin(lst)]
 		
-		# 해당 장소들을 돌면서 
-		for i in range(len(interest_df)):
-			bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
+		# 해당 장소들을 돌면서
+		if len(interest_df) <= 10:
+			place_id_list = random.sample(list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=30)).order_by('-average_score')[:20].values('place_id')),10)
+			for i in place_id_list:
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=i['place_id'], category=0))
+		else:
+			for i in range(len(interest_df)):
+				bulk.append(MainRecommend(user_id=user['user_id'], place_id=interest_df.iloc[i]['similar_place_id'], category=interest_df.iloc[i]['category']))
 
 	MainRecommend.objects.bulk_create(bulk)
 
@@ -320,8 +473,17 @@ def food_predict_score(request):
 		bulk = []
 		for i in range(len(user_predict)):
 			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=1))))
-			
-		Recommend.objects.bulk_create(bulk)
+
+	our_id = set(pd.DataFrame(list(Score.objects.all().values()))['user_id'].tolist())
+	all_id = set(pd.DataFrame(list(User.objects.all().values()))['user_id'].tolist())
+	sub_list = list(all_id - our_id)
+	for user_number in sub_list:
+		place_id_list = random.sample(list(Place.objects.filter(Q(category = 1) & Q(score_count__gte=30)).order_by('-average_score')[:50].values('place_id')),10)
+		for place_number in place_id_list:
+			bulk.append(Recommend(user_id=user_number,place_id=place_number ,category=1))
+
+
+	Recommend.objects.bulk_create(bulk)
 
 def tour_predict_score(request):
 	Recommend.objects.all().delete()
@@ -331,7 +493,7 @@ def tour_predict_score(request):
 	our_list = our_counts['index'].values.tolist()
 	
 	# 테이블 만들기
-	UserUser, user = food_user_matrix(our_list)
+	UserUser, user = tour_user_matrix(our_list)
 	
 	for people in our_list:
 		simliar_userlist = UserUser.sort_values(by=people, ascending=False)[people].to_frame().index
@@ -369,7 +531,16 @@ def tour_predict_score(request):
 		user_predict = user_predict.sort_values(by=['pred_score'], ascending=False)[:10]
 
 		bulk = []
+		
 		for i in range(len(user_predict)):
 			bulk.append(Recommend(user_id=int(user_predict.iloc[i]['user_id'], place_id=int(user_predict.iloc[i]['place_id'], category=0))))
-			
-		Recommend.objects.bulk_create(bulk)
+	
+	our_id = set(pd.DataFrame(list(Score.objects.all().values()))['user_id'].tolist())
+	all_id = set(pd.DataFrame(list(User.objects.all().values()))['user_id'].tolist())
+	sub_list = list(all_id - our_id)
+	for user_number in sub_list:
+		place_id_list = random.sample(list(Place.objects.filter(Q(category = 0) & Q(score_count__gte=10)).order_by('-average_score')[:30].values('place_id')),10)
+		for place_number in place_id_list:
+			bulk.append(Recommend(user_id=user_number,place_id=place_number ,category=0))	
+
+	Recommend.objects.bulk_create(bulk)

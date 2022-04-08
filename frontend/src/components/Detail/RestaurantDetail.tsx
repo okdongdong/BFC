@@ -5,34 +5,22 @@ import PlaceImg from "./PlaceImg";
 import PlaceInfo from "../../components/Detail/PlaceInfo";
 import Grid from "@mui/material/Grid";
 import PlaceRating from "./PlaceRating";
-import AnotherPlatform from "./AnotherPlatform";
 import PlaceLike from "./PlaceLike";
 import Menu from "./Menu";
 import { useEffect, useState } from "react";
 import { customAxios } from "../../lib/customAxios";
+import { connect } from "react-redux";
+import KakaoMap from "../FullCourse/CreateFullCourse/KakaoMap";
+import { PlaceReducer } from "../../redux/rootReducer";
 const PlaceNameStyle = styled("h2")(() => ({
   display: "flex",
   alignItems: "center",
   margin: 0,
+  justifyContent: "space-between",
+  fontSize: "20px",
+  width: "300px",
 }));
-function RestaurantDetail() {
-  const name: string = "부산 목구멍";
-  const place_id = 1; //데이터 가져옴
-  const [averageScore, setAverageScore] = useState(1);
-  //평점가져오기
-  function getScore() {
-    customAxios({
-      method: "get",
-      url: `/place/${place_id}/score`,
-    }).then((res) => {
-      console.log(res);
-      setAverageScore(res.data);
-    });
-  }
-  useEffect(() => {
-    getScore();
-  }, [averageScore]);
-
+function RestaurantDetail({ lat, lng, name, averageScore }: Props) {
   return (
     <div
       style={{
@@ -43,26 +31,49 @@ function RestaurantDetail() {
       }}
     >
       <Grid container spacing={2}>
-        <Grid xs={3}>
+        <Grid xs={4}>
           <PlaceNameStyle>
             {name}
-            <StarScore starScore={averageScore}></StarScore>
+            <StarScore starScore={averageScore.toFixed(2)}></StarScore>
           </PlaceNameStyle>
           <PlaceImg></PlaceImg>
           <PlaceLike></PlaceLike>
           <Menu></Menu>
         </Grid>
-        <Grid xs={6}>
+        <Grid xs={8}>
           <PlaceRating></PlaceRating>
           <PlaceInfo></PlaceInfo>
         </Grid>
-        <Grid xs={3}>
-          <AnotherPlatform></AnotherPlatform>
-        </Grid>
       </Grid>
-
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            width: "1000px",
+            height: "300px",
+          }}
+        >
+          <KakaoMap lat={lat} lng={lng}></KakaoMap>
+        </div>
+      </div>
       <PlaceReview></PlaceReview>
     </div>
   );
 }
-export default RestaurantDetail;
+const mapStateToProps = ({ place }: PlaceReducer) => {
+  return {
+    name: place.name,
+    averageScore: place.averageScore,
+    lat: place.lat,
+    lng: place.lon,
+  };
+};
+type Props = ReturnType<typeof mapStateToProps>;
+
+export default connect(mapStateToProps)(RestaurantDetail);

@@ -1,7 +1,11 @@
 import placeMarker from "../../../assets/img/place_marker.png";
+import placeMarkerBlue from "../../../assets/img/place_marker_blue.png";
+import selectedMarker from "../../../assets/img/selected_marker.png";
 import { CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
 import { PlaceCard } from "../../../redux/placeList/types";
 import { styled } from "@mui/styles";
+import { connect } from "react-redux";
+import { setSelectedPlaceId } from "../../../redux/placeDetail/actions";
 
 interface PlaceKakaoMapMarkersProps {
   placeCardList: PlaceCard[];
@@ -16,9 +20,11 @@ const Overlay = styled("div")({
 });
 
 function PlaceKakaoMapMarkers({
+  setSelectedPlaceId,
+  selectedPlaceId,
   placeCardList,
   setCenter,
-}: PlaceKakaoMapMarkersProps) {
+}: PlaceKakaoMapMarkersProps & Props) {
   return (
     <div>
       {placeCardList.map((placeCard: PlaceCard, idx: number) => (
@@ -29,29 +35,47 @@ function PlaceKakaoMapMarkers({
               lng: placeCard.content.lng,
             }}
             xAnchor={0.5}
-            yAnchor={1.8}
+            yAnchor={selectedPlaceId === placeCard.content.placeId ? 2.1 : 1.8}
           >
             <Overlay>
               <h3 className="title">{placeCard.content.name}</h3>
             </Overlay>
             <MapMarker
-              onClick={() =>
+              onClick={() => {
                 setCenter({
                   lat: placeCard.content.lat,
                   lng: placeCard.content.lng,
-                })
-              }
+                });
+                setSelectedPlaceId(placeCard.content.placeId);
+              }}
               image={{
-                src: placeMarker, // 마커이미지의 주소입니다
-                size: {
-                  width: 60,
-                  height: 60,
-                }, // 마커이미지의 크기입니다
+                src:
+                  selectedPlaceId === placeCard.content.placeId
+                    ? selectedMarker
+                    : !placeCard.content.category
+                    ? placeMarker
+                    : placeMarkerBlue, // 마커이미지의 주소입니다
+                size:
+                  selectedPlaceId === placeCard.content.placeId
+                    ? {
+                        width: 80,
+                        height: 80,
+                      }
+                    : {
+                        width: 60,
+                        height: 60,
+                      }, // 마커이미지의 크기입니다
                 options: {
-                  offset: {
-                    x: 30,
-                    y: 60,
-                  }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                  offset:
+                    selectedPlaceId === placeCard.content.placeId
+                      ? {
+                          x: 40,
+                          y: 80,
+                        }
+                      : {
+                          x: 30,
+                          y: 60,
+                        }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
                 },
               }}
               position={{
@@ -67,4 +91,20 @@ function PlaceKakaoMapMarkers({
   );
 }
 
-export default PlaceKakaoMapMarkers;
+const mapStateToProps = ({ placeDetailReducer }: any) => ({
+  selectedPlaceId: placeDetailReducer.selectedPlaceId,
+});
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setSelectedPlaceId: (placeId: number) =>
+      dispatch(setSelectedPlaceId(placeId)),
+  };
+};
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PlaceKakaoMapMarkers);

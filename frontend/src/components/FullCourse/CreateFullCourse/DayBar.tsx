@@ -11,10 +11,12 @@ function DayBar({
   pickedDay,
   setPickedDay,
   setDayChange,
+  setOpenModal,
 }: Props & {
   pickedDay: number;
   setPickedDay: React.Dispatch<React.SetStateAction<number>>;
   setDayChange: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [dayList, setDayList] = useState<Array<string>>([]);
   const startDate: Date = new Date(fullCourseDate[0]);
@@ -33,6 +35,10 @@ function DayBar({
     position: "relative",
     fontSize: 20,
     fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: "#9ACBF2",
+      color: "white",
+    },
   }));
   const DayTextBox = styled("div")(() => ({
     backgroundColor: "#ddd",
@@ -43,9 +49,6 @@ function DayBar({
     position: "relative",
     fontSize: 20,
     fontWeight: "bold",
-    "&:hover": {
-      backgroundColor: "#47A3EC",
-    },
   }));
 
   // 풀코스 일정 길이 계산
@@ -107,6 +110,15 @@ function DayBar({
           <p>
             <Icon sx={{ fontSize: 30 }} onClick={addDate}>
               add
+            </Icon>
+          </p>
+        </DayTextStyle>
+      </DayTextBox>
+      <DayTextBox sx={{ position: "absolute", bottom: 5 }}>
+        <DayTextStyle sx={{ backgroundColor: "rgba(0,0,0,0)" }} idx={-2}>
+          <p>
+            <Icon sx={{ fontSize: 30 }} onClick={() => setOpenModal(true)}>
+              logout
             </Icon>
           </p>
         </DayTextStyle>

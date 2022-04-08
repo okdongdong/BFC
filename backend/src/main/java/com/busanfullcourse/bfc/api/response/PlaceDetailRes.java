@@ -1,6 +1,6 @@
 package com.busanfullcourse.bfc.api.response;
 
-
+import com.busanfullcourse.bfc.db.entity.Menu;
 import lombok.*;
 
 import java.util.List;
@@ -10,8 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AttractionDetailRes {
-
+public class PlaceDetailRes {
     private Long placeId;
 
     private String name;
@@ -36,5 +35,9 @@ public class AttractionDetailRes {
 
     private Float averageScore;
 
+    private Integer scoreCount;
+
     private String thumbnail;
+
+    private List<Menu> menus;
 }

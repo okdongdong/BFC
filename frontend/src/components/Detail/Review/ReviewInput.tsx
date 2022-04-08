@@ -1,31 +1,45 @@
 import React, { useState, KeyboardEvent } from "react";
 import { Button, TextField, Box } from "@mui/material";
-import { ReviewListProps, ReviewProps } from "../../../types/review";
-import axios from "axios";
-const ReviewInput = ({ reviewList, setReviewList }: ReviewListProps) => {
-  const place_id = 1; //리덕스로 받기
+import { connect } from "react-redux";
+import { customAxios } from "../../../lib/customAxios";
+import { SetReview } from "../../../types/detail";
+import { setReviewList } from "../../../redux/detail/action";
+interface InputReviewProps {
+  profileImg: string;
+  nickname: string;
+  content: string;
+  userId: number;
+}
+const ReviewInput = ({
+  setReviewList,
+  placeId,
+  profileImg,
+  nickname,
+  reviewList,
+  currentUserId,
+}: Props) => {
   const [content, setContent] = useState("");
-  const review: ReviewProps = {
-    reviewId: 1,
-    profile:
-      "https://cdn.gukjenews.com/news/photo/202110/2328684_2319618_5032.png",
-    nickname: "뉴조이이",
+  const review: InputReviewProps = {
+    profileImg: profileImg,
+    nickname: nickname,
     content: content,
+    userId: currentUserId,
   };
   const onChangeContent = (e: React.ChangeEvent<HTMLInputElement>) =>
     setContent(e.target.value);
   const onClick = () => {
-    axios({
+    customAxios({
       method: "post",
-      url: `${process.env.REACT_APP_BASE_URL}/api/v1/review/place/${place_id}`,
-      data: review,
+      url: `/review/place/${placeId}`,
+      data: { content: content },
     }).then((res) => {
-      console.log(res);
+      console.log("리뷰작성완료", res);
+      const newReviewList = [...reviewList];
+      newReviewList.push(review);
+      console.log(newReviewList);
+      setReviewList(newReviewList);
     });
     console.log(review);
-    if (setReviewList !== undefined) {
-      setReviewList((r) => [review, ...r]);
-    }
     setContent(""); //내용 초기화
   };
   const onKeyPress = (e: KeyboardEvent<HTMLImageElement>) => {
@@ -62,4 +76,23 @@ const ReviewInput = ({ reviewList, setReviewList }: ReviewListProps) => {
     </div>
   );
 };
-export default ReviewInput;
+const mapStateToProps = ({ account, place, reviewList }: any) => {
+  return {
+    placeId: place.placeId,
+    profileImg: account.profileImg,
+    nickname: account.nickname,
+    reviewList: reviewList.reviewList,
+    currentUserId: account.userId,
+  };
+};
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setReviewList: (reviewList: SetReview[]) =>
+      dispatch(setReviewList(reviewList)),
+  };
+};
+
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewInput);

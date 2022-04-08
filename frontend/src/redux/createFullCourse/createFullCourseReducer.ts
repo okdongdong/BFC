@@ -1,37 +1,27 @@
 import { AnyAction } from "redux";
-import { placeList } from "../../assets/dummyData/dummyData";
-import { PlaceCardProps } from "../../types/main";
 import deepcopy from "deepcopy";
 
 import {
   MOVE_CARD,
   SET_FULL_COURSE_DATE,
   FullCourseListProps,
-  CREATE_CARD,
   CREATE_FULL_COURSE_SUCCESS,
   ADD_CUSTOM_PLACE,
+  DELETE_CARD,
+  RESET_FULL_COURSE,
+  SET_FULL_COURSE_INFO,
 } from "./types";
 
 export interface CreateFullCourseDnd {
   fullCourseList: FullCourseListProps;
   fullCourseDate: Array<string | null>;
   fullCourseId?: number;
+  fullCourseTitle?: string;
 }
 
-const plt: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
-const plt2: Array<{ id: string; content: PlaceCardProps }> | Array<any> = [];
-
-placeList.map((place: PlaceCardProps) =>
-  plt.push({ id: `place-${place.placeId}`, content: place })
-);
-placeList.map((place: PlaceCardProps) =>
-  plt2.push({
-    id: `place2-${place.placeId}+${new Date().getTime()}`,
-    content: place,
-  })
-);
-
 const initialState: CreateFullCourseDnd = {
+  fullCourseId: 0,
+  fullCourseTitle: "",
   fullCourseList: [[]],
   fullCourseDate: [null, null],
 };
@@ -45,15 +35,27 @@ const createFullCourseReducer = (
     // 스케줄 DND에서 카드 옮길 때
     case MOVE_CARD:
       console.log(action.payload);
-      console.log('실행이 안되나?');
-      
+      console.log("실행이 안되나?");
+
       const newFullCourseList = deepcopy(action.payload);
       return {
         ...newState,
         fullCourseList: newFullCourseList,
       };
 
-    case CREATE_CARD:
+    case SET_FULL_COURSE_INFO:
+      return { ...action.payload };
+
+    case DELETE_CARD:
+      newState.fullCourseList[action.payload.day].splice(
+        action.payload.sequence,
+        1
+      );
+
+      return { ...newState };
+
+    case RESET_FULL_COURSE:
+      console.log("리셋");
       return { ...initialState };
 
     // 풀코스 날짜 설정

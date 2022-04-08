@@ -2,18 +2,24 @@
 import { Dispatch } from "redux";
 import { customAxios } from "../../lib/customAxios";
 import {
-  GET_PLACE_LIST,
-  GET_PLACE_LIST_WITH_DISTANCE,
   PlaceListInfoForGet,
   PlaceCardList,
-  PlaceInfo,
   PlaceCard,
   SET_PLACE_LIST,
   SET_PLACE_LIST_WITH_DISTANCE,
   SET_SEARCH_PLACE_LIST,
   PlaceSearchInfo,
+  PlaceInfoData,
+  RESET_PLACE_LIST_WITH_DISTANCE,
+  RESET_SEARCH_PLACE_LIST,
+  RESET_PLACE_LIST_WITH_SURVEY,
+  SurveyPlaceListInfoForGet,
+  SET_PLACE_LIST_WITH_SURVEY,
+  RESET_PLACE_LIST,
+  PlaceInfoForGet,
 } from "./types";
 import { loadingControl, errorControl } from "../baseInfo/actions";
+import { setFinished } from "../schedule/actions";
 
 const setPlaceList = (placeList: PlaceCardList) => {
   return {
@@ -33,33 +39,92 @@ const setSearchPlaceList = (placeList: PlaceCardList) => {
     payload: placeList,
   };
 };
+const setPlaceListWithSurvey = (placeList: PlaceCardList) => {
+  return {
+    type: SET_PLACE_LIST_WITH_SURVEY,
+    payload: placeList,
+  };
+};
 
-// 장소 리스트 받아오기
-// export const getPlaceList = (
-//   fullCourseInfo: CreateFullCourseRequestData
-// ) => {
-//   return async (dispatch: Dispatch) => {
-//     // 서버에 요청 => 로딩중 표시
-//     dispatch(placeListRequest());
+export const resetPlaceList = () => {
+  return {
+    type: RESET_PLACE_LIST,
+  };
+};
+export const resetPlaceListWithDistance = () => {
+  return {
+    type: RESET_PLACE_LIST_WITH_DISTANCE,
+  };
+};
 
-//     console.log("fullCourseInfo", fullCourseInfo);
+export const resetPlaceListWithSurvey = () => {
+  return {
+    type: RESET_PLACE_LIST_WITH_SURVEY,
+  };
+};
 
-//     try {
-//       const res = await customAxios({
-//         method: "POST",
-//         url: `/fullCourse`,
-//         data: fullCourseInfo,
-//       });
+export const resetSearchPlaceList = () => {
+  return {
+    type: RESET_SEARCH_PLACE_LIST,
+  };
+};
 
-//       const fullCourseId = res.data.fullCourseId;
-//       dispatch(loadingControl(dispatch, fullCourseId));
-//       console.log(res);
-//     } catch (e) {
-//       dispatch(createFullCourseFailure("풀코스 생성실패.."));
-//       console.log(e);
-//     }
-//   };
-// };
+export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
+  return async (dispatch: Dispatch) => {
+    // 서버에 요청 => 로딩중 표시
+    loadingControl(dispatch, true);
+
+    console.log("PlaceListInfoForGet", placeInfoForGet);
+
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `/place/recommend`,
+        params: placeInfoForGet,
+      });
+
+      console.log(placeInfoForGet.page);
+      console.log(res.data.totalPages);
+
+      if (placeInfoForGet.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      const placeListData: PlaceCard[] = [];
+      console.log(res);
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
+        const placeCard: PlaceCard =
+          {
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
+          } || [];
+
+        placeListData.push(placeCard);
+      });
+      dispatch(setPlaceList(placeListData));
+
+      console.log(res);
+    } catch (e) {
+      dispatch(setFinished(true));
+      errorControl(dispatch, "장소 조회 실패");
+      console.log(e);
+    }
+
+    loadingControl(dispatch, false);
+  };
+};
 
 // 거리기반 장소 리스트 받아오기
 export const getPlaceListWithDistance = (
@@ -78,13 +143,32 @@ export const getPlaceListWithDistance = (
         params: placeListInfoForGet,
       });
 
-      const placeListData: PlaceCard[] = [];
+      console.log(placeListInfoForGet.page);
+      console.log(res.data.totalPages);
 
-      res.data.placeList.map((place: PlaceInfo, idx: number) => {
+      if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      const placeListData: PlaceCard[] = [];
+      console.log(res);
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
         const placeCard: PlaceCard =
           {
-            id: `place-${idx}-${new Date()}`,
-            content: place,
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
           } || [];
 
         placeListData.push(placeCard);
@@ -93,6 +177,70 @@ export const getPlaceListWithDistance = (
 
       console.log(res);
     } catch (e) {
+      dispatch(setFinished(true));
+      errorControl(dispatch, "장소 조회 실패");
+      console.log(e);
+    }
+
+    loadingControl(dispatch, false);
+  };
+};
+
+// 설문기반 장소 리스트 받아오기
+export const getPlaceListWithSurvey = (
+  placeListInfoForGet: SurveyPlaceListInfoForGet
+) => {
+  return async (dispatch: Dispatch) => {
+    // 서버에 요청 => 로딩중 표시
+    loadingControl(dispatch, true);
+
+    console.log("PlaceListInfoForGet", placeListInfoForGet);
+
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `fullCourse/${placeListInfoForGet.userId}/surveyRecommend`,
+        params: {
+          page: placeListInfoForGet.page,
+          size: placeListInfoForGet.size,
+        },
+      });
+
+      console.log(placeListInfoForGet.page);
+      console.log(res.data.totalPages);
+
+      if (placeListInfoForGet.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      const placeListData: PlaceCard[] = [];
+      console.log(res);
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
+        const placeCard: PlaceCard =
+          {
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
+          } || [];
+
+        placeListData.push(placeCard);
+      });
+      dispatch(setPlaceListWithSurvey(placeListData));
+
+      console.log(res);
+    } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 조회 실패");
       console.log(e);
     }
@@ -114,12 +262,36 @@ export const getSearchPlaceList = (placeSearchInfo: PlaceSearchInfo) => {
         url: `/place/search`,
         params: placeSearchInfo,
       });
+      const placeListData: PlaceCard[] = [];
+      console.log("검색된 장소", res);
 
-      const placeListData = res.data;
+      if (placeSearchInfo.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
+        const placeCard: PlaceCard =
+          {
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
+          } || [];
+        placeListData.push(placeCard);
+      });
       dispatch(setSearchPlaceList(placeListData));
-
-      console.log(res);
     } catch (e) {
+      dispatch(setFinished(true));
       errorControl(dispatch, "장소 검색 실패");
       console.log(e);
     }

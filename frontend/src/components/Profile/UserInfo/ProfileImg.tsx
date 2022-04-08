@@ -1,4 +1,4 @@
-import { dividerClasses, Theme } from "@mui/material";
+import { Button, dividerClasses, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useRef } from "react";
 import { AccountReducer, ProfileReducer } from "../../../redux/rootReducer";
@@ -21,8 +21,8 @@ function ProfileImg({
   currentUserId,
   setProfileImg,
   userId,
+  myProfileImg,
 }: Props) {
-  console.log(profileImg);
   const classes = useStyles();
   const imgRef = useRef(
     document.getElementById("inputFile") as HTMLInputElement
@@ -40,10 +40,6 @@ function ProfileImg({
             //null값 제외 시키기 위해서 필요
             setProfileImg(reader.result);
           }
-
-          // console.log("이미지주소", reader.result);
-          // console.log(file[0]);
-          console.log("여기보세요", formData);
         }
         const token = localStorage.getItem("accessToken") || "";
 
@@ -60,12 +56,9 @@ function ProfileImg({
           //   url: `/users/${userId}/profile`,
           //   data: formData,
         })
-          .then((res) => {
-            console.log(res);
-          })
+          .then((res) => {})
           .catch((err) => {
             console.log(err);
-            console.log(token);
           });
       };
     }
@@ -76,7 +69,21 @@ function ProfileImg({
 
   return (
     <div>
-      <img src={profileImg} className={classes.myImg}></img>
+      {profileImg ? (
+        <div>
+          {currentUserId === userId ? (
+            <img src={myProfileImg} className={classes.myImg}></img>
+          ) : (
+            <img src={profileImg} className={classes.myImg}></img>
+          )}
+        </div>
+      ) : (
+        <img
+          src="https://cdn.newspenguin.com/news/photo/202002/1208_2870_473.jpg"
+          className={classes.myImg}
+        ></img>
+      )}
+
       <div>
         <input
           type="file"
@@ -88,14 +95,16 @@ function ProfileImg({
           id="inputFile"
         />
         {currentUserId === userId ? (
-          <button
+          <Button
+            variant="contained"
+            size="small"
             style={{ cursor: "pointer" }}
             onClick={() => {
               onClickFileBtn();
             }}
           >
             프사수정
-          </button>
+          </Button>
         ) : (
           <div></div>
         )}
@@ -109,6 +118,7 @@ const mapStateToProps = ({ account, profile }: any) => {
     profileImg: profile.profileImg,
     currentUserId: account.userId,
     userId: profile.userId,
+    myProfileImg: account.profileImg,
   };
 };
 const mapDispatchToProps = (dispatch: any) => {

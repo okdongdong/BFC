@@ -1,7 +1,7 @@
 import { Card, styled } from "@mui/material";
 
 interface DateCounterProps {
-  startOn: Date;
+  startedOn: Date;
   finishedOn: Date;
 }
 
@@ -18,15 +18,15 @@ const DayCountStyle = styled("span")(() => ({
   fontWeight: "bold",
 }));
 
-function DateCounter({ startOn, finishedOn }: DateCounterProps) {
+function DateCounter({ startedOn, finishedOn }: DateCounterProps) {
   const dayToMilisec = 1000 * 3600 * 24;
   const dayDiff = Math.ceil(
-    (finishedOn.getTime() - startOn.getTime()) / dayToMilisec
+    (finishedOn.getTime() - startedOn.getTime()) / dayToMilisec
   );
 
   return (
     <CardStyle>
-      <DayCountStyle>{dayDiff}</DayCountStyle>
+      <DayCountStyle>{dayDiff + 1}</DayCountStyle>
       <br />
       <span>{dayDiff === 1 ? "DAY" : "DAYS"}</span>
     </CardStyle>

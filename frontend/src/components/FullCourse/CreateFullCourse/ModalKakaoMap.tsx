@@ -2,10 +2,12 @@
 
 import { Box } from "@mui/material";
 import { useEffect } from "react";
+import placeMarkerGreen from "../../../assets/img/place_marker_green.png";
 
 const { kakao } = window;
 
 interface KakaoMapProps {
+  address: string;
   mapId?: string;
   lat?: number;
   lng?: number;
@@ -15,9 +17,20 @@ interface KakaoMapProps {
       lng: number;
     }>
   >;
+  nowSearch: boolean;
+  nowMove: boolean;
+  setNowSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  setNowMove: React.Dispatch<React.SetStateAction<boolean>>;
+  setCustomSearchList: any;
 }
 
 function ModalKakaoMap({
+  address,
+  nowSearch,
+  nowMove,
+  setNowSearch,
+  setNowMove,
+  setCustomSearchList,
   mapId = "map",
   lat = 35.1797913,
   lng = 129.074987,
@@ -30,10 +43,14 @@ function ModalKakaoMap({
       level: 3,
     };
     var map = new kakao.maps.Map(container, options);
-
+    var markerImage = new kakao.maps.MarkerImage(
+      placeMarkerGreen,
+      new kakao.maps.Size(60, 60)
+    );
     var marker = new kakao.maps.Marker({
       map: map,
       position: new kakao.maps.LatLng(lat, lng),
+      image: markerImage,
     });
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
@@ -43,35 +60,42 @@ function ModalKakaoMap({
 
       // 마커 위치를 클릭한 위치로 옮깁니다
       marker.setPosition(latlng);
+      console.log(latlng);
+
       var message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
       message += "경도는 " + latlng.getLng() + " 입니다";
       setLocation({ lat: latlng.getLat(), lng: latlng.getLng() });
       console.log(message);
     });
   };
-  // kakao.maps.event.addListener(marker, "click", function () {
-  //   alert("마커를 클릭했습니다!");
-  //   console.log(marker);
-  // });
 
-  // // 마커에 dragstart 이벤트 등록
-  // kakao.maps.event.addListener(marker, "dragstart", function () {
-  //   console.log("마커에 dragstart 이벤트가 발생했습니다!");
-  // });
+  var places = new kakao.maps.services.Places();
 
-  // // 마커에 dragend 이벤트 등록
-  // kakao.maps.event.addListener(marker, "dragend", function (dragEvent: any) {
-  //   console.log("마커에 dragend 이벤트가 발생했습니다!");
-  //   console.log(marker);
-  //   console.log(dragEvent);
-  // });
-
-  // 중심을 부드럽게 이동하는 함수
-  // map.panTo(moveLatLon);
+  var callback = function (result: any, status: any) {
+    if (status === kakao.maps.services.Status.OK) {
+      setCustomSearchList([...result]);
+      console.log(result);
+    }
+  };
 
   useEffect(() => {
     loadMap();
   }, []);
+
+  useEffect(() => {
+    if (nowSearch) {
+      places.keywordSearch(`부산 ${address}`, callback);
+      setNowSearch(false);
+    }
+  }, [nowSearch]);
+
+  useEffect(() => {
+    if (nowMove) {
+      loadMap();
+    }
+    setNowMove(false);
+  }, [nowMove]);
+
   return <Box id={mapId} sx={{ flexGrow: 1 }}></Box>;
 }
 

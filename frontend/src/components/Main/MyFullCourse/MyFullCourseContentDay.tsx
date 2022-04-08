@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
 import React from "react";
-import { MyFullCourseContentDayProps } from "../../../types/main";
+import { toStringByFormatting } from "../../../layouts/CreateFullCourseNavbar";
 
 const CircleStlye = styled("div")(() => ({
   marginRight: 0,
@@ -23,13 +23,17 @@ const PlaceNameStlye = styled("div")(() => ({
   color: "black",
 }));
 
-function MyFullCourseContentDay({
-  courseDate,
-  day,
-  placeList,
-}: MyFullCourseContentDayProps) {
-  placeList.sort((item) => item.order);
+interface MyFullCourseContentDayProps {
+  day: number;
+  startedOn: string;
+  placeNameList: string[];
+}
 
+function MyFullCourseContentDay({
+  day,
+  placeNameList,
+  startedOn,
+}: MyFullCourseContentDayProps) {
   return (
     <Box
       sx={{
@@ -40,14 +44,28 @@ function MyFullCourseContentDay({
         margin: 0,
       }}
     >
-      <h3>{courseDate}</h3>
+      <div style={{ fontSize: 24, marginBottom: 10, fontWeight: "bold" }}>
+        {toStringByFormatting(
+          new Date(
+            new Date(startedOn).setDate(new Date(startedOn).getDate() + day - 1)
+          ),
+          "."
+        )}
+      </div>
       <CircleStlye>
         <p>{day}</p>
       </CircleStlye>
       <PlaceNameStlye>
-        {placeList.map((place, index) => (
-          <div key={index}>{place.name}</div>
-        ))}
+        {placeNameList.length > 0 ? (
+          placeNameList.map((placeName, index) => (
+            <div key={index}>{placeName}</div>
+          ))
+        ) : (
+          <div style={{ fontSize: 12, color: "grey" }}>
+            <p>예정된 일정이</p>
+            <p>없습니다</p>
+          </div>
+        )}
       </PlaceNameStlye>
     </Box>
   );

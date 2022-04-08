@@ -1,6 +1,7 @@
 package com.busanfullcourse.bfc.api.service;
 
-import com.busanfullcourse.bfc.api.response.SearchPlaceListRes;
+import com.busanfullcourse.bfc.api.response.PlaceListRes;
+import com.busanfullcourse.bfc.common.util.ExceptionUtil;
 import com.busanfullcourse.bfc.db.entity.CustomPlace;
 import com.busanfullcourse.bfc.db.entity.Place;
 import com.busanfullcourse.bfc.db.entity.Schedule;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,27 +26,31 @@ public class ElasticSearchService {
     private final PlaceRepository placeRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public Page<SearchPlaceListRes> searchPlaceByName(String name, Pageable pageable) {
-        Page<Place> list = placeSearchRepository.findByNameContains(name, pageable);
-        return SearchPlaceListRes.of(list);
+    public Page<PlaceListRes> searchPlaceByName(String name, Pageable pageable) {
+        Page<Place> list = placeSearchRepository.findByNameContains(name.strip(), pageable);
+        return PlaceListRes.of(list);
     }
 
     public Page<Place> searchAll(Pageable pageable) {
         return placeSearchRepository.findAll(pageable);
     }
 
+    public Page<Place> searchPlaceByNameByJPA(String name, Pageable pageable) {
+        return placeRepository.findByNameContains(name.strip(),pageable);
+    }
+
     public void saveAll() {
-        placeSearchRepository.saveAll(placeRepository.findAll().stream()
-                .peek(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())))
-                .collect(Collectors.toList()));
+        List<Place> places = placeRepository.findAll();
+        places.forEach(place -> place.setLocation(new GeoPoint(place.getLat(), place.getLon())));
+        placeSearchRepository.saveAll(places);
     }
 
     public void deleteAll() {
         placeSearchRepository.deleteAll();
     }
 
-    public Page<SearchPlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(NoSuchElementException::new);
+    public Page<PlaceListRes> searchByDistance(Long scheduleId, Integer distance, Pageable pageable) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new NoSuchElementException(ExceptionUtil.SCHEDULE_NOT_FOUND));
         Place place = schedule.getPlace();
         Page<Place> list;
 
@@ -67,6 +71,6 @@ public class ElasticSearchService {
                 }
             }
         }
-        return SearchPlaceListRes.of(list);
+        return PlaceListRes.of(list);
     }
 }
