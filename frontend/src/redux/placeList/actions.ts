@@ -15,6 +15,8 @@ import {
   RESET_PLACE_LIST_WITH_SURVEY,
   SurveyPlaceListInfoForGet,
   SET_PLACE_LIST_WITH_SURVEY,
+  RESET_PLACE_LIST,
+  PlaceInfoForGet,
 } from "./types";
 import { loadingControl, errorControl } from "../baseInfo/actions";
 import { setFinished } from "../schedule/actions";
@@ -44,6 +46,11 @@ const setPlaceListWithSurvey = (placeList: PlaceCardList) => {
   };
 };
 
+export const resetPlaceList = () => {
+  return {
+    type: RESET_PLACE_LIST,
+  };
+};
 export const resetPlaceListWithDistance = () => {
   return {
     type: RESET_PLACE_LIST_WITH_DISTANCE,
@@ -59,6 +66,62 @@ export const resetPlaceListWithSurvey = () => {
 export const resetSearchPlaceList = () => {
   return {
     type: RESET_SEARCH_PLACE_LIST,
+  };
+};
+
+export const getPlaceList = (placeInfoForGet: PlaceInfoForGet) => {
+  return async (dispatch: Dispatch) => {
+    // 서버에 요청 => 로딩중 표시
+    loadingControl(dispatch, true);
+
+    console.log("PlaceListInfoForGet", placeInfoForGet);
+
+    try {
+      const res = await customAxios({
+        method: "get",
+        url: `/place/recommend`,
+        params: placeInfoForGet,
+      });
+
+      console.log(placeInfoForGet.page);
+      console.log(res.data.totalPages);
+
+      if (placeInfoForGet.page + 1 >= res.data.totalPages) {
+        dispatch(setFinished(true));
+        console.log("조회끝");
+      }
+
+      const placeListData: PlaceCard[] = [];
+      console.log(res);
+      res.data.content.map((place: PlaceInfoData, idx: number) => {
+        const placeCard: PlaceCard =
+          {
+            id: `place-${idx}-${new Date().getTime()}-${Math.random()}`,
+            content: {
+              placeId: place.placeId,
+              lat: place.lat,
+              lng: place.lon,
+              name: place.name,
+              thumbnail: place.thumbnail,
+              address: place.address,
+              averageScore: place.averageScore,
+              scoreCount: place.scoreCount,
+              category: place.category,
+              keywords: place.keywords,
+            },
+          } || [];
+
+        placeListData.push(placeCard);
+      });
+      dispatch(setPlaceList(placeListData));
+
+      console.log(res);
+    } catch (e) {
+      errorControl(dispatch, "장소 조회 실패");
+      console.log(e);
+    }
+
+    loadingControl(dispatch, false);
   };
 };
 

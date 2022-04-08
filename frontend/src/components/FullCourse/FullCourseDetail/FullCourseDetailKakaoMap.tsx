@@ -15,8 +15,11 @@ interface LatLng {
   lat: number;
   lng: number;
 }
+interface StepProps {
+  activeStep: number;
+}
 
-function FullCourseDetailKakaoMap({ steps }: Props) {
+function FullCourseDetailKakaoMap({ steps, activeStep }: StepProps & Props) {
   const [dailyFullCoursePath, setDailyFullCoursePath] = useState<Array<LatLng>>(
     []
   );
