@@ -149,9 +149,8 @@ function PlaceCardList({
           모든 결과를 출력했습니다.
         </div>
       )}
-      {(nowFilterTypeIdx !== 1 && nowFilterTypeIdx !== 3) || (
-        <div style={{ height: 100, width: 1 }} ref={interSectRef}></div>
-      )}
+
+      <div style={{ height: 100, width: 1 }} ref={interSectRef}></div>
     </div>
   );
 }
