@@ -5,7 +5,6 @@
 ------
 
 - [부산풀코스](https://j6e201.p.ssafy.io/)
-
   - **부산풀코스는 부산의 여행지나 맛집 정보를 추천 받고 여행 플래너를 작성할 수 있는 서비스**
   - **빅데이터 기반 부산 여행지 추천 웹서비스**
 
@@ -131,7 +130,6 @@
   <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=SpringBoot&logoColor=ffffff" /><img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=ffffff" /><img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=ffffff"/><img src="https://img.shields.io/badge/redux-764ABC?style=flat-square&logo=react&logoColor=ffffff"/><img src="https://img.shields.io/badge/Typescript-3178C6?style=flat&logo=typescript&logoColor=ffffff"/><img src="https://img.shields.io/badge/Django-092E20?style=flat-square&logo=Django&logoColor=ffffff" /><img src="https://img.shields.io/badge/Jupyter-F37626?style=flat-square&logo=Jupyter&logoColor=ffffff" />
 
   - **Backend**
-    
     - **SpringBoot** (2.6.4) : Restful API 구현
     - **JPA** : ORM 기술을 활용하여 객체 지향적이고 생산성이 높은 개발을 추구함.
     - **QueryDSL** (5.0.0) : 컴파일 타임에 에러를 잡고 동적 쿼리를 사용하기 위해 사용
@@ -142,23 +140,19 @@
     - **Jenkins** (:lts) : pipeline을 이용한 빌드 및 배포 자동화
     
     
-    
   - **Frontend**
-    
     - **React** (17.0.2) : SPA구현
     - **Redux** (4.1.2) : 글로벌 변수관리과 상태관리를 위해 리덕스 사용
     - **TypeScript** (4.6.2) :  변수의 타입을 명확히 하여 버그를 사전에 방지하기 위해 사용
-    
-    
-    
+
+
   - **DataAnalysis**
-    
     - **Django**(3.2.12) : 추천시스템을 구성하기 위한 Backend
     - **BeautifulSoup** : 리뷰 데이터 및 장소 데이터 크롤링하기 위해 사용
-    - **Crontab **: 특정 시간 (새벽 3시)마다 주기적으로 학습을 시켜주기 위함
+    - **Crontab** : 특정 시간 (새벽 3시)마다 주기적으로 학습을 시켜주기 위함
     - **Pandas** : 데이터 전처리
-    
-    
+
+
 
 - **정적분석(Sonarqube)**
 
@@ -270,7 +264,6 @@
     - PORT : 6379
   - Elastic Search
     - PORT : 9200
-
 - Backend
   - Spring 2.6.4 (Gradle)
   - Django 3.2.12
